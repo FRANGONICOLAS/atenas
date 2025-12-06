@@ -16,7 +16,7 @@ export const translations = {
     },
     home: {
       heroTitle: 'Transformando Vidas a Través del Deporte',
-      heroSubtitle: 'Fundación deportiva sin ánimo de lucro dedicada al desarrollo integral de jóvenes a través del fútbol',
+      heroSubtitle: 'Fundación deportiva sin ánimo de lucro dedicada al desarrollo integral de jóvenes a través del fútbo',
       heroCta: 'Únete a Nuestra Causa',
       donateNow: 'Donar Ahora',
       learnMore: 'Conoce Más',
