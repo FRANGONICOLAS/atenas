@@ -31,7 +31,7 @@ const ProjectsPage = () => {
     },
     {
       id: 2,
-      title: 'Uniformes y Equipamiento 2024',
+      title: 'Uniformes y Equipamiento 2026',
       description: 'Dotación completa de uniformes, balones, conos y material deportivo para todas las categorías.',
       goal: 8000000,
       raised: 8000000,

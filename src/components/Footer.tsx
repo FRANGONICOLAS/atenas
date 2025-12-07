@@ -30,7 +30,7 @@ const Footer = () => {
               <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
                 <Heart className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="font-bold text-lg">Fundación Deportiva</span>
+              <span className="font-bold text-lg">Fundación Sociodeportiva Atenas</span>
             </div>
             <p className="text-primary-foreground/80 text-sm">
               Transformando vidas a través del deporte. Una fundación sin ánimo de lucro dedicada al desarrollo integral de jóvenes.
@@ -60,7 +60,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Mail className="w-4 h-4 text-primary" />
-                info@fundaciondeportiva.org
+                info@fundacionatenas.org
               </li>
               <li className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <Phone className="w-4 h-4 text-primary" />
@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2 text-sm text-primary-foreground/80">
                 <MapPin className="w-4 h-4 text-primary" />
-                Bogotá, Colombia
+                Cali, Colombia
               </li>
             </ul>
           </div>
@@ -95,7 +95,7 @@ const Footer = () => {
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-8 text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Fundación Deportiva. {t.footer.rights}.
+            © {new Date().getFullYear()} Fundación Sociodeportiva Atenas. {t.footer.rights}.
           </p>
         </div>
       </div>

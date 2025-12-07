@@ -9,24 +9,24 @@ const HomePage = () => {
   const { t } = useLanguage();
 
   const impactStats = [
-    { icon: Users, value: '500+', label: t.home.beneficiaries },
+    { icon: Users, value: '200+', label: t.home.beneficiaries },
     { icon: Target, value: '12', label: t.home.projects },
     { icon: DollarSign, value: '$50K+', label: t.home.donations },
-    { icon: Calendar, value: '8', label: t.home.years },
+    { icon: Calendar, value: '10', label: t.home.years },
   ];
 
   const categories = [
-    { age: '6-8', name: 'Semillero', players: 45 },
-    { age: '8-10', name: 'Iniciación', players: 52 },
-    { age: '10-12', name: 'Formación', players: 48 },
-    { age: '12-15', name: 'Desarrollo', players: 60 },
-    { age: '15-17', name: 'Competencia', players: 38 },
+    { age: '6-8', name: 'Categoria 1', players: 45 },
+    { age: '8-10', name: 'Categoria 2', players: 52 },
+    { age: '10-12', name: 'Categoria 3', players: 48 },
+    { age: '12-15', name: 'Categoria 4', players: 60 },
+    { age: '15-17', name: 'Categoria 5', players: 38 },
   ];
 
   const featuredPlayers = [
-    { name: 'Santiago López', age: 14, position: 'Delantero', goals: 23, image: 'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=300&h=300&fit=crop' },
-    { name: 'María García', age: 12, position: 'Mediocampista', goals: 15, image: 'https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=300&h=300&fit=crop' },
-    { name: 'Andrés Rodríguez', age: 16, position: 'Portero', goals: 0, image: 'https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?w=300&h=300&fit=crop' },
+    { name: 'Santiago López', age: 14, position: 'Delantero', goals: 23, image: 'public/image1.jpg' },
+    { name: 'Mario García', age: 12, position: 'Mediocampista', goals: 15, image: 'public/image2.jpg' },
+    { name: 'Andrés Rodríguez', age: 16, position: 'Portero', goals: 0, image: 'public/image3.jpg' },
   ];
 
   return (

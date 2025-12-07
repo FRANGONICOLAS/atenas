@@ -8,7 +8,7 @@ const CategoriesPage = () => {
 
   const categories = [
     {
-      name: 'Semillero',
+      name: 'Categoria 1',
       ageRange: '6-8',
       players: 45,
       trainers: 3,
@@ -19,7 +19,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-1',
     },
     {
-      name: 'Iniciación',
+      name: 'Categoria 2',
       ageRange: '8-10',
       players: 52,
       trainers: 4,
@@ -30,7 +30,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-2',
     },
     {
-      name: 'Formación',
+      name: 'Categoria 3',
       ageRange: '10-12',
       players: 48,
       trainers: 4,
@@ -41,7 +41,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-3',
     },
     {
-      name: 'Desarrollo',
+      name: 'Categoria 4',
       ageRange: '12-15',
       players: 60,
       trainers: 5,
@@ -52,7 +52,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-4',
     },
     {
-      name: 'Competencia',
+      name: 'Categoria 5',
       ageRange: '15-17',
       players: 38,
       trainers: 3,

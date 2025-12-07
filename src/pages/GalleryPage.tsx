@@ -15,8 +15,8 @@ const GalleryPage = () => {
   const [filter, setFilter] = useState<'all' | 'photo' | 'video'>('all');
 
   const galleryItems = [
-    { id: 1, type: 'photo', src: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&h=600&fit=crop', title: 'Entrenamiento categoría Semillero', category: 'Entrenamiento' },
-    { id: 2, type: 'photo', src: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop', title: 'Torneo Municipal 2023', category: 'Torneos' },
+    { id: 1, type: 'photo', src: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&h=600&fit=crop', title: 'Entrenamiento categoría 1', category: 'Entrenamiento' },
+    { id: 2, type: 'photo', src: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop', title: 'Torneo Municipal 2024', category: 'Torneos' },
     { id: 3, type: 'video', src: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=800&h=600&fit=crop', title: 'Goles del mes', category: 'Highlights', videoUrl: '#' },
     { id: 4, type: 'photo', src: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&h=600&fit=crop', title: 'Final Copa Juvenil', category: 'Torneos' },
     { id: 5, type: 'photo', src: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=800&h=600&fit=crop', title: 'Celebración de gol', category: 'Momentos' },
