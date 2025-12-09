@@ -15,10 +15,10 @@ const AboutPage = () => {
   ];
 
   const team = [
-    { name: 'Hector Sanchez', role: 'Director General', image: 'public/hector.jpg' },
-    { name: 'Omar', role: 'Director General', image: '' },
-    { name: 'Roberto Silva (ejemplo)', role: 'Director Sede Norte', image: '' },
-    { name: 'María Fernández (ejemplo)', role: 'Directora Sede Sur', image: '' },
+    { name: 'Hector Sanchez', role: 'Director General', image: '/hector.jpg' },
+    { name: 'Omar', role: 'Director General', image: '/image1.jpg' },
+    { name: 'Roberto Silva', role: 'Director Sede Norte', image: '/image2.jpg' },
+    { name: 'María Fernández', role: 'Directora Sede Sur', image: '/image3.jpg' },
   ];
 
   return (
@@ -98,19 +98,33 @@ const AboutPage = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
             {t.about.structure}
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {team.map((member, index) => (
-              <Card key={index} className="overflow-hidden group">
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={member.image} 
-                    alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+              <Card key={index} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20">
+                <div className="relative h-64 overflow-hidden bg-muted/30">
+                  {member.image ? (
+                    <img 
+                      src={member.image} 
+                      alt={member.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/placeholder.svg';
+                        target.onerror = null;
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                      <Users className="w-16 h-16 text-muted-foreground/30" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                <CardContent className="p-4 text-center">
-                  <h3 className="font-bold text-foreground">{member.name}</h3>
-                  <p className="text-sm text-muted-foreground">{member.role}</p>
+                <CardContent className="p-6 text-center bg-card">
+                  <h3 className="font-bold text-lg text-foreground mb-1 group-hover:text-primary transition-colors">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-medium">{member.role}</p>
                 </CardContent>
               </Card>
             ))}

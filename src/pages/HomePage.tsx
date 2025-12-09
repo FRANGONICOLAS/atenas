@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, ChevronRight } from 'lucide-react';
+import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, ChevronRight, AlertTriangle, Shield, Sparkles, Activity, Brain, Smile, Handshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -25,9 +25,9 @@ const HomePage = () => {
   ];
 
   const featuredPlayers = [
-    { name: 'Santiago López', age: 14, position: 'Delantero', goals: 23, image: 'public/image1.jpg' },
-    { name: 'Mario García', age: 12, position: 'Mediocampista', goals: 15, image: 'public/image2.jpg' },
-    { name: 'Andrés Rodríguez', age: 16, position: 'Portero', goals: 0, image: 'public/image3.jpg' },
+    { name: 'Santiago López', age: 14, position: 'Delantero', goals: 23, image: '/image1.jpg' },
+    { name: 'Mario García', age: 12, position: 'Mediocampista', goals: 15, image: '/image2.jpg' },
+    { name: 'Andrés Rodríguez', age: 16, position: 'Portero', goals: 0, image: '/image3.jpg' },
   ];
 
   return (
@@ -67,125 +67,342 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Impact Stats */}
-      <section className="py-16 bg-primary">
+      
+      {/* Problem Section */}
+      <section className="py-20 bg-foreground">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center text-primary-foreground mb-12">
-            {t.home.impactTitle}
-          </h2>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {impactStats.map((stat, index) => (
-              <div 
-                key={index}
-                className="text-center p-6 rounded-xl bg-primary-foreground/10 backdrop-blur-sm"
-              >
-                <stat.icon className="w-8 h-8 mx-auto mb-3 text-primary-foreground" />
-                <div className="text-3xl md:text-4xl font-bold text-primary-foreground mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-primary-foreground/80">
-                  {stat.label}
-                </div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
+              La Realidad que Enfrentamos
+            </h2>
+            <p className="text-primary-foreground/80 max-w-3xl mx-auto text-lg leading-relaxed mb-4">
+              Muchos jóvenes viven en contextos de vulnerabilidad: falta de oportunidades, riesgo de deserción escolar, violencia, adicciones o exclusión social. La ausencia de espacios de recreación y contención social profundiza el problema, dejando a los jóvenes sin alternativas sanas para su tiempo libre.
+            </p>
+            <p className="text-primary-foreground/70 max-w-3xl mx-auto leading-relaxed">
+              En la Comuna 17, aunque está marcada con estrato económico 4 a 5, la mayoría de personas no tienen capacidad adquisitiva para pagar escuelas deportivas. A pesar de vivir en un estrato alto, no hay recursos para acceder a planes deportivos formales, y muchos jóvenes terminan en situaciones de riesgo.
+            </p>
+          </div>
+          
+          {/* Image Grid */}
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
+            <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
+              {/* Placeholder for problem image */}
+              <div className="text-center p-6">
+                <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-primary-foreground/30" />
+                <p className="text-sm text-primary-foreground/60 italic">Imagen: Problemática de la comunidad</p>
               </div>
-            ))}
+              {/* Image will go here - replace the div above with: */}
+              {/* <img 
+                src="/path/to/problem-image.jpg" 
+                alt="Problemática de la comunidad"
+                className="w-full h-full object-cover"
+              /> */}
+            </div>
+            <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
+              {/* Placeholder for impact image */}
+              <div className="text-center p-6">
+                <Users className="w-12 h-12 mx-auto mb-3 text-primary-foreground/30" />
+                <p className="text-sm text-primary-foreground/60 italic">Imagen: Impacto en jóvenes</p>
+              </div>
+              {/* Image will go here - replace the div above with: */}
+              {/* <img 
+                src="/path/to/impact-image.jpg" 
+                alt="Impacto en jóvenes"
+                className="w-full h-full object-cover"
+              /> */}
+            </div>
+          </div>
+
+          {/* Problem Details */}
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card className="bg-card/50 border-primary/20">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-bold text-primary-foreground mb-3">El Problema</h3>
+                  <ul className="space-y-2 text-primary-foreground/80 text-sm">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                      <span>Falta de espacios seguros de recreación y formación</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                      <span>Riesgo de deserción escolar y exclusión social</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                      <span>Exposición a violencia, adicciones y bandas</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
+                      <span>Familias sin recursos para escuelas deportivas</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card className="bg-card/50 border-primary/20">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-bold text-primary-foreground mb-3">Nuestro Impacto</h3>
+                  <ul className="space-y-2 text-primary-foreground/80 text-sm">
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                      <span>35+ jóvenes rescatados de bandas y situaciones de violencia</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                      <span>10 años trabajando en la Comuna 17</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                      <span>Jóvenes que han llegado al fútbol profesional</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                      <span>Transformación de actitudes violentas a través del deporte</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto text-center">
+            <div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">35+</div>
+              <div className="text-sm text-primary-foreground/70">Jóvenes rescatados</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">10</div>
+              <div className="text-sm text-primary-foreground/70">Años trabajando</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">Comuna 17</div>
+              <div className="text-sm text-primary-foreground/70">Zona de impacto</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How Sport Helps Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Cómo el Deporte Transforma Vidas
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              El deporte genera sentido de pertenencia, disciplina, salud mental y reduce la vulnerabilidad.
+            </p>
+          </div>
+
+          {/* Main Image */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <div className="relative h-96 rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center">
+              {/* Placeholder for main sport transformation image */}
+              <div className="text-center p-8">
+                <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
+                <p className="text-muted-foreground italic">Imagen: Deporte transformando vidas</p>
+              </div>
+              {/* Image will go here - replace the div above with: */}
+              {/* <img 
+                src="/path/to/sport-transformation.jpg" 
+                alt="Deporte transformando vidas"
+                className="w-full h-full object-cover"
+              /> */}
+            </div>
+          </div>
+
+          {/* Benefits Grid with Images */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Users className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Sentido de pertenencia</p>
+                </div>
+                {/* Image will go here - replace the div above with: */}
+                {/* <img 
+                  src="/path/to/belonging-image.jpg" 
+                  alt="Sentido de pertenencia"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                /> */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Sentido de Pertenencia</h3>
+                <p className="text-xs text-muted-foreground">Construyendo comunidad</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Brain className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Manejo de emociones</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Manejo de Emociones</h3>
+                <p className="text-xs text-muted-foreground">Transformando actitudes</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Activity className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Salud física y mental</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Salud Física y Mental</h3>
+                <p className="text-xs text-muted-foreground">Prevención y bienestar</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Target className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Disciplina y metas</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Disciplina y Metas</h3>
+                <p className="text-xs text-muted-foreground">Trabajo constante</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Handshake className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Trabajo en equipo</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Trabajo en Equipo</h3>
+                <p className="text-xs text-muted-foreground">Éxito colectivo</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for image */}
+                <div className="text-center p-4">
+                  <Smile className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Oportunidades y futuro</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Oportunidades y Futuro</h3>
+                <p className="text-xs text-muted-foreground">Abriendo puertas</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* What Donations Do Section */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              ¿Qué Hacemos con tu Donación?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Las donaciones son usadas para seguir transformando vidas a través del deporte.
+            </p>
+          </div>
+
+          {/* Activities Grid with Images */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for training equipment image */}
+                <div className="text-center p-4">
+                  <Trophy className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Equipo deportivo</p>
+                </div>
+                {/* Image will go here - replace the div above with: */}
+                {/* <img 
+                  src="/path/to/equipment-image.jpg" 
+                  alt="Equipo deportivo"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                /> */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Equipo Deportivo</h3>
+                <p className="text-xs text-muted-foreground">Para entrenamiento y práctica deportiva</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for tournaments image */}
+                <div className="text-center p-4">
+                  <Target className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Torneos</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Torneos</h3>
+                <p className="text-xs text-muted-foreground">Participación en competencias deportivas</p>
+              </CardContent>
+            </Card>
+
+            <Card className="overflow-hidden group hover:shadow-lg transition-all">
+              <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for projects image */}
+                <div className="text-center p-4">
+                  <Star className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
+                  <p className="text-xs text-muted-foreground italic">Imagen: Proyectos definidos</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <CardContent className="p-4 text-center">
+                <h3 className="font-bold text-foreground mb-1">Proyectos Definidos</h3>
+                <p className="text-xs text-muted-foreground">Donaciones dedicadas a proyectos específicos</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Bottom Message with Image */}
+          <div className="mt-12 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 items-center">
+              <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
+                {/* Placeholder for community image */}
+                <div className="text-center p-6">
+                  <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
+                  <p className="text-sm text-muted-foreground italic">Imagen: Comunidad unida</p>
+                </div>
+                {/* Image will go here */}
+              </div>
+              <div>
+                <p className="text-lg text-foreground leading-relaxed mb-3">
+                  <span className="font-bold text-primary">Cada donación es un paso</span> hacia una comunidad más unida, sana y con futuro.
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Trabajamos con transparencia total. Puedes elegir si tu donación va a un proyecto específico o a inversión libre.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Categories Preview */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {t.categories.title}
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {t.categories.subtitle}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {categories.map((category, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all">
-                    <Trophy className="w-8 h-8 text-primary group-hover:text-primary-foreground" />
-                  </div>
-                  <h3 className="font-bold text-lg text-foreground mb-1">{category.name}</h3>
-                  <p className="text-2xl font-bold text-primary">{category.age}</p>
-                  <p className="text-sm text-muted-foreground">{t.categories.age}</p>
-                  <p className="text-xs text-muted-foreground mt-2">{category.players} jugadores</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link to="/categorias">
-              <Button variant="outline" className="gap-2">
-                Ver todas las categorías
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Players */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              {t.players.title}
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              {t.players.subtitle}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredPlayers.map((player, index) => (
-              <Card key={index} className="group overflow-hidden hover:shadow-xl transition-all">
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={player.image} 
-                    alt={player.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="font-bold text-xl text-primary-foreground">{player.name}</h3>
-                    <p className="text-primary-foreground/80">{player.position} • {player.age} años</p>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <Star className="w-5 h-5 text-secondary" />
-                      <span className="font-bold text-foreground">{player.goals} {t.players.goals}</span>
-                    </div>
-                    <Link to="/jugadores">
-                      <Button variant="ghost" size="sm" className="gap-1">
-                        Ver perfil
-                        <ChevronRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link to="/jugadores">
-              <Button className="gap-2">
-                Ver todos los jugadores
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      
 
       <CTA />
     </div>

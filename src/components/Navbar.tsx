@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Globe, Heart, ChevronDown, Users, Target, MapPin } from 'lucide-react';
+import { Menu, X, Globe, Heart, ChevronDown, Users, Target, MapPin, Trophy, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -18,15 +18,13 @@ const Navbar = () => {
 
   const navLinks = [
     { href: '/', label: t.nav.home },
-    { href: '/categorias', label: t.nav.categories },
-    { href: '/jugadores', label: t.nav.players },
     { href: '/proyectos', label: t.nav.projects },
     { href: '/galeria', label: t.nav.gallery },
-    { href: '/testimonios', label: t.nav.testimonials },
   ];
 
   const isActive = (path: string) => location.pathname === path;
   const isAboutActive = location.pathname === '/quienes-somos' || location.pathname === '/que-hacemos' || location.pathname === '/sedes';
+  const isBeneficiariesActive = location.pathname === '/categorias' || location.pathname === '/jugadores' || location.pathname === '/testimonios';
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md shadow-md">
@@ -109,6 +107,66 @@ const Navbar = () => {
                   >
                     <MapPin className="w-4 h-4" />
                     <span>{t.nav.locations}</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Beneficiaries Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={cn(
+                  'text-sm font-medium transition-all hover:text-primary flex items-center gap-1.5 px-3 py-2 rounded-md hover:bg-primary/5 group',
+                  isBeneficiariesActive ? 'text-primary bg-primary/10' : 'text-muted-foreground'
+                )}
+              >
+                {t.nav.beneficiaries}
+                <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="start" 
+                className="w-56 mt-2 p-2 bg-card border border-border shadow-lg rounded-lg"
+              >
+                <DropdownMenuItem asChild>
+                  <Link 
+                    to="/categorias" 
+                    className={cn(
+                      'w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors',
+                      isActive('/categorias')
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'hover:bg-primary/5 text-foreground'
+                    )}
+                  >
+                    <Trophy className="w-4 h-4" />
+                    <span>{t.nav.categories}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link 
+                    to="/jugadores" 
+                    className={cn(
+                      'w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors',
+                      isActive('/jugadores')
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'hover:bg-primary/5 text-foreground'
+                    )}
+                  >
+                    <Users className="w-4 h-4" />
+                    <span>{t.nav.players}</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link 
+                    to="/testimonios" 
+                    className={cn(
+                      'w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors',
+                      isActive('/testimonios')
+                        ? 'bg-primary/10 text-primary font-medium'
+                        : 'hover:bg-primary/5 text-foreground'
+                    )}
+                  >
+                    <Quote className="w-4 h-4" />
+                    <span>{t.nav.testimonials}</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -229,6 +287,54 @@ const Navbar = () => {
                     )}
                   >
                     {t.nav.locations}
+                  </Link>
+                </div>
+              </div>
+
+              {/* Beneficiaries Section in Mobile */}
+              <div className="px-4 py-2">
+                <div className={cn(
+                  'text-sm font-medium mb-2',
+                  isBeneficiariesActive ? 'text-primary' : 'text-foreground'
+                )}>
+                  {t.nav.beneficiaries}
+                </div>
+                <div className="flex flex-col gap-1 ml-4">
+                  <Link
+                    to="/categorias"
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'px-4 py-2 rounded-md text-sm transition-colors',
+                      isActive('/categorias')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {t.nav.categories}
+                  </Link>
+                  <Link
+                    to="/jugadores"
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'px-4 py-2 rounded-md text-sm transition-colors',
+                      isActive('/jugadores')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {t.nav.players}
+                  </Link>
+                  <Link
+                    to="/testimonios"
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'px-4 py-2 rounded-md text-sm transition-colors',
+                      isActive('/testimonios')
+                        ? 'bg-primary text-primary-foreground'
+                        : 'hover:bg-muted text-muted-foreground'
+                    )}
+                  >
+                    {t.nav.testimonials}
                   </Link>
                 </div>
               </div>

@@ -216,7 +216,7 @@ const ProjectsPage = () => {
                   </div>
 
                   {project.status === 'active' && (
-                    <Link to="/donar">
+                    <Link to="/donar" className="block mt-6">
                       <Button className="w-full gap-2">
                         <Heart className="w-4 h-4" />
                         {t.projects.support}
