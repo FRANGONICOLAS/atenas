@@ -8,6 +8,7 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 const GalleryPage = () => {
   const { t } = useLanguage();
@@ -145,6 +146,7 @@ const GalleryPage = () => {
           )}
         </DialogContent>
       </Dialog>
+      <CTA />
     </div>
   );
 };

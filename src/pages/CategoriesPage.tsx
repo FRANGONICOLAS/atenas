@@ -2,6 +2,7 @@ import { Trophy, Users, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 const CategoriesPage = () => {
   const { t } = useLanguage();
@@ -144,6 +145,7 @@ const CategoriesPage = () => {
           </div>
         </div>
       </section>
+      <CTA />
     </div>
   );
 };

@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 interface Player {
   id: number;
@@ -323,6 +324,7 @@ const PlayersPage = () => {
           )}
         </DialogContent>
       </Dialog>
+      <CTA />
     </div>
   );
 };

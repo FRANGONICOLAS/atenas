@@ -1,6 +1,7 @@
 import { Heart, Target, Eye, Users, Award, Shield, Handshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 const AboutPage = () => {
   const { t } = useLanguage();
@@ -147,6 +148,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
+      <CTA />
     </div>
   );
 };

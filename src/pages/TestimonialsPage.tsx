@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState } from 'react';
+import CTA from '@/components/CTA';
 
 const TestimonialsPage = () => {
   const { t } = useLanguage();
@@ -236,6 +237,7 @@ const TestimonialsPage = () => {
           </div>
         </div>
       </section>
+      <CTA />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { MapPin, Phone, Mail, Clock, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 const LocationsPage = () => {
   const { t } = useLanguage();
@@ -178,6 +179,7 @@ const LocationsPage = () => {
           </div>
         </div>
       </section>
+      <CTA />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 
 const ProjectsPage = () => {
   const { t } = useLanguage();
@@ -229,21 +230,7 @@ const ProjectsPage = () => {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-secondary">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-secondary-foreground mb-4">
-            ¿Tienes una idea de proyecto?
-          </h2>
-          <p className="text-secondary-foreground/80 mb-6 max-w-xl mx-auto">
-            Si tienes una propuesta que pueda beneficiar a nuestros jóvenes, nos encantaría escucharla.
-          </p>
-          <Button variant="default" className="gap-2 bg-foreground text-primary-foreground hover:bg-foreground/90">
-            Proponer un proyecto
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </div>
-      </section>
+      <CTA />
     </div>
   );
 };

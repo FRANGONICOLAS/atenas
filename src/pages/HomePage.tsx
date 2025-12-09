@@ -3,6 +3,7 @@ import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, C
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import CTA from '@/components/CTA';
 import heroImage from '@/assets/hero-soccer.jpg';
 
 const HomePage = () => {
@@ -56,19 +57,12 @@ const HomePage = () => {
                 </Button>
               </Link>
               <Link to="/quienes-somos">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 text-base bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 text-base bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground">
                   {t.home.learnMore}
                   <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             </div>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-primary-foreground/50 rounded-full flex items-start justify-center p-1">
-            <div className="w-1.5 h-3 bg-primary-foreground/50 rounded-full animate-pulse" />
           </div>
         </div>
       </section>
@@ -193,23 +187,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-secondary-foreground mb-6">
-            ¿Quieres ser parte del cambio?
-          </h2>
-          <p className="text-secondary-foreground/80 max-w-2xl mx-auto mb-8 text-lg">
-            Tu donación puede transformar la vida de un joven a través del deporte. Cada aporte cuenta para construir un futuro mejor.
-          </p>
-          <Link to="/donar">
-            <Button size="lg" variant="default" className="gap-2 bg-foreground text-primary-foreground hover:bg-foreground/90">
-              <Heart className="w-5 h-5" />
-              {t.home.donateNow}
-            </Button>
-          </Link>
-        </div>
-      </section>
+      <CTA />
     </div>
   );
 };

@@ -4,12 +4,14 @@ export const translations = {
   es: {
     nav: {
       home: 'Inicio',
-      about: 'Quiénes Somos',
+      about: 'Acerca de Atenas',
+      whatWeDo: 'Qué Hacemos',
       categories: 'Categorías',
       players: 'Jugadores',
       projects: 'Proyectos',
       gallery: 'Galería',
       testimonials: 'Testimonios',
+      locations: 'Sedes',
       donate: 'Donar',
       login: 'Iniciar Sesión',
       register: 'Registrarse',
@@ -34,6 +36,34 @@ export const translations = {
       visionText: 'Ser la fundación deportiva líder en el desarrollo de jóvenes talentos, reconocida por su impacto social positivo y su modelo de formación integral.',
       values: 'Nuestros Valores',
       structure: 'Estructura Organizativa',
+    },
+    whatWeDo: {
+      title: 'Qué Hacemos',
+      subtitle: 'Conoce las actividades y programas que desarrollamos en la Fundación Sociodeportiva Atenas',
+      training: {
+        title: 'Entrenamiento Deportivo',
+        description: 'Desarrollamos programas de entrenamiento estructurados para todas las categorías, desde iniciación hasta alto rendimiento.',
+      },
+      education: {
+        title: 'Apoyo Académico',
+        description: 'Brindamos acompañamiento educativo para asegurar que nuestros jóvenes mantengan un buen rendimiento escolar.',
+      },
+      values: {
+        title: 'Formación en Valores',
+        description: 'Inculcamos valores como el respeto, la disciplina, el trabajo en equipo y la perseverancia a través del deporte.',
+      },
+      nutrition: {
+        title: 'Programa de Nutrición',
+        description: 'Proporcionamos alimentación balanceada y educación nutricional para el desarrollo integral de nuestros beneficiarios.',
+      },
+      tournaments: {
+        title: 'Participación en Torneos',
+        description: 'Organizamos y participamos en torneos locales, regionales y nacionales para desarrollar las habilidades competitivas.',
+      },
+      community: {
+        title: 'Trabajo Comunitario',
+        description: 'Realizamos actividades de integración social y trabajo comunitario para fortalecer los lazos con las familias y el entorno.',
+      },
     },
     categories: {
       title: 'Nuestras Categorías',
@@ -107,12 +137,14 @@ export const translations = {
   en: {
     nav: {
       home: 'Home',
-      about: 'About Us',
+      about: 'About Atenas',
+      whatWeDo: 'What We Do',
       categories: 'Categories',
       players: 'Players',
       projects: 'Projects',
       gallery: 'Gallery',
       testimonials: 'Testimonials',
+      locations: 'Locations',
       donate: 'Donate',
       login: 'Login',
       register: 'Register',
@@ -137,6 +169,34 @@ export const translations = {
       visionText: 'To be the leading sports foundation in youth talent development, recognized for its positive social impact and comprehensive training model.',
       values: 'Our Values',
       structure: 'Organizational Structure',
+    },
+    whatWeDo: {
+      title: 'What We Do',
+      subtitle: 'Discover the activities and programs we develop at the Sociodeportiva Atenas Foundation',
+      training: {
+        title: 'Sports Training',
+        description: 'We develop structured training programs for all categories, from initiation to high performance.',
+      },
+      education: {
+        title: 'Academic Support',
+        description: 'We provide educational support to ensure our youth maintain good school performance.',
+      },
+      values: {
+        title: 'Values Formation',
+        description: 'We instill values such as respect, discipline, teamwork, and perseverance through sports.',
+      },
+      nutrition: {
+        title: 'Nutrition Program',
+        description: 'We provide balanced nutrition and nutritional education for the comprehensive development of our beneficiaries.',
+      },
+      tournaments: {
+        title: 'Tournament Participation',
+        description: 'We organize and participate in local, regional, and national tournaments to develop competitive skills.',
+      },
+      community: {
+        title: 'Community Work',
+        description: 'We carry out social integration activities and community work to strengthen ties with families and the environment.',
+      },
     },
     categories: {
       title: 'Our Categories',

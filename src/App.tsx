@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
+import QueHacemosPage from "./pages/WhatWeDo";
 import CategoriesPage from "./pages/CategoriesPage";
 import PlayersPage from "./pages/PlayersPage";
 import ProjectsPage from "./pages/ProjectsPage";
@@ -34,6 +35,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/quienes-somos" element={<AboutPage />} />
+                <Route path="/que-hacemos" element={<QueHacemosPage />} />
                 <Route path="/categorias" element={<CategoriesPage />} />
                 <Route path="/jugadores" element={<PlayersPage />} />
                 <Route path="/proyectos" element={<ProjectsPage />} />
