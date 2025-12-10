@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import QueHacemosPage from "./pages/WhatWeDo";
@@ -17,7 +18,15 @@ import TestimonialsPage from "./pages/TestimonialsPage";
 import DonationPage from "./pages/DonationPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import AuthCallback from "./pages/AuthCallback";
+import CompleteProfile from "./pages/CompleteProfile";
 import LocationsPage from "./pages/LocationsPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import DirectorDashboard from "./pages/DirectorDashboard";
+import DirectorSedeDashboard from "./pages/DirectorSedeDashboard";
+import DonatorDashboard from "./pages/DonatorDashboard";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,9 +51,57 @@ const App = () => (
                 <Route path="/galeria" element={<GalleryPage />} />
                 <Route path="/testimonios" element={<TestimonialsPage />} />
                 <Route path="/donar" element={<DonationPage />} />
+                <Route path="/sedes" element={<LocationsPage />} />
+
+                {/* Rutas de autenticación */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/registro" element={<RegisterPage />} />
-                <Route path="/sedes" element={<LocationsPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+                <Route path="/complete-profile" element={<CompleteProfile />} />
+
+                {/* Rutas protegidas por rol */}
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute allowedRoles={["ADMIN"]}>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/director"
+                  element={
+                    <ProtectedRoute allowedRoles={["DIRECTOR", "ADMIN"]}>
+                      <DirectorDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/director-sede"
+                  element={
+                    <ProtectedRoute allowedRoles={["DIRECTOR_SEDE", "ADMIN"]}>
+                      <DirectorSedeDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/donator"
+                  element={
+                    <ProtectedRoute allowedRoles={["DONATOR"]}>
+                      <DonatorDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
