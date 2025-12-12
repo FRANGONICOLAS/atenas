@@ -28,8 +28,9 @@ export const ProtectedRoute = ({
   }
 
   // Verificar roles permitidos si se especifican
-  if (allowedRoles && user?.role) {
-    if (!allowedRoles.includes(user.role as UserRole)) {
+  if (allowedRoles && allowedRoles.length > 0 && user?.role) {
+    const userRole = (user.role as string).toLowerCase() as UserRole;
+    if (!allowedRoles.includes(userRole)) {
       return (
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">

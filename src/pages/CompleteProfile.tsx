@@ -38,7 +38,7 @@ const CompleteProfile = () => {
   } = useForm<CompleteGoogleUserInput>({
     resolver: zodResolver(completeGoogleUserSchema),
     defaultValues: {
-      role: "DONATOR",
+      role: "donator",
     },
   });
 
@@ -202,15 +202,17 @@ const CompleteProfile = () => {
               <Select
                 value={role}
                 onValueChange={(value) =>
-                  setValue("role", value as "DONATOR" | "DIRECTOR" | "ADMIN")
+                  setValue("role", value as "donator" | "director" | "admin" | "director_sede")
                 }
               >
                 <SelectTrigger className="mt-2">
                   <SelectValue placeholder="Selecciona un rol" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="DONATOR">Donador</SelectItem>
-                  <SelectItem value="DIRECTOR">Director</SelectItem>
+                  <SelectItem value="donator">Donador</SelectItem>
+                  <SelectItem value="director">Director</SelectItem>
+                  <SelectItem value="director_sede">Director de Sede</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
               {errors.role && (

@@ -71,12 +71,15 @@ const ProfilePage = () => {
 
   const getRoleBadgeVariant = (role?: string) => {
     switch (role) {
-      case 'ADMIN':
+      case 'admin':
         return 'destructive';
-      case 'DIRECTOR':
+      case 'director':
+      case 'director_sede':
         return 'default';
-      case 'DONATOR':
+      case 'donator':
         return 'secondary';
+      case 'entrenador':
+        return 'outline';
       default:
         return 'outline';
     }

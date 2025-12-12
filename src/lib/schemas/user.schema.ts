@@ -43,7 +43,8 @@ export const createUserSchema = z
     password: passwordSchema,
     confirmPassword: z.string().min(1, "Debes confirmar la contraseña"),
 
-    role: z.enum(["DONATOR", "DIRECTOR", "ADMIN", "DIRECTOR_SEDE"]).default("DONATOR"),
+    // Roles se almacenan en minúsculas en user_role
+    role: z.enum(["donator", "director", "admin", "director_sede"]).default("donator"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
@@ -66,7 +67,8 @@ export const completeGoogleUserSchema = z.object({
     .regex(/^[0-9+\-\s()]*$/, "Número de teléfono inválido")
     .optional()
     .or(z.literal("")),
-  role: z.enum(["DONATOR", "DIRECTOR", "ADMIN", "DIRECTOR_SEDE"]).default("DONATOR"),
+  // Roles se almacenan en minúsculas en user_role
+  role: z.enum(["donator", "director", "admin", "director_sede"]).default("donator"),
 });
 
 export const updateUserSchema = z.object({

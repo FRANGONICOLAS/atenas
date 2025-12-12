@@ -263,7 +263,7 @@ const Navbar = () => {
                     <DropdownMenuSeparator className="my-1" />
                     
                     {/* Dashboard links based on role */}
-                    {user?.role === 'ADMIN' && (
+                    {user?.role === 'admin' && (
                       <DropdownMenuItem asChild>
                         <button 
                           onClick={() => navigate('/admin')}
@@ -274,7 +274,7 @@ const Navbar = () => {
                         </button>
                       </DropdownMenuItem>
                     )}
-                    {(user?.role === 'DIRECTOR' || user?.role === 'ADMIN') && (
+                    {(user?.role === 'director' || user?.role === 'admin') && (
                       <DropdownMenuItem asChild>
                         <button 
                           onClick={() => navigate('/director')}
@@ -285,7 +285,7 @@ const Navbar = () => {
                         </button>
                       </DropdownMenuItem>
                     )}
-                    {(user?.role === 'DIRECTOR_SEDE' || user?.role === 'ADMIN') && (
+                    {(user?.role === 'director_sede' || user?.role === 'admin') && (
                       <DropdownMenuItem asChild>
                         <button 
                           onClick={() => navigate('/director-sede')}
@@ -296,7 +296,7 @@ const Navbar = () => {
                         </button>
                       </DropdownMenuItem>
                     )}
-                    {user?.role === 'DONATOR' && (
+                    {user?.role === 'donator' && (
                       <DropdownMenuItem asChild>
                         <button 
                           onClick={() => navigate('/donator')}

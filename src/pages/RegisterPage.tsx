@@ -33,13 +33,13 @@ const RegisterPage = () => {
     register,
     handleSubmit,
     setValue,
-    watch,
+        watch,
     trigger,
     formState: { errors },
   } = useForm<CreateUserInput>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
-      role: 'DONATOR',
+          role: 'donator',
     },
   });
 
@@ -278,16 +278,17 @@ const RegisterPage = () => {
                   <Select
                     value={role}
                     onValueChange={(value) =>
-                      setValue('role', value as 'DONATOR' | 'DIRECTOR' | 'ADMIN' | 'DIRECTOR_SEDE')
+                      setValue('role', value as 'donator' | 'director' | 'admin' | 'director_sede')
                     }
                   >
                     <SelectTrigger className="mt-2">
                       <SelectValue placeholder="Selecciona un rol" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="DONATOR">{t.auth.donor}</SelectItem>
-                      <SelectItem value="DIRECTOR">Director</SelectItem>
-                      <SelectItem value="DIRECTOR_SEDE">Director de Sede</SelectItem>
+                      <SelectItem value="donator">{t.auth.donor}</SelectItem>
+                      <SelectItem value="director">Director</SelectItem>
+                      <SelectItem value="director_sede">Director de Sede</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
                     </SelectContent>
                   </Select>
                   {errors.role && (

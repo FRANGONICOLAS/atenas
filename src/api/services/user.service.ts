@@ -35,16 +35,28 @@ export const userService = {
   },
 
   /**
-   * Obtiene el rol de un usuario por su ID
+   * Obtiene el rol de un usuario por su ID desde la tabla user_role
    */
   async getUserRole(userId: string): Promise<UserRole | null> {
     const { data, error } = await client
-      .from("user")
-      .select("role")
-      .eq("id", userId)
+      .from("user_role")
+      .select("role_id")
+      .eq("user_id", userId)
       .maybeSingle();
     if (error) throw error;
-    return data?.role || null;
+    return (data?.role_id as UserRole) || null;
+  },
+
+  /**
+   * Obtiene todos los roles de un usuario por su ID desde la tabla user_role
+   */
+  async getUserRoles(userId: string): Promise<string[]> {
+    const { data, error } = await client
+      .from("user_role")
+      .select("role_id")
+      .eq("user_id", userId);
+    if (error) throw error;
+    return data?.map(r => r.role_id) || [];
   },
 
   /**
@@ -63,21 +75,45 @@ export const userService = {
           user_last_name: userData.last_name,
           user_birthdate: userData.birthdate,
           user_phone: userData.phone || "",
-          user_role: userData.role || "DONATOR",
+          user_role: (userData.role || "donator").toLowerCase(), // Convert to lowercase
         });
 
       if (error) throw error;
-      return data;
+      
+      // Enrich user with roles from user_role table
+      const roles = await this.getUserRoles(data.id);
+      return { ...data, roles };
     } catch (rpcError) {
       // Si falla la función, intentar con insert directo
       console.warn("RPC insert failed, trying direct insert:", rpcError);
-      const { data, error } = await client
+      const { data: userData_insert, error: insertError } = await client
         .from("user")
-        .insert([userData])
+        .insert([{
+          id: userData.id,
+          email: userData.email,
+          username: userData.username,
+          first_name: userData.first_name,
+          last_name: userData.last_name,
+          birthdate: userData.birthdate,
+          phone: userData.phone,
+        }])
         .select()
         .single();
-      if (error) throw error;
-      return data;
+      
+      if (insertError) throw insertError;
+      
+      // Insert role manually
+      const { error: roleError } = await client
+        .from("user_role")
+        .insert({
+          user_id: userData.id,
+          role_id: (userData.role || "donator").toLowerCase(),
+        });
+      
+      if (roleError) throw roleError;
+      
+      const roles = await this.getUserRoles(userData.id);
+      return { ...userData_insert, roles };
     }
   },
 

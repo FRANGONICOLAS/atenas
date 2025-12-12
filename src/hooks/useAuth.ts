@@ -14,9 +14,11 @@ interface UserWithRole extends User {
 const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> => {
   try {
     const dbUser = await userService.getById(supabaseUser.id);
+    // Get user role from user_role table
+    const userRole = await userService.getUserRole(supabaseUser.id);
     const meta = supabaseUser.user_metadata ?? {};
     const metaRole = typeof meta["role"] === "string" ? meta["role"] : undefined;
-    const finalRole = dbUser?.role || metaRole || "DONATOR";
+    const finalRole = userRole || metaRole || "donator";
 
     return {
       ...supabaseUser,
@@ -29,7 +31,7 @@ const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> =
     const meta = supabaseUser.user_metadata ?? {};
     return {
       ...supabaseUser,
-      role: (meta["role"] as string) || "DONATOR",
+      role: (meta["role"] as string) || "donator",
     };
   }
 };
