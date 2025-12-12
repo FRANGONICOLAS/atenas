@@ -48,16 +48,37 @@ export const userService = {
   },
 
   /**
-   * Crea un nuevo usuario en la base de datos
+   * Crea un nuevo usuario en la base de datos usando una función de base de datos
+   * Esto evita problemas con RLS durante el registro
    */
   async create(userData: CreateUserData): Promise<User> {
-    const { data, error } = await client
-      .from("user")
-      .insert([userData])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    try {
+      // Intentar primero con la función de registro (más seguro para RLS)
+      const { data, error } = await client
+        .rpc("register_new_user", {
+          user_id: userData.id,
+          user_email: userData.email,
+          user_username: userData.username,
+          user_first_name: userData.first_name,
+          user_last_name: userData.last_name,
+          user_birthdate: userData.birthdate,
+          user_phone: userData.phone || "",
+          user_role: userData.role || "DONATOR",
+        });
+
+      if (error) throw error;
+      return data;
+    } catch (rpcError) {
+      // Si falla la función, intentar con insert directo
+      console.warn("RPC insert failed, trying direct insert:", rpcError);
+      const { data, error } = await client
+        .from("user")
+        .insert([userData])
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    }
   },
 
   /**
