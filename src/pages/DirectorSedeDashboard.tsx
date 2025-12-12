@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Table,
   TableBody,
@@ -566,11 +567,19 @@ const DirectorSedeDashboard = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="player_birthdate">Fecha de Nacimiento *</Label>
-                <Input
-                  id="player_birthdate"
-                  type="date"
-                  value={playerForm.birthdate}
-                  onChange={(e) => setPlayerForm({ ...playerForm, birthdate: e.target.value })}
+                <DatePicker
+                  date={playerForm.birthdate ? new Date(playerForm.birthdate + 'T12:00:00') : undefined}
+                  onDateChange={(date) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setPlayerForm({ ...playerForm, birthdate: `${year}-${month}-${day}` });
+                    } else {
+                      setPlayerForm({ ...playerForm, birthdate: '' });
+                    }
+                  }}
+                  placeholder="Selecciona la fecha"
                 />
               </div>
 
@@ -705,11 +714,19 @@ const DirectorSedeDashboard = () => {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="coach_birthdate">Fecha de Nacimiento *</Label>
-                <Input
-                  id="coach_birthdate"
-                  type="date"
-                  value={coachForm.birthdate}
-                  onChange={(e) => setCoachForm({ ...coachForm, birthdate: e.target.value })}
+                <DatePicker
+                  date={coachForm.birthdate ? new Date(coachForm.birthdate + 'T12:00:00') : undefined}
+                  onDateChange={(date) => {
+                    if (date) {
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      setCoachForm({ ...coachForm, birthdate: `${year}-${month}-${day}` });
+                    } else {
+                      setCoachForm({ ...coachForm, birthdate: '' });
+                    }
+                  }}
+                  placeholder="Selecciona la fecha"
                 />
               </div>
 

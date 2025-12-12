@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Heart, Mail, Lock, Eye, EyeOff, User, Calendar, Phone, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Heart, Mail, Lock, Eye, EyeOff, User, Phone, ChevronRight, ChevronLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Select,
   SelectContent,
@@ -183,13 +184,20 @@ const RegisterPage = () => {
 
                 <div>
                   <Label htmlFor="birthdate">Fecha de Nacimiento</Label>
-                  <div className="relative mt-2">
-                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <Input
-                      id="birthdate"
-                      type="date"
-                      className="pl-10"
-                      {...register('birthdate')}
+                  <div className="mt-2">
+                    <DatePicker
+                      date={watch('birthdate') ? new Date(watch('birthdate') + 'T12:00:00') : undefined}
+                      onDateChange={(date) => {
+                        if (date) {
+                          const year = date.getFullYear();
+                          const month = String(date.getMonth() + 1).padStart(2, '0');
+                          const day = String(date.getDate()).padStart(2, '0');
+                          setValue('birthdate', `${year}-${month}-${day}`);
+                        } else {
+                          setValue('birthdate', '');
+                        }
+                      }}
+                      placeholder="Selecciona tu fecha de nacimiento"
                     />
                   </div>
                   {errors.birthdate && (
