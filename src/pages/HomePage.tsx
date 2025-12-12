@@ -86,30 +86,18 @@ const HomePage = () => {
           {/* Image Grid */}
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
             <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for problem image */}
-              <div className="text-center p-6">
-                <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-primary-foreground/30" />
-                <p className="text-sm text-primary-foreground/60 italic">Imagen: Problemática de la comunidad</p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/problem-image.jpg" 
+              <img
+                src="/image7.jpg"
                 alt="Problemática de la comunidad"
                 className="w-full h-full object-cover"
-              /> */}
+              />
             </div>
             <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for impact image */}
-              <div className="text-center p-6">
-                <Users className="w-12 h-12 mx-auto mb-3 text-primary-foreground/30" />
-                <p className="text-sm text-primary-foreground/60 italic">Imagen: Impacto en jóvenes</p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/impact-image.jpg" 
+              <img
+                src="/image8.jpg"
                 alt="Impacto en jóvenes"
                 className="w-full h-full object-cover"
-              /> */}
+              />
             </div>
           </div>
 
@@ -196,37 +184,16 @@ const HomePage = () => {
           </div>
 
           {/* Main Image */}
-          <div className="max-w-4xl mx-auto mb-12">
-            <div className="relative h-96 rounded-xl overflow-hidden bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for main sport transformation image */}
-              <div className="text-center p-8">
-                <Shield className="w-16 h-16 mx-auto mb-4 text-muted-foreground/30" />
-                <p className="text-muted-foreground italic">Imagen: Deporte transformando vidas</p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/sport-transformation.jpg" 
-                alt="Deporte transformando vidas"
-                className="w-full h-full object-cover"
-              /> */}
-            </div>
-          </div>
 
           {/* Benefits Grid with Images */}
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Users className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Sentido de pertenencia</p>
-                </div>
-                {/* Image will go here - replace the div above with: */}
-                {/* <img 
-                  src="/path/to/belonging-image.jpg" 
+                <img 
+                  src="/image9.jpg" 
                   alt="Sentido de pertenencia"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                /> */}
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Sentido de Pertenencia</h3>
@@ -236,12 +203,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Brain className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Manejo de emociones</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image10.jpg" 
+                  alt="Manejo de emociones"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Manejo de Emociones</h3>
@@ -251,12 +217,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Activity className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Salud física y mental</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image11.jpg" 
+                  alt="Salud física y mental"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Salud Física y Mental</h3>
@@ -266,12 +231,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Target className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Disciplina y metas</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image12.jpg" 
+                  alt="Disciplina y metas"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Disciplina y Metas</h3>
@@ -281,12 +245,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Handshake className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Trabajo en equipo</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image13.jpg" 
+                  alt="Trabajo en equipo"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Trabajo en Equipo</h3>
@@ -296,12 +259,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for image */}
-                <div className="text-center p-4">
-                  <Smile className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Oportunidades y futuro</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image14.jpg" 
+                  alt="Oportunidades y futuro"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Oportunidades y Futuro</h3>
@@ -328,17 +290,11 @@ const HomePage = () => {
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for training equipment image */}
-                <div className="text-center p-4">
-                  <Trophy className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Equipo deportivo</p>
-                </div>
-                {/* Image will go here - replace the div above with: */}
-                {/* <img 
-                  src="/path/to/equipment-image.jpg" 
+                <img 
+                  src="/image16.jpg" 
                   alt="Equipo deportivo"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                /> */}
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Equipo Deportivo</h3>
@@ -348,12 +304,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for tournaments image */}
-                <div className="text-center p-4">
-                  <Target className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Torneos</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image16.jpg" 
+                  alt="Torneos"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Torneos</h3>
@@ -363,12 +318,11 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for projects image */}
-                <div className="text-center p-4">
-                  <Star className="w-10 h-10 mx-auto mb-2 text-muted-foreground/30" />
-                  <p className="text-xs text-muted-foreground italic">Imagen: Proyectos definidos</p>
-                </div>
-                {/* Image will go here */}
+                <img 
+                  src="/image17.jpg" 
+                  alt="Proyectos definidos"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Proyectos Definidos</h3>
@@ -381,12 +335,11 @@ const HomePage = () => {
           <div className="mt-12 max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-                {/* Placeholder for community image */}
-                <div className="text-center p-6">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground italic">Imagen: Comunidad unida</p>
-                </div>
-                {/* Image will go here */}
+                <img
+                  src="/image18.jpg"
+                  alt="Comunidad unida"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <p className="text-lg text-foreground leading-relaxed mb-3">
