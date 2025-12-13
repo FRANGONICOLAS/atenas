@@ -8,19 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { authService } from '@/api/services/auth.service';
 import { userService } from '@/api/services/user.service';
 import { handleAuthError } from '@/lib/errorHandler';
 import { createUserSchema, type CreateUserInput } from '@/lib/schemas/user.schema';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const RegisterPage = () => {
   const { t } = useLanguage();
@@ -28,23 +21,22 @@ const RegisterPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
 
   const {
     register,
     handleSubmit,
     setValue,
-        watch,
+    watch,
     trigger,
     formState: { errors },
   } = useForm<CreateUserInput>({
     resolver: zodResolver(createUserSchema),
     defaultValues: {
-          role: 'donator',
+      role: 'donator',
+      phone: '',
     },
   });
-
-  const role = watch('role');
-  const totalSteps = 3;
 
   const nextStep = async () => {
     let fieldsToValidate: (keyof CreateUserInput)[] = [];
@@ -79,7 +71,7 @@ const RegisterPage = () => {
         }
       );
 
-      if (!authUser) {
+      if (!authUser || !authUser.id) {
         throw new Error('No se pudo crear el usuario');
       }
 
@@ -92,7 +84,8 @@ const RegisterPage = () => {
         birthdate: data.birthdate,
         username: data.username,
         phone: data.phone || '',
-        role: data.role,
+        // Rol fijo por autoservicio
+        role: 'donator',
       });
 
       toast.success('¡Cuenta creada exitosamente!');
@@ -273,30 +266,6 @@ const RegisterPage = () => {
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="role">{t.auth.role}</Label>
-                  <Select
-                    value={role}
-                    onValueChange={(value) =>
-                      setValue('role', value as 'donator' | 'director' | 'admin' | 'director_sede')
-                    }
-                  >
-                    <SelectTrigger className="mt-2">
-                      <SelectValue placeholder="Selecciona un rol" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="donator">{t.auth.donor}</SelectItem>
-                      <SelectItem value="director">Director</SelectItem>
-                      <SelectItem value="director_sede">Director de Sede</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {errors.role && (
-                    <p className="text-sm text-destructive mt-1">
-                      {errors.role.message}
-                    </p>
-                  )}
-                </div>
               </>
             )}
 

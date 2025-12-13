@@ -2,18 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Heart, User, Calendar, Phone } from "lucide-react";
+import { Heart, User, Phone } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// Role selection removed for self-service; default role is donator
 import { useAuth } from "@/hooks/useAuth";
 import { userService } from "@/api/services/user.service";
 import { toast } from "sonner";
@@ -37,15 +31,11 @@ const CompleteProfile = () => {
     formState: { errors },
   } = useForm<CompleteGoogleUserInput>({
     resolver: zodResolver(completeGoogleUserSchema),
-    defaultValues: {
-      role: "donator",
-    },
+    defaultValues: {},
   });
 
-  const role = watch("role");
-
   const onSubmit = async (data: CompleteGoogleUserInput) => {
-    if (!user) {
+    if (!user || !user.id) {
       toast.error("No se encontró el usuario autenticado");
       navigate("/login");
       return;
@@ -53,17 +43,32 @@ const CompleteProfile = () => {
 
     setIsLoading(true);
     try {
-      // Crear usuario en la tabla user
-      await userService.create({
-        id: user.id,
-        email: user.email!,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        birthdate: data.birthdate,
-        username: data.username,
-        phone: data.phone || "",
-        role: data.role,
-      });
+      // Verificar si el usuario ya existe en la tabla user
+      const existingUser = await userService.getById(user.id);
+      
+      if (existingUser) {
+        // Actualizar usuario existente
+        await userService.update(user.id, {
+          first_name: data.first_name,
+          last_name: data.last_name,
+          birthdate: data.birthdate || null,
+          username: data.username,
+          phone: data.phone || null,
+        });
+      } else {
+        // Crear nuevo usuario en la tabla user
+        await userService.create({
+          id: user.id,
+          email: user.email!,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          birthdate: data.birthdate,
+          username: data.username,
+          phone: data.phone || "",
+          // Rol fijo por autoservicio
+          role: "donator",
+        });
+      }
 
       // El hook useAuth se actualizará automáticamente al cambiar los datos
 
@@ -196,31 +201,6 @@ const CompleteProfile = () => {
               )}
             </div>
 
-            {/* Rol */}
-            <div>
-              <Label htmlFor="role">Rol</Label>
-              <Select
-                value={role}
-                onValueChange={(value) =>
-                  setValue("role", value as "donator" | "director" | "admin" | "director_sede")
-                }
-              >
-                <SelectTrigger className="mt-2">
-                  <SelectValue placeholder="Selecciona un rol" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="donator">Donador</SelectItem>
-                  <SelectItem value="director">Director</SelectItem>
-                  <SelectItem value="director_sede">Director de Sede</SelectItem>
-                  <SelectItem value="admin">Admin</SelectItem>
-                </SelectContent>
-              </Select>
-              {errors.role && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.role.message}
-                </p>
-              )}
-            </div>
 
             <Button
               type="submit"

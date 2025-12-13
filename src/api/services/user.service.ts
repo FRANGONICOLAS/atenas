@@ -64,6 +64,31 @@ export const userService = {
    * Esto evita problemas con RLS durante el registro
    */
   async create(userData: CreateUserData): Promise<User> {
+    if (!userData.id) {
+      throw new Error("userService.create: user id is required");
+    }
+
+    // Si ya existe, devolverlo para evitar conflictos de email
+    try {
+      const existingById = await this.getById(userData.id);
+      if (existingById) {
+        const roles = await this.getUserRoles(userData.id);
+        return { ...existingById, roles } as User;
+      }
+    } catch (_) {
+      // Ignorar fallos de lectura por RLS en la verificación previa
+    }
+
+    try {
+      const existingByEmail = await this.findByEmail(userData.email);
+      if (existingByEmail) {
+        const roles = await this.getUserRoles(existingByEmail.id);
+        return { ...existingByEmail, roles } as User;
+      }
+    } catch (_) {
+      // Ignorar fallos de lectura por RLS en la verificación previa
+    }
+
     try {
       // Intentar primero con la función de registro (más seguro para RLS)
       const { data, error } = await client
@@ -83,7 +108,21 @@ export const userService = {
       // Enrich user with roles from user_role table
       const roles = await this.getUserRoles(data.id);
       return { ...data, roles };
-    } catch (rpcError) {
+    } catch (rpcError: any) {
+      // Si es duplicado de email, devolver el existente
+      const code = rpcError?.code || rpcError?.details || rpcError?.message;
+      if (typeof code === "string" && code.includes("23505")) {
+        try {
+          const existing = await this.findByEmail(userData.email);
+          if (existing) {
+            const roles = await this.getUserRoles(existing.id);
+            return { ...existing, roles } as User;
+          }
+        } catch (_) {
+          // Ignorar fallo de lectura
+        }
+      }
+
       // Si falla la función, intentar con insert directo
       console.warn("RPC insert failed, trying direct insert:", rpcError);
       const { data: userData_insert, error: insertError } = await client

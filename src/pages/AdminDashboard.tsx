@@ -260,7 +260,7 @@ const Navbar = () => {
   );
 };
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Users, 
   Trophy, 
@@ -321,6 +321,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { userService } from '@/api/services/user.service';
+import type { User as DBUser } from '@/api/types/database.types';
+import { client } from '@/api/supabase/client';
 import {
   generateUsersExcel,
   generateUsersPDF,
@@ -338,28 +341,18 @@ const AdminDashboard = () => {
   const [showContentDialog, setShowContentDialog] = useState(false);
   const [showConfigDialog, setShowConfigDialog] = useState(false);
   const [activeTab, setActiveTab] = useState('users');
-  
-  type User = {
-    id: number;
-    name: string;
-    email: string;
-    role: 'ADMIN' | 'DIRECTOR' | 'DONATOR';
-    status: 'active' | 'pending' | 'inactive';
-    date: string;
-  };
-  
-  const [users, setUsers] = useState<User[]>([
-    { id: 1, name: 'Carlos Rodríguez', email: 'carlos@example.com', role: 'DONATOR', status: 'active', date: '2024-12-08' },
-    { id: 2, name: 'María González', email: 'maria@example.com', role: 'DIRECTOR', status: 'active', date: '2024-12-07' },
-    { id: 3, name: 'Juan Pérez', email: 'juan@example.com', role: 'DONATOR', status: 'pending', date: '2024-12-06' },
-    { id: 4, name: 'Ana Martínez', email: 'ana@example.com', role: 'DONATOR', status: 'active', date: '2024-12-05' },
-  ]);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<DBUser[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [editingUser, setEditingUser] = useState<DBUser | null>(null);
+  const [availableRoles, setAvailableRoles] = useState<Array<{role_id: string; role_name: string}>>([]);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [userForm, setUserForm] = useState({
-    name: '',
+    first_name: '',
+    last_name: '',
+    username: '',
     email: '',
-    role: 'DONATOR' as 'ADMIN' | 'DIRECTOR' | 'DONATOR',
-    status: 'active' as 'active' | 'pending' | 'inactive',
+    birthdate: '',
+    phone: '',
   });
   const [contentForm, setContentForm] = useState({
     type: 'image' as 'image' | 'video' | 'text',
@@ -369,11 +362,45 @@ const AdminDashboard = () => {
     section: 'gallery' as 'gallery' | 'testimonials' | 'about' | 'projects',
   });
 
+  // Load users and roles from Supabase
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoadingUsers(true);
+        const [usersData, rolesData] = await Promise.all([
+          userService.getAll(),
+          client.from('role').select('role_id, role_name')
+        ]);
+        
+        setUsers(usersData);
+        if (rolesData.data) {
+          setAvailableRoles(rolesData.data);
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast.error('Error al cargar datos', {
+          description: 'No se pudieron cargar los datos de la base de datos',
+        });
+      } finally {
+        setIsLoadingUsers(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Calculate stats from real data
   const stats = [
-    { icon: Users, title: 'Total Usuarios', value: '248', change: '+12', color: 'bg-blue-500' },
-    { icon: Trophy, title: 'Jugadores Activos', value: '195', change: '+8', color: 'bg-green-500' },
-    { icon: DollarSign, title: 'Donaciones Este Mes', value: '$2.5M', change: '+15%', color: 'bg-yellow-500' },
-    { icon: BarChart3, title: 'Proyectos Activos', value: '12', change: '+2', color: 'bg-purple-500' },
+    { 
+      icon: Users, 
+      title: 'Total Usuarios', 
+      value: users.length.toString(), 
+      change: '+0', 
+      color: 'bg-blue-500' 
+    },
+    { icon: Trophy, title: 'Jugadores Activos', value: '0', change: '+0', color: 'bg-green-500' },
+    { icon: DollarSign, title: 'Donaciones Este Mes', value: '$0', change: '+0%', color: 'bg-yellow-500' },
+    { icon: BarChart3, title: 'Proyectos Activos', value: '0', change: '+0', color: 'bg-purple-500' },
   ];
 
   const recentDonations = [
@@ -385,60 +412,111 @@ const AdminDashboard = () => {
   // User CRUD handlers
   const handleCreateUser = () => {
     setEditingUser(null);
+    setSelectedRoles(['donator']); // Default role for new users
     setUserForm({
-      name: '',
+      first_name: '',
+      last_name: '',
+      username: '',
       email: '',
-      role: 'DONATOR',
-      status: 'active',
+      birthdate: '',
+      phone: '',
     });
     setShowUserDialog(true);
   };
 
-  const handleEditUser = (user: typeof users[0]) => {
+  const handleEditUser = async (user: DBUser) => {
     setEditingUser(user);
     setUserForm({
-      name: user.name,
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
+      username: user.username,
       email: user.email,
-      role: user.role,
-      status: user.status,
+      birthdate: user.birthdate || '',
+      phone: user.phone || '',
     });
+    
+    // Load user roles
+    try {
+      const roles = await userService.getUserRoles(user.id);
+      setSelectedRoles(roles);
+    } catch (error) {
+      console.error('Error loading user roles:', error);
+      setSelectedRoles([]);
+    }
+    
     setShowUserDialog(true);
   };
 
-  const handleDeleteUser = (userId: number) => {
-    setUsers(users.filter(u => u.id !== userId));
-    toast.success('Usuario eliminado', {
-      description: 'El usuario ha sido eliminado correctamente',
-    });
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await userService.delete(userId);
+      setUsers(users.filter(u => u.id !== userId));
+      toast.success('Usuario eliminado', {
+        description: 'El usuario ha sido eliminado correctamente',
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast.error('Error al eliminar usuario', {
+        description: 'No se pudo eliminar el usuario',
+      });
+    }
   };
 
-  const handleSaveUser = () => {
-    if (!userForm.name || !userForm.email) {
+  const handleSaveUser = async () => {
+    if (!userForm.first_name || !userForm.last_name || !userForm.username || !userForm.email) {
       toast.error('Campos requeridos', {
         description: 'Por favor completa todos los campos obligatorios',
       });
       return;
     }
 
-    if (editingUser) {
-      setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...userForm } : u));
-      toast.success('Usuario actualizado', {
-        description: `${userForm.name} ha sido actualizado correctamente`,
-      });
-    } else {
-      const newUser = {
-        id: Math.max(...users.map(u => u.id)) + 1,
-        ...userForm,
-        date: new Date().toISOString().split('T')[0],
-      };
-      setUsers([...users, newUser]);
-      toast.success('Usuario creado', {
-        description: `${userForm.name} ha sido creado correctamente`,
+    try {
+      if (editingUser) {
+        // Update user info
+        const updated = await userService.update(editingUser.id, {
+          first_name: userForm.first_name,
+          last_name: userForm.last_name,
+          username: userForm.username,
+          birthdate: userForm.birthdate || null,
+          phone: userForm.phone || null,
+        });
+        
+        // Update roles: delete old ones and insert new ones
+        await client.from('user_role').delete().eq('user_id', editingUser.id);
+        
+        if (selectedRoles.length > 0) {
+          const roleInserts = selectedRoles.map(role_id => ({
+            user_id: editingUser.id,
+            role_id: role_id
+          }));
+          await client.from('user_role').insert(roleInserts);
+        }
+        
+        // Reload users to get updated roles
+        const refreshedUsers = await userService.getAll();
+        setUsers(refreshedUsers);
+        
+        toast.success('Usuario actualizado', {
+          description: `${userForm.first_name} ${userForm.last_name} ha sido actualizado correctamente`,
+        });
+      } else {
+        // Creating users directly is not supported
+        // Users must register through the registration flow first
+        toast.error('Creación no disponible', {
+          description: 'Los usuarios deben registrarse primero a través del formulario de registro. Desde aquí solo puedes editar usuarios existentes.',
+        });
+        return;
+      }
+      
+      setShowUserDialog(false);
+      setEditingUser(null);
+      setSelectedRoles([]);
+    } catch (error) {
+      console.error('Error saving user:', error);
+      toast.error('Error al guardar usuario', {
+        description: 'No se pudo guardar el usuario',
       });
     }
-
-    setShowUserDialog(false);
-    setEditingUser(null);
   };
 
   const handleManageContent = () => {
@@ -471,13 +549,13 @@ const AdminDashboard = () => {
   };
 
   const handleExportUsersExcel = () => {
-    const reportData: UserReport[] = users.map(u => ({
-      id: u.id,
-      name: u.name,
+    const reportData: UserReport[] = users.map((u, index) => ({
+      id: index + 1,
+      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
       email: u.email,
-      role: u.role,
-      status: u.status === 'active' ? 'Activo' : u.status === 'pending' ? 'Pendiente' : 'Inactivo',
-      date: u.date,
+      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
+      status: 'Activo',
+      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
     }));
 
     generateUsersExcel(reportData, 'reporte_usuarios');
@@ -487,13 +565,13 @@ const AdminDashboard = () => {
   };
 
   const handleExportUsersPDF = () => {
-    const reportData: UserReport[] = users.map(u => ({
-      id: u.id,
-      name: u.name,
+    const reportData: UserReport[] = users.map((u, index) => ({
+      id: index + 1,
+      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
       email: u.email,
-      role: u.role,
-      status: u.status === 'active' ? 'Activo' : u.status === 'pending' ? 'Pendiente' : 'Inactivo',
-      date: u.date,
+      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
+      status: 'Activo',
+      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
     }));
 
     generateUsersPDF(reportData, 'reporte_usuarios');
@@ -535,13 +613,13 @@ const AdminDashboard = () => {
   };
 
   const handleExportConsolidated = () => {
-    const userReports: UserReport[] = users.map(u => ({
-      id: u.id,
-      name: u.name,
+    const userReports: UserReport[] = users.map((u, index) => ({
+      id: index + 1,
+      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
       email: u.email,
-      role: u.role,
-      status: u.status === 'active' ? 'Activo' : u.status === 'pending' ? 'Pendiente' : 'Inactivo',
-      date: u.date,
+      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
+      status: 'Activo',
+      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
     }));
 
     const donationReports: DonationReport[] = recentDonations.map(d => ({
@@ -620,7 +698,15 @@ const AdminDashboard = () => {
         <div className="container mx-auto px-4">
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-4 mb-6">
-            <Button onClick={handleCreateUser} className="gap-2">
+            <Button 
+              onClick={() => {
+                toast.info('Registro de usuarios', {
+                  description: 'Los usuarios deben registrarse a través del formulario de registro. Aquí solo puedes editar usuarios existentes.',
+                });
+              }} 
+              variant="outline"
+              className="gap-2"
+            >
               <UserPlus className="w-4 h-4" />
               Nuevo Usuario
             </Button>
@@ -698,35 +784,61 @@ const AdminDashboard = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {users.filter(u => 
-                        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        u.email.toLowerCase().includes(searchTerm.toLowerCase())
-                      ).map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="font-medium">{user.name}</TableCell>
-                          <TableCell>{user.email}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline">{user.role}</Badge>
+                      {isLoadingUsers ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8">
+                            <div className="flex items-center justify-center gap-2">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                              <span className="text-muted-foreground">Cargando usuarios...</span>
+                            </div>
                           </TableCell>
+                        </TableRow>
+                      ) : users.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={6} className="text-center py-8">
+                            <div className="text-muted-foreground">
+                              <Users className="w-12 h-12 mx-auto mb-2 opacity-20" />
+                              <p>No hay usuarios registrados</p>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : users.filter(u => {
+                        const fullName = `${u.first_name || ''} ${u.last_name || ''}`.toLowerCase();
+                        const username = u.username.toLowerCase();
+                        const email = u.email.toLowerCase();
+                        const term = searchTerm.toLowerCase();
+                        return fullName.includes(term) || username.includes(term) || email.includes(term);
+                      }).map((u) => (
+                        <TableRow key={u.id}>
+                          <TableCell className="font-medium">
+                            {u.first_name || ''} {u.last_name || ''}
+                            <div className="text-xs text-muted-foreground">@{u.username}</div>
+                          </TableCell>
+                          <TableCell>{u.email}</TableCell>
                           <TableCell>
-                            <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
-                              {user.status}
+                            <Badge variant="outline">
+                              {u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-muted-foreground">{user.date}</TableCell>
+                          <TableCell>
+                            <Badge variant="default">Activo</Badge>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
+                            {new Date(u.created_at).toLocaleDateString('es-CO')}
+                          </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-2">
                               <Button
                                 size="icon"
                                 variant="ghost"
-                                onClick={() => handleEditUser(user)}
+                                onClick={() => handleEditUser(u)}
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="icon"
                                 variant="ghost"
-                                onClick={() => handleDeleteUser(user.id)}
+                                onClick={() => handleDeleteUser(u.id)}
                               >
                                 <Trash2 className="w-4 h-4" />
                               </Button>
@@ -829,7 +941,7 @@ const AdminDashboard = () => {
 
       {/* User CRUD Dialog */}
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <UserPlus className="w-5 h-5" />
@@ -839,64 +951,149 @@ const AdminDashboard = () => {
               {editingUser ? 'Modifica la información del usuario' : 'Completa el formulario para crear un nuevo usuario'}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nombre Completo *</Label>
-              <Input
-                id="name"
-                value={userForm.name}
-                onChange={(e) => setUserForm({ ...userForm, name: e.target.value })}
-                placeholder="Juan Pérez"
-              />
+          <div className="space-y-6 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="first_name">Nombre *</Label>
+                <Input
+                  id="first_name"
+                  value={userForm.first_name}
+                  onChange={(e) => setUserForm({ ...userForm, first_name: e.target.value })}
+                  placeholder="Juan"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="last_name">Apellido *</Label>
+                <Input
+                  id="last_name"
+                  value={userForm.last_name}
+                  onChange={(e) => setUserForm({ ...userForm, last_name: e.target.value })}
+                  placeholder="Pérez"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="username">Username *</Label>
+                <Input
+                  id="username"
+                  value={userForm.username}
+                  onChange={(e) => setUserForm({ ...userForm, username: e.target.value })}
+                  placeholder="juanperez"
+                  disabled={!!editingUser}
+                />
+                {editingUser && (
+                  <p className="text-xs text-muted-foreground">No se puede modificar</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={userForm.email}
+                  onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
+                  placeholder="juan@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="birthdate">Fecha de Nacimiento</Label>
+                <Input
+                  id="birthdate"
+                  type="date"
+                  value={userForm.birthdate}
+                  onChange={(e) => setUserForm({ ...userForm, birthdate: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Teléfono</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={userForm.phone}
+                  onChange={(e) => setUserForm({ ...userForm, phone: e.target.value })}
+                  placeholder="+57 300 123 4567"
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={userForm.email}
-                onChange={(e) => setUserForm({ ...userForm, email: e.target.value })}
-                placeholder="juan@example.com"
-              />
-            </div>
+            <div className="space-y-4 pt-4 border-t">
+              <div>
+                <Label className="text-base font-semibold">Roles del Usuario</Label>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {editingUser 
+                    ? 'Gestiona los permisos del usuario asignando roles' 
+                    : 'Selecciona los roles iniciales (se aplicarán después del registro)'}
+                </p>
+              </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Left column: Add role selector */}
+                  <div className="space-y-2">
+                    <Label htmlFor="role-select">Agregar Rol</Label>
+                    <Select
+                      value=""
+                      onValueChange={(value) => {
+                        if (value && !selectedRoles.includes(value)) {
+                          setSelectedRoles([...selectedRoles, value]);
+                        }
+                      }}
+                    >
+                      <SelectTrigger id="role-select">
+                        <SelectValue placeholder="Selecciona un rol..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableRoles.map((role) => (
+                          <SelectItem
+                            key={role.role_id}
+                            value={role.role_id}
+                            disabled={selectedRoles.includes(role.role_id)}
+                          >
+                            <span className="capitalize">{role.role_name}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="role">Rol *</Label>
-              <Select
-                value={userForm.role}
-                onValueChange={(value: 'ADMIN' | 'DIRECTOR' | 'DONATOR') =>
-                  setUserForm({ ...userForm, role: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ADMIN">Administrador</SelectItem>
-                  <SelectItem value="DIRECTOR">Director</SelectItem>
-                  <SelectItem value="DONATOR">Donador</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                  {/* Right column: Display selected roles as badges */}
+                  <div className="space-y-2">
+                    <Label>Roles Asignados</Label>
+                    {selectedRoles.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {selectedRoles.map((roleId) => {
+                          const role = availableRoles.find(r => r.role_id === roleId);
+                          return (
+                            <Badge key={roleId} variant="secondary" className="gap-1">
+                              <span className="capitalize">{role?.role_name || roleId}</span>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedRoles(selectedRoles.filter(r => r !== roleId))}
+                                className="ml-1 hover:text-destructive"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                        Sin roles asignados
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="status">Estado *</Label>
-              <Select
-                value={userForm.status}
-                onValueChange={(value: 'active' | 'pending' | 'inactive') =>
-                  setUserForm({ ...userForm, status: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Activo</SelectItem>
-                  <SelectItem value="pending">Pendiente</SelectItem>
-                  <SelectItem value="inactive">Inactivo</SelectItem>
-                </SelectContent>
-              </Select>
+              {selectedRoles.length === 0 && (
+                <div className="flex items-center gap-2 text-sm text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-md">
+                  <AlertCircle className="w-4 h-4" />
+                  El usuario debe tener al menos un rol asignado
+                </div>
+              )}
             </div>
           </div>
           <DialogFooter>
@@ -914,7 +1111,7 @@ const AdminDashboard = () => {
 
       {/* Content Management Dialog */}
       <Dialog open={showContentDialog} onOpenChange={setShowContentDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Upload className="w-5 h-5" />
@@ -1032,7 +1229,7 @@ const AdminDashboard = () => {
 
       {/* Configuration Dialog */}
       <Dialog open={showConfigDialog} onOpenChange={setShowConfigDialog}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Settings className="w-5 h-5" />
