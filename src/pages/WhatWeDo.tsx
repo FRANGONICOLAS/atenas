@@ -16,22 +16,10 @@ const QueHacemosPage = () => {
       imagePlaceholder: 'Imagen de entrenamiento deportivo',
     },
     {
-      icon: BookOpen,
-      title: t.whatWeDo.education.title,
-      description: t.whatWeDo.education.description,
-      imagePlaceholder: 'Imagen de apoyo académico',
-    },
-    {
       icon: Heart,
       title: t.whatWeDo.values.title,
       description: t.whatWeDo.values.description,
       imagePlaceholder: 'Imagen de formación en valores',
-    },
-    {
-      icon: Apple,
-      title: t.whatWeDo.nutrition.title,
-      description: t.whatWeDo.nutrition.description,
-      imagePlaceholder: 'Imagen de programa de nutrición',
     },
     {
       icon: Trophy,
