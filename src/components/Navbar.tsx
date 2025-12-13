@@ -248,7 +248,7 @@ const Navbar = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
                     align="end" 
-                    className="w-56 mt-2 p-2 bg-card border border-border shadow-lg rounded-lg"
+                    className="w-64 mt-2 p-2 bg-card border border-border shadow-lg rounded-lg"
                   >
                     <DropdownMenuLabel className="px-3 py-2">
                       <div className="flex flex-col">
@@ -275,17 +275,37 @@ const Navbar = () => {
                       </DropdownMenuItem>
                     )}
                     {(user?.role === 'director' || user?.role === 'admin') && (
-                      <DropdownMenuItem asChild>
-                        <button 
-                          onClick={() => navigate('/director')}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                        >
-                          <User className="w-4 h-4" />
-                          <span>Dirección</span>
-                        </button>
-                      </DropdownMenuItem>
+                      <>
+                        <DropdownMenuItem asChild>
+                          <button 
+                            onClick={() => navigate('/director')}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
+                          >
+                            <User className="w-4 h-4" />
+                            <span>Dirección</span>
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <button 
+                            onClick={() => navigate('/director-proyectos')}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
+                          >
+                            <Target className="w-4 h-4" />
+                            <span>Gestión de Proyectos</span>
+                          </button>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <button 
+                            onClick={() => navigate('/director-beneficiarios')}
+                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
+                          >
+                            <Users className="w-4 h-4" />
+                            <span>Gestión de Beneficiarios</span>
+                          </button>
+                        </DropdownMenuItem>
+                      </>
                     )}
-                    {(user?.role === 'director_sede' || user?.role === 'admin') && (
+                    {(user?.role === 'director_sede' || user?.role === 'director' || user?.role === 'admin') && (
                       <DropdownMenuItem asChild>
                         <button 
                           onClick={() => navigate('/director-sede')}

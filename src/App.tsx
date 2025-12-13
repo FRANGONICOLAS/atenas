@@ -23,8 +23,10 @@ import AuthCallback from "./pages/AuthCallback";
 import CompleteProfile from "./pages/CompleteProfile";
 import LocationsPage from "./pages/LocationsPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import DirectorDashboard from "./pages/DirectorDashboard";
-import DirectorSedeDashboard from "./pages/DirectorSedeDashboard";
+import DirectorDashboard from "./pages/DirectorPages/DirectorDashboard";
+import DirectorHeadquarter from "./pages/DirectorPages/DirectorHeadquarter";
+import DirectorProjects from "./pages/DirectorPages/DirectorProjects";
+import DirectorBeneficiary from "./pages/DirectorPages/DirectorBeneficiary";
 import DonatorDashboard from "./pages/DonatorDashboard";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
@@ -80,8 +82,24 @@ const App = () => (
                 <Route
                   path="/director-sede"
                   element={
-                    <ProtectedRoute allowedRoles={["director_sede", "admin"]}>
-                      <DirectorSedeDashboard />
+                    <ProtectedRoute allowedRoles={["director_sede", "director", "admin"]}>
+                      <DirectorHeadquarter />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/director-proyectos"
+                  element={
+                    <ProtectedRoute allowedRoles={["director", "admin"]}>
+                      <DirectorProjects />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/director-beneficiarios"
+                  element={
+                    <ProtectedRoute allowedRoles={["director", "admin"]}>
+                      <DirectorBeneficiary />
                     </ProtectedRoute>
                   }
                 />
