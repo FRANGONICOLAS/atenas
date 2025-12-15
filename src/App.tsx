@@ -4,32 +4,41 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ScrollToTop from "@/components/common/ScrollToTop";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import HomePage from "./pages/HomePage";
-import AboutPage from "./pages/AboutPage";
-import QueHacemosPage from "./pages/WhatWeDo";
-import CategoriesPage from "./pages/CategoriesPage";
-import PlayersPage from "./pages/PlayersPage";
-import ProjectsPage from "./pages/ProjectsPage";
-import GalleryPage from "./pages/GalleryPage";
-import TestimonialsPage from "./pages/TestimonialsPage";
-import DonationPage from "./pages/DonationPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import AuthCallback from "./pages/AuthCallback";
-import CompleteProfile from "./pages/CompleteProfile";
-import LocationsPage from "./pages/LocationsPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import DirectorDashboard from "./pages/DirectorPages/DirectorDashboard";
-import DirectorHeadquarter from "./pages/DirectorPages/DirectorHeadquarter";
-import DirectorProjects from "./pages/DirectorPages/DirectorProjects";
-import DirectorBeneficiary from "./pages/DirectorPages/DirectorBeneficiary";
-import DonatorDashboard from "./pages/DonatorDashboard";
-import ProfilePage from "./pages/ProfilePage";
-import NotFound from "./pages/NotFound";
+import {
+  // Auth Pages
+  LoginPage,
+  RegisterPage,
+  ResetPasswordPage,
+  AuthCallback,
+  CompleteProfile,
+  // Public Pages
+  HomePage,
+  AboutPage,
+  WhatWeDo,
+  ProjectsPage,
+  GalleryPage,
+  LocationsPage,
+  // Beneficiary Pages
+  CategoriesPage,
+  PlayersPage,
+  TestimonialsPage,
+  // Dashboard Pages
+  AdminDashboard,
+  DonatorDashboard,
+  ProfilePage,
+  // Director Pages
+  DirectorDashboard,
+  DirectorHeadquarter,
+  DirectorProjects,
+  DirectorBeneficiary,
+  // Common Pages
+  DonationPage,
+  NotFound,
+} from "@/pages";
 
 const queryClient = new QueryClient();
 
@@ -40,13 +49,14 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ScrollToTop />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/quienes-somos" element={<AboutPage />} />
-                <Route path="/que-hacemos" element={<QueHacemosPage />} />
+                <Route path="/que-hacemos" element={<WhatWeDo />} />
                 <Route path="/categorias" element={<CategoriesPage />} />
                 <Route path="/jugadores" element={<PlayersPage />} />
                 <Route path="/proyectos" element={<ProjectsPage />} />
@@ -82,7 +92,9 @@ const App = () => (
                 <Route
                   path="/director-sede"
                   element={
-                    <ProtectedRoute allowedRoles={["director_sede", "director", "admin"]}>
+                    <ProtectedRoute
+                      allowedRoles={["director_sede", "director", "admin"]}
+                    >
                       <DirectorHeadquarter />
                     </ProtectedRoute>
                   }
