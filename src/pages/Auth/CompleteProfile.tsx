@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Heart, User, Phone } from "lucide-react";
+import { Heart, User, Phone, LogOut } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-// Role selection removed for self-service; default role is donator
+import { AuthLayout } from "@/components/layout/AuthLayout";
 import { useAuth } from "@/hooks/useAuth";
 import { userService } from "@/api/services/user.service";
+import { authService } from "@/api/services/auth.service";
 import { toast } from "sonner";
 import { handleAuthError } from "@/lib/errorHandler";
 import {
@@ -20,7 +21,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 
 const CompleteProfile = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -33,6 +34,39 @@ const CompleteProfile = () => {
     resolver: zodResolver(completeGoogleUserSchema),
     defaultValues: {},
   });
+
+  // Evitar que el usuario salga sin completar el perfil
+  useEffect(() => {
+    // Si el usuario ya tiene el perfil completo, redirigir al home
+    if (user?.hasCompletedProfile) {
+      navigate("/");
+      return;
+    }
+
+    // Bloquear la navegación del navegador
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+      return '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [user, navigate]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Sesión cerrada");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      toast.error("Error al cerrar sesión");
+    }
+  };
 
   const onSubmit = async (data: CompleteGoogleUserInput) => {
     if (!user || !user.id) {
@@ -70,10 +104,13 @@ const CompleteProfile = () => {
         });
       }
 
-      // El hook useAuth se actualizará automáticamente al cambiar los datos
+      // Refrescar la sesión para actualizar el estado del usuario
+      await authService.getSession();
 
       toast.success("¡Perfil completado exitosamente!");
-      navigate("/");
+      
+      // Forzar recarga de la página para actualizar el estado global
+      window.location.href = "/";
     } catch (error) {
       console.error("Error al completar perfil:", error);
       handleAuthError(error);
@@ -83,7 +120,7 @@ const CompleteProfile = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-background flex items-center justify-center px-4 py-12">
+    <AuthLayout>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -210,10 +247,20 @@ const CompleteProfile = () => {
             >
               {isLoading ? "Guardando..." : "Completar Perfil"}
             </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full gap-2"
+              onClick={handleSignOut}
+            >
+              <LogOut className="h-4 w-4" />
+              Cerrar Sesión
+            </Button>
           </form>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };
 

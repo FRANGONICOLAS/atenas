@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 import { toast } from 'sonner';
 import { authService } from '@/api/services/auth.service';
 import { handleAuthError } from '@/lib/errorHandler';
@@ -40,7 +41,7 @@ const ResetPasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-background flex items-center justify-center px-4">
+    <AuthLayout>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -104,7 +105,7 @@ const ResetPasswordPage = () => {
           )}
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };
 

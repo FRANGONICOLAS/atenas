@@ -12,12 +12,27 @@ import type {
  */
 export const userService = {
   /**
-   * Obtiene todos los usuarios
+   * Obtiene todos los usuarios con sus roles
    */
   async getAll(): Promise<User[]> {
-    const { data, error } = await client.from("user").select("*");
+    const { data, error } = await client
+      .from("user")
+      .select(`
+        *,
+        user_role!inner(
+          role_id,
+          role!inner(
+            role_name
+          )
+        )
+      `);
     if (error) throw error;
-    return data || [];
+    
+    // Mapear los datos para incluir los roles en el formato esperado
+    return (data || []).map(user => ({
+      ...user,
+      roles: user.user_role?.map((ur: any) => ur.role?.role_name).filter(Boolean) || []
+    }));
   },
 
   /**

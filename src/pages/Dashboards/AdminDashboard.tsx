@@ -276,9 +276,17 @@ const AdminDashboard = () => {
                           </TableCell>
                           <TableCell>{u.email}</TableCell>
                           <TableCell>
-                            <Badge variant="outline">
-                              {u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'}
-                            </Badge>
+                            <div className="flex gap-1 flex-wrap">
+                              {u.roles && u.roles.length > 0 ? (
+                                u.roles.map((role, idx) => (
+                                  <Badge key={idx} variant="outline">
+                                    {role.toUpperCase()}
+                                  </Badge>
+                                ))
+                              ) : (
+                                <Badge variant="outline">DONATOR</Badge>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell>
                             <Badge variant="default">Activo</Badge>

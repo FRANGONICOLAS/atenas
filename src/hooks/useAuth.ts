@@ -4,34 +4,46 @@ import { authService } from "@/api/services/auth.service";
 import { userService } from "@/api/services/user.service";
 
 interface UserWithRole extends User {
-  role?: string;
+  role?: string; // Rol principal (el primero de la lista)
+  roles?: string[]; // Todos los roles del usuario
   username?: string;
   first_name?: string;
   last_name?: string;
+  hasCompletedProfile?: boolean;
 }
 
 // Enriquece el usuario de Supabase con datos de la base de datos
 const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> => {
   try {
     const dbUser = await userService.getById(supabaseUser.id);
-    // Get user role from user_role table
-    const userRole = await userService.getUserRole(supabaseUser.id);
+    // Get all user roles from user_role table
+    const userRoles = await userService.getUserRoles(supabaseUser.id);
     const meta = supabaseUser.user_metadata ?? {};
     const metaRole = typeof meta["role"] === "string" ? meta["role"] : undefined;
-    const finalRole = userRole || metaRole || "donator";
+    
+    // Si no tiene roles en la BD, usar el rol de metadata o "donator"
+    const finalRoles = userRoles.length > 0 ? userRoles : [metaRole || "donator"];
+    const primaryRole = finalRoles[0];
+
+    // Verificar si el perfil está completo
+    const hasCompletedProfile = !!(dbUser?.username && dbUser?.first_name && dbUser?.last_name);
 
     return {
       ...supabaseUser,
-      role: finalRole,
+      role: primaryRole,
+      roles: finalRoles,
       username: dbUser?.username,
       first_name: dbUser?.first_name,
       last_name: dbUser?.last_name,
+      hasCompletedProfile,
     };
   } catch (err) {
     const meta = supabaseUser.user_metadata ?? {};
     return {
       ...supabaseUser,
       role: (meta["role"] as string) || "donator",
+      roles: [(meta["role"] as string) || "donator"],
+      hasCompletedProfile: false,
     };
   }
 };

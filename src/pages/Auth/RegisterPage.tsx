@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/ui/date-picker';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 import { toast } from 'sonner';
 import { authService } from '@/api/services/auth.service';
 import { userService } from '@/api/services/user.service';
@@ -105,7 +106,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-background flex items-center justify-center px-4 py-12">
+    <AuthLayout>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -370,7 +371,7 @@ const RegisterPage = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };
 

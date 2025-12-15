@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import { authService } from '@/api/services/auth.service';
@@ -55,7 +56,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-background flex items-center justify-center px-4">
+    <AuthLayout>
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -171,7 +172,7 @@ const LoginPage = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </AuthLayout>
   );
 };
 

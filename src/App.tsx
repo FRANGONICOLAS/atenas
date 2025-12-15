@@ -4,10 +4,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import ScrollToTop from "@/components/common/ScrollToTop";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { ProfileGuard } from "@/components/auth/ProfileGuard";
+import { RoleBasedRedirect } from "@/components/auth/RoleBasedRedirect";
 import {
   // Auth Pages
   LoginPage,
@@ -49,12 +50,15 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <ScrollToTop />
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-1">
+          <ProfileGuard>
+            <ScrollToTop />
+            <ConditionalLayout>
               <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={
+                  <RoleBasedRedirect>
+                    <HomePage />
+                  </RoleBasedRedirect>
+                } />
                 <Route path="/quienes-somos" element={<AboutPage />} />
                 <Route path="/que-hacemos" element={<WhatWeDo />} />
                 <Route path="/categorias" element={<CategoriesPage />} />
@@ -70,7 +74,14 @@ const App = () => (
                 <Route path="/registro" element={<RegisterPage />} />
                 <Route path="/reset-password" element={<ResetPasswordPage />} />
                 <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/complete-profile" element={<CompleteProfile />} />
+                <Route 
+                  path="/complete-profile" 
+                  element={
+                    <ProtectedRoute requireCompleteProfile={false}>
+                      <CompleteProfile />
+                    </ProtectedRoute>
+                  } 
+                />
 
                 {/* Rutas protegidas por rol */}
                 <Route
@@ -78,6 +89,14 @@ const App = () => (
                   element={
                     <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/donator"
+                  element={
+                    <ProtectedRoute allowedRoles={["donator", "admin"]}>
+                      <DonatorDashboard />
                     </ProtectedRoute>
                   }
                 />
@@ -116,17 +135,9 @@ const App = () => (
                   }
                 />
                 <Route
-                  path="/donator"
-                  element={
-                    <ProtectedRoute allowedRoles={["donator"]}>
-                      <DonatorDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
                   path="/profile"
                   element={
-                    <ProtectedRoute>
+                    <ProtectedRoute allowedRoles={["admin", "director", "director_sede", "donator", "entrenador"]}>
                       <ProfilePage />
                     </ProtectedRoute>
                   }
@@ -134,9 +145,8 @@ const App = () => (
 
                 <Route path="*" element={<NotFound />} />
               </Routes>
-            </main>
-            <Footer />
-          </div>
+            </ConditionalLayout>
+          </ProfileGuard>
         </BrowserRouter>
       </TooltipProvider>
     </LanguageProvider>
