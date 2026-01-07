@@ -168,3 +168,23 @@ All colors MUST be HSL.
 *::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+/* Fix Leaflet map z-index to prevent interference with modals/dialogs */
+.leaflet-container {
+  position: relative;
+  z-index: 0 !important;
+}
+
+.leaflet-pane {
+  z-index: auto !important;
+}
+
+.leaflet-control {
+  z-index: 1 !important;
+}
+
+/* Ensure dialogs and overlays appear above Leaflet maps */
+[data-radix-dialog-overlay],
+[data-radix-dialog-content] {
+  z-index: 9999 !important;
+}

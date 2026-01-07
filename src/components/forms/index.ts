@@ -1,0 +1,1 @@
+export { GenericAuthForm } from './GenericAuthForm';

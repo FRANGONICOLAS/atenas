@@ -19,16 +19,12 @@ export { default as PlayersPage } from './Beneficiaries/PlayersPage';
 export { default as TestimonialsPage } from './Beneficiaries/TestimonialsPage';
 
 // Dashboard Pages
-export { default as AdminDashboard } from './Dashboards/AdminDashboard';
-export { default as DonatorDashboard } from './Dashboards/DonatorDashboard';
-export { default as ProfilePage } from './Dashboards/ProfilePage';
-
-// Director Pages
-export { default as DirectorDashboard } from './Directors/DirectorDashboard';
-export { default as DirectorHeadquarter } from './Directors/components/DirectorHeadquarter';
-export { default as DirectorProjects } from './Directors/components/DirectorProjects';
-export { default as DirectorBeneficiary } from './Directors/components/DirectorBeneficiary';
+export { default as AdminView } from './AdminView/AdminView';
+export { default as DirectorView } from './DirectorView/DirectorView';
+export { default as DirectorSedeView } from './DirectorSedeView/DirectorSedeView';
+export { default as DonatorView } from './DonatorView/DonatorView';
 
 // Common Pages
 export { default as DonationPage } from './Common/DonationPage';
+export { default as ProfilePage } from './Common/ProfilePage';
 export { default as NotFound } from './Common/NotFound';

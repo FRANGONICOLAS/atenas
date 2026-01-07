@@ -231,11 +231,34 @@ const Navbar = () => {
             {isAuthenticated ? (
               <div className="hidden md:flex items-center gap-2">
                 <Link to="/donar">
-                  <Button size="sm" className="gap-1">
+                  <Button variant="outline" size="sm" className="gap-1">
                     <Heart className="w-4 h-4" />
                     {t.nav.donate}
                   </Button>
                 </Link>
+                
+                {/* Dashboard Button */}
+                <Button 
+                  size="sm" 
+                  onClick={() => {
+                    const userRoles = user?.roles || [];
+                    if (userRoles.includes('admin')) {
+                      navigate('/admin');
+                    } else if (userRoles.includes('director')) {
+                      navigate('/director');
+                    } else if (userRoles.includes('director_sede')) {
+                      navigate('/director-sede');
+                    } else if (userRoles.includes('donator')) {
+                      navigate('/donator');
+                    } else {
+                      navigate('/profile');
+                    }
+                  }}
+                  className="gap-1"
+                >
+                  <User className="w-4 h-4" />
+                  Dashboard
+                </Button>
                 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -262,73 +285,7 @@ const Navbar = () => {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="my-1" />
                     
-                    {/* Dashboard links based on role */}
-                    {user?.role === 'admin' && (
-                      <DropdownMenuItem asChild>
-                        <button 
-                          onClick={() => navigate('/admin')}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                        >
-                          <User className="w-4 h-4" />
-                          <span>Administración</span>
-                        </button>
-                      </DropdownMenuItem>
-                    )}
-                    {(user?.role === 'director' || user?.role === 'admin') && (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <button 
-                            onClick={() => navigate('/director')}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                          >
-                            <User className="w-4 h-4" />
-                            <span>Dirección</span>
-                          </button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <button 
-                            onClick={() => navigate('/director-proyectos')}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                          >
-                            <Target className="w-4 h-4" />
-                            <span>Gestión de Proyectos</span>
-                          </button>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <button 
-                            onClick={() => navigate('/director-beneficiarios')}
-                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                          >
-                            <Users className="w-4 h-4" />
-                            <span>Gestión de Beneficiarios</span>
-                          </button>
-                        </DropdownMenuItem>
-                      </>
-                    )}
-                    {(user?.role === 'director_sede' || user?.role === 'director' || user?.role === 'admin') && (
-                      <DropdownMenuItem asChild>
-                        <button 
-                          onClick={() => navigate('/director-sede')}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                        >
-                          <Trophy className="w-4 h-4" />
-                          <span>Dirección de Sede</span>
-                        </button>
-                      </DropdownMenuItem>
-                    )}
-                    {user?.role === 'donator' && (
-                      <DropdownMenuItem asChild>
-                        <button 
-                          onClick={() => navigate('/donator')}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
-                        >
-                          <Heart className="w-4 h-4" />
-                          <span>Donación</span>
-                        </button>
-                      </DropdownMenuItem>
-                    )}
-                    
-                    {/* Todos los usuarios autenticados pueden ver su perfil */}
+                    {/* Perfil */}
                     <DropdownMenuItem asChild>
                       <button 
                         onClick={() => navigate('/profile')}
@@ -528,6 +485,27 @@ const Navbar = () => {
                       </span>
                     </div>
                   </div>
+                  <Button
+                    className="w-full"
+                    onClick={() => {
+                      setIsOpen(false);
+                      const userRoles = user?.roles || [];
+                      if (userRoles.includes('admin')) {
+                        navigate('/admin');
+                      } else if (userRoles.includes('director')) {
+                        navigate('/director');
+                      } else if (userRoles.includes('director_sede')) {
+                        navigate('/director-sede');
+                      } else if (userRoles.includes('donator')) {
+                        navigate('/donator');
+                      } else {
+                        navigate('/profile');
+                      }
+                    }}
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Ir a Dashboard
+                  </Button>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
@@ -553,7 +531,7 @@ const Navbar = () => {
                     </Button>
                   </div>
                   <Link to="/donar" className="block" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full gap-1">
+                    <Button variant="outline" className="w-full gap-1">
                       <Heart className="w-4 h-4" />
                       {t.nav.donate}
                     </Button>
