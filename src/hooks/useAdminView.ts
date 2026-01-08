@@ -157,12 +157,13 @@ export const useAdminDashboard = () => {
       await userService.delete(userId);
       setUsers(users.filter(u => u.id !== userId));
       toast.success('Usuario eliminado', {
-        description: 'El usuario ha sido eliminado correctamente',
+        description: 'El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación',
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting user:', error);
+      const errorMessage = error?.message || 'No se pudo eliminar el usuario';
       toast.error('Error al eliminar usuario', {
-        description: 'No se pudo eliminar el usuario',
+        description: errorMessage,
       });
     }
   };

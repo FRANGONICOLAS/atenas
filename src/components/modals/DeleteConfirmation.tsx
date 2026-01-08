@@ -33,7 +33,7 @@ const DeleteConfirmation = ({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>
             {description}
-            {targetName ? ` (${targetName})` : null}
+            {targetName ? ` ${targetName}` : null}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

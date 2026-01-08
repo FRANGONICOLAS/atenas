@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Edit, Trash2, Search, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import DeleteConfirmation from '@/components/modals/DeleteConfirmation';
 
 interface User {
   id: string;
@@ -41,6 +43,8 @@ export const UsersView = ({
   onEditUser,
   onDeleteUser,
 }: UsersViewProps) => {
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+
   const filteredUsers = users.filter(u => {
     const fullName = `${u.first_name || ''} ${u.last_name || ''}`.toLowerCase();
     const username = u.username.toLowerCase();
@@ -48,6 +52,21 @@ export const UsersView = ({
     const term = searchTerm.toLowerCase();
     return fullName.includes(term) || username.includes(term) || email.includes(term);
   });
+
+  const handleDeleteClick = (user: User) => {
+    setUserToDelete(user);
+  };
+
+  const handleConfirmDelete = () => {
+    if (userToDelete) {
+      onDeleteUser(userToDelete.id);
+      setUserToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setUserToDelete(null);
+  };
 
   return (
     <Card>
@@ -137,7 +156,7 @@ export const UsersView = ({
                       <Button
                         size="icon"
                         variant="ghost"
-                        onClick={() => onDeleteUser(u.id)}
+                        onClick={() => handleDeleteClick(u)}
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -149,6 +168,15 @@ export const UsersView = ({
           </TableBody>
         </Table>
       </CardContent>
+
+      <DeleteConfirmation
+        open={!!userToDelete}
+        title="Confirmar eliminación de usuario"
+        description="¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer."
+        targetName={userToDelete ? `${userToDelete.first_name} ${userToDelete.last_name} (@${userToDelete.username})` : ''}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </Card>
   );
 };

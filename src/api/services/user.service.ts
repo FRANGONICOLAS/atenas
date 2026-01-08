@@ -200,11 +200,33 @@ export const userService = {
   },
 
   /**
-   * Elimina un usuario por su ID
+   * Elimina un usuario por su ID usando la Edge Function
+   * Esta función elimina el usuario tanto de auth.users como de las tablas relacionadas
    */
   async delete(userId: string): Promise<void> {
-    const { error } = await client.from("user").delete().eq("id", userId);
-    if (error) throw error;
+    // Obtener la URL de Supabase y la sesión actual
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const { data: { session } } = await client.auth.getSession();
+    
+    if (!session) {
+      throw new Error('Sesión expirada. Por favor inicia sesión nuevamente.');
+    }
+
+    // Llamar a la Edge Function para eliminar el usuario
+    const response = await fetch(`${supabaseUrl}/functions/v1/Delete-users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'No se pudo eliminar el usuario');
+    }
   },
 
   /**
