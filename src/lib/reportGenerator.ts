@@ -1,6 +1,11 @@
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import type { 
+  ProjectReport,
+  BeneficiaryReport,
+  UserReport
+} from '@/types';
 
 // Tipo extendido para jsPDF con autoTable
 interface jsPDFWithAutoTable extends jsPDF {
@@ -9,41 +14,20 @@ interface jsPDFWithAutoTable extends jsPDF {
   };
 }
 
-// Tipos para los reportes
+// Re-export tipos para compatibilidad
+export type { 
+  ProjectReport,
+  BeneficiaryReport,
+  UserReport
+};
+
+// Tipos para los reportes (internos)
 export interface DonationReport {
   id: number;
   donor: string;
   amount: number;
   project: string;
   date: string;
-  status: string;
-}
-
-export interface UserReport {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: string;
-  date: string;
-}
-
-export interface ProjectReport {
-  id: number;
-  name: string;
-  category: string;
-  goal: number;
-  raised: number;
-  progress: number;
-  status: string;
-}
-
-export interface BeneficiaryReport {
-  id: number;
-  name: string;
-  age: number;
-  category: string;
-  location: string;
   status: string;
 }
 

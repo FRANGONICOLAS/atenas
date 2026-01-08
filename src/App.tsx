@@ -28,14 +28,12 @@ import {
   PlayersPage,
   TestimonialsPage,
   // Dashboard Pages
-  AdminDashboard,
-  DonatorDashboard,
+  AdminView,
   ProfilePage,
   // Director Pages
-  DirectorDashboard,
-  DirectorHeadquarter,
-  DirectorProjects,
-  DirectorBeneficiary,
+  DirectorView,
+  DirectorSedeView,
+  DonatorView,
   // Common Pages
   DonationPage,
   NotFound,
@@ -59,6 +57,8 @@ const App = () => (
                     <HomePage />
                   </RoleBasedRedirect>
                 } />
+                {/* Ruta directa al home sin redirección automática */}
+                <Route path="/inicio" element={<HomePage />} />
                 <Route path="/quienes-somos" element={<AboutPage />} />
                 <Route path="/que-hacemos" element={<WhatWeDo />} />
                 <Route path="/categorias" element={<CategoriesPage />} />
@@ -88,7 +88,7 @@ const App = () => (
                   path="/admin"
                   element={
                     <ProtectedRoute allowedRoles={["admin"]}>
-                      <AdminDashboard />
+                      <AdminView />
                     </ProtectedRoute>
                   }
                 />
@@ -96,7 +96,7 @@ const App = () => (
                   path="/donator"
                   element={
                     <ProtectedRoute allowedRoles={["donator", "admin"]}>
-                      <DonatorDashboard />
+                      <DonatorView />
                     </ProtectedRoute>
                   }
                 />
@@ -104,7 +104,7 @@ const App = () => (
                   path="/director"
                   element={
                     <ProtectedRoute allowedRoles={["director", "admin"]}>
-                      <DirectorDashboard />
+                      <DirectorView />
                     </ProtectedRoute>
                   }
                 />
@@ -114,23 +114,7 @@ const App = () => (
                     <ProtectedRoute
                       allowedRoles={["director_sede", "director", "admin"]}
                     >
-                      <DirectorHeadquarter />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/director-proyectos"
-                  element={
-                    <ProtectedRoute allowedRoles={["director", "admin"]}>
-                      <DirectorProjects />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/director-beneficiarios"
-                  element={
-                    <ProtectedRoute allowedRoles={["director", "admin"]}>
-                      <DirectorBeneficiary />
+                      <DirectorSedeView />
                     </ProtectedRoute>
                   }
                 />
