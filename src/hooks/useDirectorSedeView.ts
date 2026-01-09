@@ -6,7 +6,6 @@ import type {
   Evaluation,
   EvaluationType,
   SedeReport,
-  ReportType
 } from '@/types';
 
 export const useDirectorSedeView = () => {

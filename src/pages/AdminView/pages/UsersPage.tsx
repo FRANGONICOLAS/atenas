@@ -1,8 +1,10 @@
-import { UserPlus, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { UsersView } from '../components/UsersView';
-import { UserDialog } from '../components/UserDialog';
-import { useAdminDashboard } from '@/hooks/useAdminView';
+import { UserPlus, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { UsersView } from "../components";
+import { UserDialog } from "../components";
+import { ExportButton } from "../components";
+import { useAdminDashboard } from "@/hooks/useAdminView";
+import { User } from "@/types";
 
 const UsersPage = () => {
   const {
@@ -22,6 +24,11 @@ const UsersPage = () => {
     handleEditUser,
     handleDeleteUser,
     handleSaveUser,
+    handleExportUsersExcel,
+    handleExportUsersPDF,
+    handleExportDonationsExcel,
+    handleExportDonationsPDF,
+    handleExportConsolidated,
   } = useAdminDashboard();
 
   return (
@@ -30,15 +37,26 @@ const UsersPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Gestión de Usuarios
+          </h2>
         </div>
-        <Button 
-          onClick={handleCreateUser}
-          className="gap-2"
-        >
-          <UserPlus className="w-4 h-4" />
-          Nuevo Usuario
-        </Button>
+        <div className="flex flex-wrap gap-4">
+          {/* Create User Button */}
+          <Button onClick={handleCreateUser} className="gap-2">
+            <UserPlus className="w-4 h-4" />
+            Nuevo Usuario
+          </Button>
+
+          {/* Export Button */}
+          <ExportButton
+            onExportUsersExcel={handleExportUsersExcel}
+            onExportUsersPDF={handleExportUsersPDF}
+            onExportDonationsExcel={handleExportDonationsExcel}
+            onExportDonationsPDF={handleExportDonationsPDF}
+            onExportConsolidated={handleExportConsolidated}
+          />
+        </div>
       </div>
 
       {/* Users Table */}
@@ -55,7 +73,7 @@ const UsersPage = () => {
       <UserDialog
         open={showUserDialog}
         onOpenChange={setShowUserDialog}
-        editingUser={editingUser}
+        editingUser={editingUser as unknown as User}
         userForm={userForm}
         onUserFormChange={setUserForm}
         availableRoles={availableRoles}

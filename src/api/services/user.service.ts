@@ -31,7 +31,7 @@ export const userService = {
     // Mapear los datos para incluir los roles en el formato esperado
     return (data || []).map(user => ({
       ...user,
-      roles: user.user_role?.map((ur: any) => ur.role?.role_name).filter(Boolean) || []
+      roles: user.user_role?.map((ur: { role?: { role_name?: string } }) => ur.role?.role_name).filter(Boolean) || []
     }));
   },
 
@@ -123,9 +123,9 @@ export const userService = {
       // Enrich user with roles from user_role table
       const roles = await this.getUserRoles(data.id);
       return { ...data, roles };
-    } catch (rpcError: any) {
+    } catch (rpcError: unknown) {
       // Si es duplicado de email, devolver el existente
-      const code = rpcError?.code || rpcError?.details || rpcError?.message;
+      const code = (rpcError as { code?: string; details?: string; message?: string })?.code || (rpcError as { details?: string })?.details || (rpcError as { message?: string })?.message;
       if (typeof code === "string" && code.includes("23505")) {
         try {
           const existing = await this.findByEmail(userData.email);

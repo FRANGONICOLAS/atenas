@@ -4,7 +4,8 @@ export type UserStatus = 'active' | 'inactive' | 'pending';
 export interface User {
   id: string;
   email: string;
-  name: string;
+  first_name: string;
+  last_name: string;
   role: UserRole;
   status: UserStatus;
   createdAt: string;

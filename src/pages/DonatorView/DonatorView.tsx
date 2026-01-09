@@ -1,11 +1,13 @@
-import { DollarSign, Heart, Trophy, TrendingUp, Calendar, PiggyBank } from 'lucide-react';
+import { DollarSign, Heart, Trophy, TrendingUp, Calendar, PiggyBank, Box } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
-import { DonatorHeader, DonatorStatCard } from './components';
+import { DashboardHeader } from '@/components/common/DashboardHeader';
+import { DonatorStatCard } from './components';
 import { DonationsPage, ProjectsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { User } from '@/api/types/database.types';
 
 const DonatorView = () => {
   const { user } = useAuth();
@@ -22,10 +24,10 @@ const DonatorView = () => {
   }
 
   // Dashboard principal (sin tab)
-  return <MainDashboard user={user} />;
+  return <MainDashboard user={user as unknown as User} />;
 };
 
-const MainDashboard = ({ user }: { user: any }) => {
+const MainDashboard = ({ user }: { user: User }) => {
   const stats = [
     {
       icon: DollarSign,
@@ -97,10 +99,13 @@ const MainDashboard = ({ user }: { user: any }) => {
   return (
     <div className="w-full">
       {/* Header */}
-      <DonatorHeader
+      <DashboardHeader
+        title="Panel de Donación"
         firstName={user?.first_name}
         lastName={user?.last_name}
-        role={user?.role}
+        role={user?.roles[0]}
+        icon={Box}
+        roleIcon={Heart}
       />
 
       {/* Stats Cards */}

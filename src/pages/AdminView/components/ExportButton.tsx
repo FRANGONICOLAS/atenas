@@ -1,4 +1,4 @@
-import { UserPlus, Upload, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,9 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-interface ActionButtonsProps {
-  onCreateUser: () => void;
-  onManageContent: () => void;
+interface ExportButtonProps {
   onExportUsersExcel: () => void;
   onExportUsersPDF: () => void;
   onExportDonationsExcel: () => void;
@@ -17,25 +15,15 @@ interface ActionButtonsProps {
   onExportConsolidated: () => void;
 }
 
-export const ActionButtons = ({
-  onCreateUser,
-  onManageContent,
+export const ExportButton = ({
   onExportUsersExcel,
   onExportUsersPDF,
   onExportDonationsExcel,
   onExportDonationsPDF,
   onExportConsolidated,
-}: ActionButtonsProps) => {
+}: ExportButtonProps) => {
   return (
     <div className="flex flex-wrap gap-4 mb-6">
-      <Button onClick={onCreateUser} variant="outline" className="gap-2">
-        <UserPlus className="w-4 h-4" />
-        Nuevo Usuario
-      </Button>
-      <Button variant="outline" onClick={onManageContent} className="gap-2">
-        <Upload className="w-4 h-4" />
-        Gestionar Contenido
-      </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className="gap-2">
@@ -43,7 +31,7 @@ export const ActionButtons = ({
             Exportar Datos
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={onExportUsersExcel}>
             Usuarios (Excel)
           </DropdownMenuItem>

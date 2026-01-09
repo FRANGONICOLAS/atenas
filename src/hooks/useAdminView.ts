@@ -159,9 +159,9 @@ export const useAdminDashboard = () => {
       toast.success('Usuario eliminado', {
         description: 'El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting user:', error);
-      const errorMessage = error?.message || 'No se pudo eliminar el usuario';
+      const errorMessage = error instanceof Error ? error.message : 'No se pudo eliminar el usuario';
       toast.error('Error al eliminar usuario', {
         description: errorMessage,
       });
@@ -318,31 +318,6 @@ export const useAdminDashboard = () => {
     }
   };
 
-  const handleManageContent = () => {
-    setContentForm({
-      type: 'image',
-      title: '',
-      description: '',
-      url: '',
-      section: 'gallery',
-    });
-    setShowContentDialog(true);
-  };
-
-  const handleUploadContent = () => {
-    if (!contentForm.title || !contentForm.url) {
-      toast.error('Campos requeridos', {
-        description: 'Por favor completa título y URL',
-      });
-      return;
-    }
-
-    toast.success('Contenido subido', {
-      description: `${contentForm.title} ha sido agregado a ${contentForm.section}`,
-    });
-    setShowContentDialog(false);
-  };
-
   const handleExportUsersExcel = () => {
     const reportData: UserReport[] = users.map((u, index) => ({
       id: index + 1,
@@ -468,8 +443,6 @@ export const useAdminDashboard = () => {
     handleEditUser,
     handleDeleteUser,
     handleSaveUser,
-    handleManageContent,
-    handleUploadContent,
     handleExportUsersExcel,
     handleExportUsersPDF,
     handleExportDonationsExcel,

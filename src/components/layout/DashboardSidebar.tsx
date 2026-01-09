@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   ChevronDown, 
@@ -164,6 +164,23 @@ export const DashboardSidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollPositionRef = useRef(0);
+
+  useEffect(() => {
+    const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollElement) {
+      scrollElement.scrollTop = scrollPositionRef.current;
+    }
+  });
+
+  const handleLinkClick = () => {
+    const scrollElement = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollElement) {
+      scrollPositionRef.current = scrollElement.scrollTop;
+    }
+    setIsMobileOpen(false);
+  };
 
   const userRoles = (user?.roles || [user?.role]).filter(Boolean).map(r => r?.toLowerCase());
 
@@ -190,12 +207,10 @@ export const DashboardSidebar = () => {
     const currentSearch = location.search;
     const fullPath = currentPath + currentSearch;
     
-    // Exact match
-    if (href === currentPath || fullPath === href) return true;
+    if (fullPath === href) return true;
     
-    // Check if href without query params matches current path
     const hrefPath = href.split('?')[0];
-    if (hrefPath === currentPath && !href.includes('?')) return true;
+    if (hrefPath === currentPath && !href.includes('?') && !currentSearch) return true;
     
     return false;
   };
@@ -239,7 +254,7 @@ export const DashboardSidebar = () => {
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      <ScrollArea ref={scrollAreaRef} className="flex-1 px-3 py-4">
         <nav className="space-y-1">
           {visibleSections.map((section) => (
             <div key={section.title} className="mb-4">
@@ -274,7 +289,7 @@ export const DashboardSidebar = () => {
                       <Link
                         key={item.href}
                         to={item.href}
-                        onClick={() => setIsMobileOpen(false)}
+                        onClick={handleLinkClick}
                         className={cn(
                           "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors group relative",
                           active 
@@ -314,7 +329,7 @@ export const DashboardSidebar = () => {
       <div className="p-4 border-t border-border space-y-2">
         <Link
           to="/inicio"
-          onClick={() => setIsMobileOpen(false)}
+          onClick={handleLinkClick}
           className={cn(
             'flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors',
             !isOpen && 'justify-center'
@@ -327,7 +342,7 @@ export const DashboardSidebar = () => {
         
         <Link
           to="/profile"
-          onClick={() => setIsMobileOpen(false)}
+          onClick={handleLinkClick}
           className={cn(
             'flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors',
             !isOpen && 'justify-center'
