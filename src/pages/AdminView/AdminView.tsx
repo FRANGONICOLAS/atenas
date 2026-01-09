@@ -6,7 +6,6 @@ import { useSearchParams } from 'react-router-dom';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
 import {
   StatCard,
-  ActionButtons,
   DonationsView,
   AnalyticsView,
 } from './components';
@@ -37,17 +36,9 @@ const MainDashboard = ({ user }: { user: User }) => {
     setActiveTab,
     stats,
     recentDonations,
-    handleCreateUser,
-    handleManageContent,
-    handleExportUsersExcel,
-    handleExportUsersPDF,
-    handleExportDonationsExcel,
-    handleExportDonationsPDF,
-    handleExportConsolidated,
     formatCurrency,
   } = useAdminDashboard();
 
-  // Icon mapping for stats
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
     Users,
     Trophy,
@@ -83,17 +74,6 @@ const MainDashboard = ({ user }: { user: User }) => {
           ) : null;
         })}
       </div>
-
-      {/* Action Buttons */}
-      <ActionButtons
-        onCreateUser={handleCreateUser}
-        onManageContent={handleManageContent}
-        onExportUsersExcel={handleExportUsersExcel}
-        onExportUsersPDF={handleExportUsersPDF}
-        onExportDonationsExcel={handleExportDonationsExcel}
-        onExportDonationsPDF={handleExportDonationsPDF}
-        onExportConsolidated={handleExportConsolidated}
-      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList>

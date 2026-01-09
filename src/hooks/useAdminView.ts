@@ -318,31 +318,6 @@ export const useAdminDashboard = () => {
     }
   };
 
-  const handleManageContent = () => {
-    setContentForm({
-      type: 'image',
-      title: '',
-      description: '',
-      url: '',
-      section: 'gallery',
-    });
-    setShowContentDialog(true);
-  };
-
-  const handleUploadContent = () => {
-    if (!contentForm.title || !contentForm.url) {
-      toast.error('Campos requeridos', {
-        description: 'Por favor completa título y URL',
-      });
-      return;
-    }
-
-    toast.success('Contenido subido', {
-      description: `${contentForm.title} ha sido agregado a ${contentForm.section}`,
-    });
-    setShowContentDialog(false);
-  };
-
   const handleExportUsersExcel = () => {
     const reportData: UserReport[] = users.map((u, index) => ({
       id: index + 1,
@@ -468,8 +443,6 @@ export const useAdminDashboard = () => {
     handleEditUser,
     handleDeleteUser,
     handleSaveUser,
-    handleManageContent,
-    handleUploadContent,
     handleExportUsersExcel,
     handleExportUsersPDF,
     handleExportDonationsExcel,

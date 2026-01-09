@@ -1,5 +1,5 @@
 export { StatCard } from './StatCard';
-export { ActionButtons } from './ActionButtons';
+export { ExportButton } from './ExportButton';
 export { UsersView } from './UsersView';
 export { DonationsView } from './DonationsView';
 export { AnalyticsView } from './AnalyticsView';
