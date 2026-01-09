@@ -1,57 +1,14 @@
 import { client } from "@/api/supabase/client";
 import { storageService } from "./storage.service";
+import type {
+  GalleryItem,
+  GalleryCategory,
+  GalleryItemType,
+  CreateGalleryItemDto,
+  UpdateGalleryItemDto,
+} from "@/types/gallery.types";
 
 const BUCKET_NAME = "atenas-gallery";
-
-export type GalleryItemType = "photo" | "video";
-export type GalleryCategory =
-  | "Entrenamiento"
-  | "Torneos"
-  | "Highlights"
-  | "Momentos"
-  | "Instalaciones"
-  | "Jugadores"
-  | "Educación"
-  | "Bienestar"
-  | "Documentales"
-  | "Otros";
-
-export interface GalleryItem {
-  gallery_item_id: string;
-  title: string;
-  description?: string;
-  category: GalleryCategory;
-  type: GalleryItemType;
-  bucket_path: string;
-  thumbnail_path?: string;
-  video_url?: string;
-  is_active: boolean;
-  display_order: number;
-  uploaded_by?: string;
-  created_at: string;
-  updated_at: string;
-  // Virtual field for display
-  public_url?: string;
-}
-
-export interface CreateGalleryItem {
-  title: string;
-  description?: string;
-  category: GalleryCategory;
-  type: GalleryItemType;
-  file: File;
-  video_url?: string;
-  display_order?: number;
-}
-
-export interface UpdateGalleryItem {
-  title?: string;
-  description?: string;
-  category?: GalleryCategory;
-  is_active?: boolean;
-  display_order?: number;
-  video_url?: string;
-}
 
 /**
  * Servicio para gestionar elementos de la galería
@@ -136,7 +93,7 @@ export const galleryService = {
   /**
    * Crea un nuevo elemento en la galería
    */
-  async createItem(itemData: CreateGalleryItem): Promise<GalleryItem> {
+  async createItem(itemData: CreateGalleryItemDto): Promise<GalleryItem> {
     const {
       data: { user },
     } = await client.auth.getUser();
@@ -187,7 +144,7 @@ export const galleryService = {
    */
   async updateItem(
     id: string,
-    updates: UpdateGalleryItem
+    updates: UpdateGalleryItemDto
   ): Promise<GalleryItem> {
     const { data, error } = await client
       .from("gallery_items")

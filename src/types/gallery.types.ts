@@ -26,7 +26,6 @@ export interface GalleryItem {
   uploaded_by?: string;
   created_at: string;
   updated_at: string;
-  // Virtual field for display
   public_url?: string;
 }
 
