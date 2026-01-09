@@ -1,5 +1,4 @@
 export { StatCard } from './StatCard';
-export { DirectorHeader } from './DirectorHeader';
 export { LocationsView } from './LocationsView';
 export { ProjectsView } from './ProjectsView';
 export { EventsView } from './EventsView';

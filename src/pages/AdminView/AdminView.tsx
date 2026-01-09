@@ -1,16 +1,17 @@
-import { Users, Trophy, DollarSign, BarChart3 } from 'lucide-react';
+import { Users, Trophy, DollarSign, BarChart3, Box, Shield } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdminDashboard } from '@/hooks/useAdminView';
 import { useSearchParams } from 'react-router-dom';
+import { DashboardHeader } from '@/components/common/DashboardHeader';
 import {
   StatCard,
-  AdminHeader,
   ActionButtons,
   DonationsView,
   AnalyticsView,
 } from './components';
 import { UsersPage, ContentPage } from './pages';
+import { User } from '@/types';
 
 const AdminView = () => {
   const { user } = useAuth();
@@ -27,10 +28,10 @@ const AdminView = () => {
   }
 
   // Dashboard principal (sin tab)
-  return <MainDashboard user={user} />;
+  return <MainDashboard user={user as unknown as User} />;
 };
 
-const MainDashboard = ({ user }: { user: any }) => {
+const MainDashboard = ({ user }: { user: User }) => {
   const {
     activeTab,
     setActiveTab,
@@ -57,10 +58,13 @@ const MainDashboard = ({ user }: { user: any }) => {
   return (
     <div className="w-full">
       {/* Header */}
-      <AdminHeader
+      <DashboardHeader
+        title="Panel de Administración"
         firstName={user?.first_name}
         lastName={user?.last_name}
         role={user?.role}
+        icon={Box}
+        roleIcon={Shield}
       />
 
       {/* Stats Cards */}

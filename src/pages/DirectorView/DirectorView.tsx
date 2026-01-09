@@ -1,14 +1,15 @@
-import { Trophy, MapPin, ClipboardList, Award, TrendingUp } from 'lucide-react';
+import { Trophy, MapPin, ClipboardList, Award, TrendingUp, Box, UserCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
+import { DashboardHeader } from '@/components/common/DashboardHeader';
 import {
-  DirectorHeader,
   StatCard,
 } from './components';
 import { LocationsPage, ReportsPage, ProjectsPage, BeneficiariesPage, HeadquartersPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { User } from '@/types';
 
 const DirectorView = () => {
   const { user } = useAuth();
@@ -37,10 +38,10 @@ const DirectorView = () => {
   }
 
   // Dashboard principal (sin tab)
-  return <MainDashboard user={user} />;
+  return <MainDashboard user={user as unknown as User} />;
 };
 
-const MainDashboard = ({ user }: { user: any }) => {
+const MainDashboard = ({ user }: { user: User }) => {
   // Stats principales
   const stats = [
     {
@@ -169,10 +170,13 @@ const MainDashboard = ({ user }: { user: any }) => {
   return (
     <div className="w-full">
       {/* Header */}
-      <DirectorHeader
+      <DashboardHeader
+        title="Panel de Dirección"
         firstName={user?.first_name}
         lastName={user?.last_name}
         role={user?.role}
+        icon={Box}
+        roleIcon={UserCheck}
       />
 
       {/* Stats Cards */}

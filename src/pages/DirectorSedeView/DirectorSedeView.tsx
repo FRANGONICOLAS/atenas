@@ -1,7 +1,8 @@
-import { Users, Trophy, Award, TrendingUp, Calendar, Star } from 'lucide-react';
+import { Users, Trophy, Award, TrendingUp, Calendar, Star, Box, UserCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
-import { DirectorSedeHeader, SedeStatCard } from './components';
+import { DashboardHeader } from '@/components/common/DashboardHeader';
+import { SedeStatCard } from './components';
 import { BeneficiariesPage, EvaluationsPage, SedeReportsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -95,11 +96,14 @@ const MainDashboard = ({ user }: { user: any }) => {
   return (
     <div className="w-full">
       {/* Header */}
-      <DirectorSedeHeader
+      <DashboardHeader
+        title="Panel Director de Sede"
         firstName={user?.first_name}
         lastName={user?.last_name}
         role={user?.role}
-        sedeName="Sede Norte"
+        icon={Box}
+        roleIcon={UserCheck}
+        subtitle="Sede Norte"
       />
 
       {/* Stats Cards */}
