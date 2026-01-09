@@ -8,3 +8,4 @@ export * from './location.types';
 export * from './event.types';
 export * from './user.types';
 export * from './form.types';
+export * from './gallery.types';
