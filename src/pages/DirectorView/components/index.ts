@@ -7,3 +7,5 @@ export { BeneficiaryDialog } from './BeneficiaryDialog';
 export { ProjectDialog } from './ProjectDialog';
 export { MapDialog } from './MapDialog';
 export { CalendarDialog } from './CalendarDialog';
+export { HeadquartersMap } from './HeadquartersMap';
+export { HeadquartersTable } from './HeadquartersTable';
