@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { User } from '@/types';
 
 interface Role {
   role_id: string;
@@ -36,7 +37,7 @@ interface UserForm {
 interface UserDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  editingUser: any | null;
+  editingUser: User | null;
   userForm: UserForm;
   onUserFormChange: (form: UserForm) => void;
   availableRoles: Role[];

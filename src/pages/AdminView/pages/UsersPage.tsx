@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { UsersView } from '../components/UsersView';
 import { UserDialog } from '../components/UserDialog';
 import { useAdminDashboard } from '@/hooks/useAdminView';
+import { User } from '@/types';
 
 const UsersPage = () => {
   const {
@@ -55,7 +56,7 @@ const UsersPage = () => {
       <UserDialog
         open={showUserDialog}
         onOpenChange={setShowUserDialog}
-        editingUser={editingUser}
+        editingUser={editingUser as unknown as User}
         userForm={userForm}
         onUserFormChange={setUserForm}
         availableRoles={availableRoles}

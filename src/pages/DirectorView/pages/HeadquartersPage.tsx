@@ -323,7 +323,7 @@ const HeadquartersPage = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as HeadquarterStatus | "all")}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Estado" />
           </SelectTrigger>

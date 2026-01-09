@@ -159,9 +159,9 @@ export const useAdminDashboard = () => {
       toast.success('Usuario eliminado', {
         description: 'El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting user:', error);
-      const errorMessage = error?.message || 'No se pudo eliminar el usuario';
+      const errorMessage = error instanceof Error ? error.message : 'No se pudo eliminar el usuario';
       toast.error('Error al eliminar usuario', {
         description: errorMessage,
       });

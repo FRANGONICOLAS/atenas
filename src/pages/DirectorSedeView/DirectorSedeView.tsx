@@ -7,6 +7,7 @@ import { BeneficiariesPage, EvaluationsPage, SedeReportsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { User } from '@/types';
 
 const DirectorSedeView = () => {
   const { user } = useAuth();
@@ -27,10 +28,10 @@ const DirectorSedeView = () => {
   }
 
   // Dashboard principal (sin tab)
-  return <MainDashboard user={user} />;
+  return <MainDashboard user={user as unknown as User} />;
 };
 
-const MainDashboard = ({ user }: { user: any }) => {
+const MainDashboard = ({ user }: { user: User }) => {
   const stats = [
     {
       icon: Users,
