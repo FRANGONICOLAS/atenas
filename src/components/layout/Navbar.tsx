@@ -23,8 +23,11 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Usar /inicio para usuarios logueados para evitar redirección automática
+  const homeLink = isAuthenticated ? '/inicio' : '/';
+  
   const navLinks = [
-    { href: '/', label: t.nav.home },
+    { href: homeLink, label: t.nav.home },
     { href: '/proyectos', label: t.nav.projects },
     { href: '/galeria', label: t.nav.gallery },
   ];
@@ -59,7 +62,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to={homeLink} className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
               <Heart className="w-5 h-5 text-primary-foreground" />
             </div>
@@ -71,10 +74,10 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-6">
             <Link
-              to="/"
+              to={homeLink}
               className={cn(
                 'text-sm font-medium transition-colors hover:text-primary',
-                isActive('/') ? 'text-primary' : 'text-muted-foreground'
+                isActive(homeLink) ? 'text-primary' : 'text-muted-foreground'
               )}
             >
               {t.nav.home}
@@ -344,11 +347,11 @@ const Navbar = () => {
           <div className="lg:hidden py-4 border-t border-border">
             <div className="flex flex-col gap-2">
               <Link
-                to="/"
+                to={homeLink}
                 onClick={() => setIsOpen(false)}
                 className={cn(
                   'px-4 py-2 rounded-md text-sm font-medium transition-colors',
-                  isActive('/')
+                  isActive(homeLink)
                     ? 'bg-primary text-primary-foreground'
                     : 'hover:bg-muted'
                 )}

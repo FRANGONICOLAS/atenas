@@ -1,10 +1,20 @@
 import { Link } from 'react-router-dom';
-import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, ChevronRight, AlertTriangle, Shield, Sparkles, Activity, Brain, Smile, Handshake } from 'lucide-react';
+import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, ChevronRight, AlertTriangle, Shield, Sparkles, Activity, Brain, Smile, Handshake, Import } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from '@/components/CTA';
-import heroImage from '@/assets/hero-soccer.jpg';
+import heroImage from '@/assets/WhatsApp Image 2025-12-11 at 22.10.38.jpeg';
+import impacto from '@/assets/WhatsApp Image 2025-12-11 at 22.10.24.jpeg';
+import prueba from '@/assets/IMG_5293.JPEG';
+import transformacion_1 from '@/assets/IMG_5316.JPEG';
+import transformacion_2 from '@/assets/IMG_5317.JPEG';
+import transformacion_3 from '@/assets/IMG_5318.JPEG';
+import transformacion_4 from '@/assets/IMG_5319.JPEG';
+import transformacion_5 from '@/assets/IMG_5322.JPEG';
+import transformacion_6 from '@/assets/IMG_5323.JPEG';
+
+
 
 const HomePage = () => {
   const { t } = useLanguage();
@@ -94,7 +104,7 @@ const HomePage = () => {
             </div>
             <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
               <img
-                src="/image8.jpg"
+                src={impacto}
                 alt="Impacto en jóvenes"
                 className="w-full h-full object-cover"
               />
@@ -190,7 +200,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image9.jpg" 
+                  src={transformacion_1} 
                   alt="Sentido de pertenencia"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -204,7 +214,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image10.jpg" 
+                  src={transformacion_2} 
                   alt="Manejo de emociones"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -218,7 +228,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image11.jpg" 
+                  src={transformacion_3} 
                   alt="Salud física y mental"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -232,7 +242,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image12.jpg" 
+                  src={transformacion_4} 
                   alt="Disciplina y metas"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -246,7 +256,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image13.jpg" 
+                  src={transformacion_5} 
                   alt="Trabajo en equipo"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -260,7 +270,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image14.jpg" 
+                  src={transformacion_6} 
                   alt="Oportunidades y futuro"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -291,7 +301,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image16.jpg" 
+                  src= {impacto}
                   alt="Equipo deportivo"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -305,7 +315,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image16.jpg" 
+                  src={heroImage}
                   alt="Torneos"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -319,7 +329,7 @@ const HomePage = () => {
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img 
-                  src="/image17.jpg" 
+                  src={prueba}
                   alt="Proyectos definidos"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
@@ -336,7 +346,7 @@ const HomePage = () => {
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
                 <img
-                  src="/image18.jpg"
+                  src= {impacto}
                   alt="Comunidad unida"
                   className="w-full h-full object-cover"
                 />
