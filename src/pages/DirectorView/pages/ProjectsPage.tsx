@@ -665,36 +665,19 @@ const ProjectsPage = () => {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="goal">Meta ($) *</Label>
-                <Input
-                  id="goal"
-                  type="number"
-                  value={form.goal}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      goal: parseInt(e.target.value) || 0,
-                    })
-                  }
-                />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="raised">Recaudado ($)</Label>
-                <Input
-                  id="raised"
-                  type="number"
-                  value={form.raised}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      raised: parseInt(e.target.value) || 0,
-                    })
-                  }
-                />
-              </div>
+            <div className="grid gap-2">
+              <Label htmlFor="goal">Meta ($) *</Label>
+              <Input
+                id="goal"
+                type="number"
+                value={form.goal}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    goal: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
             </div>
 
             <div className="grid gap-2">
