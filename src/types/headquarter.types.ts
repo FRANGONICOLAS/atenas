@@ -5,7 +5,6 @@ export interface Headquarter {
   name: string;
   address: string | null;
   city: string | null;
-  location_map: string | null;
   status: string;
   user_id: string;
   created_at: string | null;
@@ -15,7 +14,6 @@ export interface CreateHeadquarterData {
   name: string;
   address?: string | null;
   city?: string | null;
-  location_map?: string | null;
   status?: string;
   user_id: string;
 }
@@ -24,7 +22,6 @@ export interface UpdateHeadquarterData {
   name?: string;
   address?: string | null;
   city?: string | null;
-  location_map?: string | null;
   status?: string;
   user_id?: string;
 }

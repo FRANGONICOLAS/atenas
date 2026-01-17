@@ -175,17 +175,17 @@ export type Database = {
           address: string | null
           created_at: string | null
           headquarters_id: string
-          location_map: string | null
           name: string
           status: string
+          city: string | null
           user_id: string
         }
         Insert: {
           address?: string | null
           created_at?: string | null
           headquarters_id?: string
-          location_map?: string | null
           name: string
+          city?: string | null
           status?: string
           user_id: string
         }
@@ -193,9 +193,9 @@ export type Database = {
           address?: string | null
           created_at?: string | null
           headquarters_id?: string
-          location_map?: string | null
           name?: string
           status?: string
+          city?: string | null
           user_id?: string
         }
         Relationships: [

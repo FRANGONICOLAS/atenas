@@ -61,7 +61,7 @@ export const headquarterService = {
       .insert([{
         name: headquarterData.name,
         address: headquarterData.address || null,
-        location_map: headquarterData.location_map || null,
+        city: headquarterData.city || null,
         status: headquarterData.status || "active",
         user_id: headquarterData.user_id,
       }])
