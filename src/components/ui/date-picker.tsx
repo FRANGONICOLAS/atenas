@@ -18,6 +18,8 @@ interface DatePickerProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  maxDate?: Date;
+  minDate?: Date;
 }
 
 export function DatePicker({
@@ -26,6 +28,8 @@ export function DatePicker({
   placeholder = "Selecciona una fecha",
   disabled = false,
   className,
+  maxDate,
+  minDate,
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -47,22 +51,38 @@ export function DatePicker({
           className={cn(
             "w-full justify-start text-left font-normal bg-background hover:bg-accent hover:text-accent-foreground",
             !date && "text-muted-foreground",
-            className
+            className,
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP", { locale: es }) : <span>{placeholder}</span>}
+          {date ? (
+            format(date, "PPP", { locale: es })
+          ) : (
+            <span>{placeholder}</span>
+          )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-card border border-border shadow-lg" align="start">
+      <PopoverContent
+        className="w-auto p-0 bg-card border border-border shadow-lg"
+        align="start"
+      >
         <Calendar
           mode="single"
           captionLayout="dropdown-buttons"
           selected={date}
           onSelect={handleSelect}
-          disabled={(date) => date > new Date()}
-          fromYear={1940}
-          toYear={new Date().getFullYear()}
+          disabled={(date) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (maxDate && date > maxDate) return true;
+            if (minDate && date < minDate) return true;
+            if (date > today) return true;
+
+            return false;
+          }}
+          fromYear={minDate ? minDate.getFullYear() : 1940}
+          toYear={maxDate ? maxDate.getFullYear() : new Date().getFullYear()}
           initialFocus
           className="bg-card"
         />

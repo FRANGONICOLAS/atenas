@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, DollarSign, Target, FileText, AlertCircle } from 'lucide-react';
 import type { Project } from '@/types';
@@ -90,12 +91,23 @@ export const ProjectDialog = ({
 
             <div className="space-y-2">
               <Label htmlFor="deadline">Fecha Límite *</Label>
-              <Input
-                id="deadline"
-                type="date"
-                value={formData.deadline}
-                onChange={(e) => handleChange('deadline', e.target.value)}
-                required
+              <DatePicker
+                date={
+                  formData.deadline
+                    ? new Date(formData.deadline + "T12:00:00")
+                    : undefined
+                }
+                onDateChange={(date) => {
+                  if (date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const day = String(date.getDate()).padStart(2, "0");
+                    handleChange('deadline', `${year}-${month}-${day}`);
+                  } else {
+                    handleChange('deadline', '');
+                  }
+                }}
+                placeholder="Selecciona fecha límite"
               />
             </div>
 

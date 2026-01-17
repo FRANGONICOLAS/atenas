@@ -1,8 +1,8 @@
-import { UserPlus, X, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { UserPlus, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -10,15 +10,16 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { User } from '@/types';
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { User } from "@/types";
 
 interface Role {
   role_id: string;
@@ -63,10 +64,12 @@ export const UserDialog = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="w-5 h-5" />
-            {editingUser ? 'Editar Usuario' : 'Crear Nuevo Usuario'}
+            {editingUser ? "Editar Usuario" : "Crear Nuevo Usuario"}
           </DialogTitle>
           <DialogDescription>
-            {editingUser ? 'Modifica la información del usuario' : 'Completa el formulario para crear un nuevo usuario'}
+            {editingUser
+              ? "Modifica la información del usuario"
+              : "Completa el formulario para crear un nuevo usuario"}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-4">
@@ -76,7 +79,9 @@ export const UserDialog = ({
               <Input
                 id="first_name"
                 value={userForm.first_name}
-                onChange={(e) => onUserFormChange({ ...userForm, first_name: e.target.value })}
+                onChange={(e) =>
+                  onUserFormChange({ ...userForm, first_name: e.target.value })
+                }
                 placeholder="Juan"
               />
             </div>
@@ -86,7 +91,9 @@ export const UserDialog = ({
               <Input
                 id="last_name"
                 value={userForm.last_name}
-                onChange={(e) => onUserFormChange({ ...userForm, last_name: e.target.value })}
+                onChange={(e) =>
+                  onUserFormChange({ ...userForm, last_name: e.target.value })
+                }
                 placeholder="Pérez"
               />
             </div>
@@ -96,12 +103,16 @@ export const UserDialog = ({
               <Input
                 id="username"
                 value={userForm.username}
-                onChange={(e) => onUserFormChange({ ...userForm, username: e.target.value })}
+                onChange={(e) =>
+                  onUserFormChange({ ...userForm, username: e.target.value })
+                }
                 placeholder="juanperez"
                 disabled={!!editingUser}
               />
               {editingUser && (
-                <p className="text-xs text-muted-foreground">No se puede modificar</p>
+                <p className="text-xs text-muted-foreground">
+                  No se puede modificar
+                </p>
               )}
             </div>
 
@@ -111,18 +122,35 @@ export const UserDialog = ({
                 id="email"
                 type="email"
                 value={userForm.email}
-                onChange={(e) => onUserFormChange({ ...userForm, email: e.target.value })}
+                onChange={(e) =>
+                  onUserFormChange({ ...userForm, email: e.target.value })
+                }
                 placeholder="juan@example.com"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="birthdate">Fecha de Nacimiento</Label>
-              <Input
-                id="birthdate"
-                type="date"
-                value={userForm.birthdate}
-                onChange={(e) => onUserFormChange({ ...userForm, birthdate: e.target.value })}
+              <DatePicker
+                date={
+                  userForm.birthdate
+                    ? new Date(userForm.birthdate + "T12:00:00")
+                    : undefined
+                }
+                onDateChange={(date) => {
+                  if (date) {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, "0");
+                    const day = String(date.getDate()).padStart(2, "0");
+                    onUserFormChange({
+                      ...userForm,
+                      birthdate: `${year}-${month}-${day}`,
+                    });
+                  } else {
+                    onUserFormChange({ ...userForm, birthdate: "" });
+                  }
+                }}
+                placeholder="Selecciona fecha de nacimiento"
               />
             </div>
 
@@ -132,7 +160,9 @@ export const UserDialog = ({
                 id="phone"
                 type="tel"
                 value={userForm.phone}
-                onChange={(e) => onUserFormChange({ ...userForm, phone: e.target.value })}
+                onChange={(e) =>
+                  onUserFormChange({ ...userForm, phone: e.target.value })
+                }
                 placeholder="+57 300 123 4567"
               />
             </div>
@@ -140,14 +170,16 @@ export const UserDialog = ({
 
           <div className="space-y-4 pt-4 border-t">
             <div>
-              <Label className="text-base font-semibold">Roles del Usuario</Label>
+              <Label className="text-base font-semibold">
+                Roles del Usuario
+              </Label>
               <p className="text-xs text-muted-foreground mt-1">
-                {editingUser 
-                  ? 'Gestiona los permisos del usuario asignando roles' 
-                  : 'Selecciona los roles iniciales (se aplicarán después del registro)'}
+                {editingUser
+                  ? "Gestiona los permisos del usuario asignando roles"
+                  : "Selecciona los roles iniciales (se aplicarán después del registro)"}
               </p>
             </div>
-              
+
             <div className="grid grid-cols-2 gap-4">
               {/* Left column: Add role selector */}
               <div className="space-y-2">
@@ -183,13 +215,25 @@ export const UserDialog = ({
                 {selectedRoles.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
                     {selectedRoles.map((roleId) => {
-                      const role = availableRoles.find(r => r.role_id === roleId);
+                      const role = availableRoles.find(
+                        (r) => r.role_id === roleId,
+                      );
                       return (
-                        <Badge key={roleId} variant="secondary" className="gap-1">
-                          <span className="capitalize">{role?.role_name || roleId}</span>
+                        <Badge
+                          key={roleId}
+                          variant="secondary"
+                          className="gap-1"
+                        >
+                          <span className="capitalize">
+                            {role?.role_name || roleId}
+                          </span>
                           <button
                             type="button"
-                            onClick={() => onSelectedRolesChange(selectedRoles.filter(r => r !== roleId))}
+                            onClick={() =>
+                              onSelectedRolesChange(
+                                selectedRoles.filter((r) => r !== roleId),
+                              )
+                            }
                             className="ml-1 hover:text-destructive"
                           >
                             <X className="w-3 h-3" />
@@ -221,7 +265,7 @@ export const UserDialog = ({
           </Button>
           <Button onClick={onSave}>
             <CheckCircle2 className="w-4 h-4 mr-2" />
-            {editingUser ? 'Actualizar' : 'Crear'} Usuario
+            {editingUser ? "Actualizar" : "Crear"} Usuario
           </Button>
         </DialogFooter>
       </DialogContent>
