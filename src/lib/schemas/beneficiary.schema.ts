@@ -25,8 +25,8 @@ const birthDateSchema = z
       finalAge--;
     }
     
-    return finalAge <= 17;
-  }, "El beneficiario debe tener máximo 17 años")
+    return finalAge >= 6 && finalAge <= 17;
+  }, "El beneficiario debe tener entre 6 y 17 años")
   .refine((date) => {
     const birthDate = new Date(date);
     const today = new Date();

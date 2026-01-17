@@ -55,10 +55,15 @@ export const BeneficiaryForm = ({
   setForm,
   headquarters,
 }: BeneficiaryFormProps) => {
-  // Calcular fecha máxima para fecha de nacimiento (17 años atrás)
+  // Calcular rango de fechas para beneficiarios entre 6 y 17 años
   const today = new Date();
-  const maxDate = new Date(
+  const minDate = new Date(
     today.getFullYear() - 17,
+    today.getMonth(),
+    today.getDate(),
+  );
+  const maxDate = new Date(
+    today.getFullYear() - 6,
     today.getMonth(),
     today.getDate(),
   );
@@ -119,6 +124,7 @@ export const BeneficiaryForm = ({
                     setForm({ ...form, birth_date: "" });
                   }
                 }}
+                minDate={minDate}
                 maxDate={maxDate}
                 placeholder="Selecciona fecha de nacimiento"
               />

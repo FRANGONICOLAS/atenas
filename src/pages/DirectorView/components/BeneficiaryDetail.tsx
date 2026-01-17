@@ -108,7 +108,7 @@ export const BeneficiaryDetail = ({
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-sm">
-                <div className="p-3 bg-muted rounded-lg">
+                <div className="p-3 shadow-md bg-foreground/15 rounded-lg">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Activity className="w-4 h-4" /> Rendimiento Deportivo
                   </div>
@@ -126,7 +126,7 @@ export const BeneficiaryDetail = ({
                     </span>
                   </div>
                 </div>
-                <div className="p-3 bg-muted rounded-lg">
+                <div className="p-3 shadow-md bg-foreground/15 rounded-lg">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <Calendar className="w-4 h-4" /> Asistencia
                   </div>
