@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { beneficiaryService, headquarterService } from "@/api/services";
-import type { Project, Headquarter } from "@/types";
+import { beneficiaryService, headquarterService, projectService } from "@/api/services";
+import type { Project, Headquarter, ProjectDB } from "@/types";
+import type { CreateProjectData, UpdateProjectData } from "@/api/services/project.service";
 import type {
   Beneficiary,
   CreateBeneficiaryData,
@@ -18,54 +19,18 @@ import {
   updateBeneficiarySchema,
 } from "@/lib/schemas/beneficiary.schema";
 import {
+  createProjectSchema,
+  updateProjectSchema,
+} from "@/lib/schemas/project.schema";
+import {
   generateBeneficiariesExcel,
   generateBeneficiariesPDF,
 } from "@/lib/reportGenerator";
 
 export const useDirectorView = () => {
   // Projects state
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: 1,
-      name: "Torneo Interbarrial",
-      category: "Deportes",
-      type: "investment",
-      goal: 1500000,
-      raised: 1125000,
-      progress: 75,
-      priority: "high",
-      deadline: "15 Ene 2025",
-      description:
-        "Organización de torneo interbarrial para todas las categorías",
-      headquarters_id: 1,
-    },
-    {
-      id: 2,
-      name: "Programa Nutrición Infantil",
-      category: "Salud",
-      type: "investment",
-      goal: 3000000,
-      raised: 1500000,
-      progress: 50,
-      priority: "medium",
-      deadline: "30 Ene 2025",
-      description: "Programa de alimentación balanceada para 120 niños",
-      headquarters_id: 3,
-    },
-    {
-      id: 3,
-      name: "Mejora Instalaciones",
-      category: "Infraestructura",
-      type: "investment",
-      goal: 5000000,
-      raised: 1500000,
-      progress: 30,
-      priority: "low",
-      deadline: "28 Feb 2025",
-      description: "Remodelación de instalaciones deportivas en Sede Sur",
-      headquarters_id: 2,
-    },
-  ]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
   const [projectSearch, setProjectSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -85,6 +50,53 @@ export const useDirectorView = () => {
   const [headquartersLoading, setHeadquartersLoading] = useState(true);
   const [headquarterSearch, setHeadquarterSearch] = useState("");
   const [headquarterStatusFilter, setHeadquarterStatusFilter] = useState("all");
+
+  // Cargar proyectos desde Supabase
+  const loadProjects = async () => {
+    try {
+      setProjectsLoading(true);
+      const data = await projectService.getAll();
+      
+      // Convertir proyectos de BD a formato de la UI
+      const projectsWithRaised = await Promise.all(
+        data.map(async (p) => {
+          const raised = await projectService.getTotalRaised(p.project_id);
+          const goal = p.finance_goal || 0;
+          const progress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+          
+          // Obtener las sedes del proyecto
+          const headquarterIds = await projectService.getHeadquartersForProject(p.project_id);
+          const headquarterId = headquarterIds.length > 0 ? headquarterIds[0] : undefined;
+          
+          return {
+            id: parseInt(p.project_id.split('_')[1] || '0'),
+            project_id: p.project_id,
+            name: p.name,
+            category: p.category || "Sin categoría",
+            type: (p.type as "investment" | "free") || "investment",
+            goal: goal,
+            raised: raised,
+            progress: progress,
+            priority: "medium" as const,
+            deadline: p.end_date || "",
+            description: p.description || "",
+            status: p.status as "active" | "completed" | "pending",
+            start_date: p.start_date,
+            end_date: p.end_date,
+            finance_goal: p.finance_goal,
+            headquarters_id: headquarterId,
+          };
+        })
+      );
+      
+      setProjects(projectsWithRaised);
+    } catch (error) {
+      console.error("Error loading projects:", error);
+      toast.error("Error al cargar proyectos");
+    } finally {
+      setProjectsLoading(false);
+    }
+  };
 
   // Cargar beneficiarios desde Supabase
   const loadBeneficiaries = async () => {
@@ -116,6 +128,7 @@ export const useDirectorView = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
+    loadProjects();
     loadBeneficiaries();
     loadHeadquarters();
   }, []);
@@ -164,38 +177,77 @@ export const useDirectorView = () => {
   }, [beneficiaries, headquarters]);
 
   // Project handlers
-  const handleCreateProject = () => {
-    toast.info("Crear proyecto", {
-      description: "Funcionalidad en desarrollo",
-    });
+  const handleCreateProject = async (projectData: CreateProjectData, headquarterId?: string) => {
+    try {
+      await projectService.create(projectData, headquarterId);
+      await loadProjects();
+      toast.success("Proyecto creado", {
+        description: `${projectData.name} ha sido creado correctamente`,
+      });
+      return true;
+    } catch (error) {
+      console.error("Error creating project:", error);
+      toast.error("Error al crear proyecto");
+      return false;
+    }
   };
 
-  const handleEditProject = (project: Project) => {
-    toast.info("Editar proyecto", {
-      description: `Editando: ${project.name}`,
-    });
+  const handleEditProject = async (projectId: string, projectData: UpdateProjectData, headquarterId?: string) => {
+    try {
+      await projectService.update(projectId, projectData, headquarterId);
+      await loadProjects();
+      toast.success("Proyecto actualizado", {
+        description: `${projectData.name || "El proyecto"} ha sido actualizado correctamente`,
+      });
+      return true;
+    } catch (error) {
+      console.error("Error updating project:", error);
+      toast.error("Error al actualizar proyecto");
+      return false;
+    }
   };
 
-  const handleDeleteProject = (projectId: number) => {
-    setProjects((prev) => prev.filter((p) => p.id !== projectId));
-    toast.success("Proyecto eliminado");
+  const handleDeleteProject = async (projectId: string, projectName: string) => {
+    try {
+      await projectService.delete(projectId);
+      await loadProjects();
+      toast.success("Proyecto eliminado", {
+        description: `${projectName} ha sido eliminado`,
+      });
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      toast.error("Error al eliminar proyecto");
+      throw error;
+    }
   };
 
-  const handleSaveProject = (project: Partial<Project>) => {
-    if (project.id) {
-      setProjects((prev) =>
-        prev.map((p) =>
-          p.id === project.id ? ({ ...p, ...project } as Project) : p,
-        ),
-      );
-      toast.success("Proyecto actualizado");
-    } else {
-      const newProject = {
-        ...project,
-        id: Math.max(...projects.map((p) => p.id), 0) + 1,
-      } as Project;
-      setProjects((prev) => [...prev, newProject]);
-      toast.success("Proyecto creado");
+  const handleSaveProject = async (
+    projectData: CreateProjectData | UpdateProjectData,
+    isEditing: boolean,
+    editId?: string,
+    headquarterId?: string,
+  ) => {
+    try {
+      // Validar con el schema correspondiente
+      const schema = isEditing ? updateProjectSchema : createProjectSchema;
+      const result = schema.safeParse(projectData);
+
+      if (!result.success) {
+        const firstError = result.error.errors[0];
+        toast.error("Error de validación", {
+          description: firstError.message,
+        });
+        return false;
+      }
+
+      if (isEditing && editId) {
+        return await handleEditProject(editId, projectData as UpdateProjectData, headquarterId);
+      } else {
+        return await handleCreateProject(projectData as CreateProjectData, headquarterId);
+      }
+    } catch (error) {
+      console.error("Error saving project:", error);
+      return false;
     }
   };
 
@@ -358,6 +410,8 @@ export const useDirectorView = () => {
     // Projects
     projects,
     setProjects,
+    projectsLoading,
+    loadProjects,
     projectSearch,
     setProjectSearch,
     categoryFilter,

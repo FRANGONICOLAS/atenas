@@ -61,20 +61,14 @@ import type {
   ProjectReport 
 } from "@/types";
 
-const HEADQUARTERS = [
-  { id: 1, name: "Sede Norte" },
-  { id: 2, name: "Sede Centro" },
-  { id: 3, name: "Sede Sur" },
-];
-
-const getHqName = (id?: number) =>
-  HEADQUARTERS.find((h) => h.id === id)?.name || "Sin sede";
-
 const ProjectsPage = () => {
   const { user } = useAuth();
   const {
     projects,
-    setProjects,
+    projectsLoading,
+    handleSaveProject,
+    handleDeleteProject,
+    headquarters,
     projectSearch: search,
     setProjectSearch: setSearch,
     categoryFilter,
@@ -85,6 +79,16 @@ const ProjectsPage = () => {
     setTypeFilter,
     formatCurrency,
   } = useDirectorView();
+
+  // Función para obtener nombre de sede
+  const getHqName = (id?: number | string) => {
+    if (!id) return "Sin sede";
+    const hq = headquarters.find((h) => 
+      h.headquarters_id === String(id) || 
+      String(h.headquarters_id) === String(id)
+    );
+    return hq?.name || "Sin sede";
+  };
 
   const [showDialog, setShowDialog] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
@@ -101,7 +105,7 @@ const ProjectsPage = () => {
     priority: "medium" as ProjectPriority,
     deadline: "",
     description: "",
-    headquarters_id: undefined as number | undefined,
+    headquarters_id: undefined as number | string | undefined,
   });
 
   // Stats
@@ -192,12 +196,12 @@ const ProjectsPage = () => {
       priority: project.priority,
       deadline: project.deadline,
       description: project.description,
-      headquarters_id: project.headquarters_id,
+      headquarters_id: project.headquarters_id ? String(project.headquarters_id) : undefined,
     });
     setShowDialog(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name || !form.category || !form.deadline) {
       toast.error("Campos requeridos", {
         description:
@@ -206,51 +210,41 @@ const ProjectsPage = () => {
       return;
     }
 
-    if (editing) {
-      // Update
-      const progress =
-        form.goal > 0 ? Math.round((form.raised / form.goal) * 100) : 0;
-      setProjects(
-        projects.map((p) =>
-          p.id === editing.id
-            ? {
-                ...form,
-                id: p.id,
-                progress,
-              }
-            : p
-        )
-      );
-      toast.success("Proyecto actualizado", {
-        description: `${form.name} ha sido actualizado correctamente`,
-      });
-    } else {
-      // Create
-      const progress =
-        form.goal > 0 ? Math.round((form.raised / form.goal) * 100) : 0;
-      const newProject: Project = {
-        id: Math.max(...projects.map((p) => p.id), 0) + 1,
-        ...form,
-        progress,
-      };
-      setProjects([...projects, newProject]);
-      toast.success("Proyecto creado", {
-        description: `${form.name} ha sido creado correctamente`,
+    const projectData = {
+      name: form.name,
+      category: form.category,
+      type: form.type,
+      description: form.description,
+      finance_goal: form.goal,
+      start_date: form.deadline,
+      end_date: form.deadline,
+      status: "active" as const,
+    };
+
+    // Convertir headquarters_id a string si existe
+    const headquarterId = form.headquarters_id ? String(form.headquarters_id) : undefined;
+
+    const success = await handleSaveProject(
+      projectData,
+      !!editing,
+      editing?.project_id,
+      headquarterId,
+    );
+
+    if (success) {
+      setShowDialog(false);
+      setForm({
+        name: "",
+        category: "",
+        type: "investment",
+        goal: 0,
+        raised: 0,
+        priority: "medium",
+        deadline: "",
+        description: "",
+        headquarters_id: undefined,
       });
     }
-
-    setShowDialog(false);
-    setForm({
-      name: "",
-      category: "",
-      type: "investment",
-      goal: 0,
-      raised: 0,
-      priority: "medium",
-      deadline: "",
-      description: "",
-      headquarters_id: undefined,
-    });
   };
 
   const initiateDelete = (project: Project) => {
@@ -258,14 +252,17 @@ const ProjectsPage = () => {
     setShowDeleteConfirm(true);
   };
 
-  const handleDelete = () => {
-    if (deleteTarget) {
-      setProjects(projects.filter((p) => p.id !== deleteTarget.id));
-      toast.success("Proyecto eliminado", {
-        description: `${deleteTarget.name} ha sido eliminado`,
-      });
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+
+    try {
+      if (deleteTarget.project_id) {
+        await handleDeleteProject(deleteTarget.project_id, deleteTarget.name);
+      }
       setShowDeleteConfirm(false);
       setDeleteTarget(null);
+    } catch (error) {
+      // Error ya manejado en el hook
     }
   };
 
@@ -369,172 +366,175 @@ const ProjectsPage = () => {
         ))}
       </div>
 
-      {/* Filters */}
+      {/* Table */}
       <Card>
-        <CardContent className="pt-6">
-          <div className="grid gap-4 md:grid-cols-4">
-            <div className="space-y-2">
-              <Label>Buscar</Label>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="w-5 h-5" />
+            Proyectos
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2">
               <Input
                 placeholder="Buscar proyectos..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                className="w-[250px]"
               />
-            </div>
-            <div className="space-y-2">
-              <Label>Categoría</Label>
               <Select
-                value={categoryFilter}
-                onValueChange={setCategoryFilter}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="Deportes">Deportes</SelectItem>
-                  <SelectItem value="Salud">Salud</SelectItem>
-                  <SelectItem value="Infraestructura">
-                    Infraestructura
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Todas las categorías" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las categorías</SelectItem>
+                    <SelectItem value="Deportes">Deportes</SelectItem>
+                    <SelectItem value="Salud">Salud</SelectItem>
+                    <SelectItem value="Infraestructura">
+                      Infraestructura
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={priorityFilter}
+                  onValueChange={setPriorityFilter}
+                >
+                  <SelectTrigger className="w-[150px]">
+                    <SelectValue placeholder="Todas las prioridades" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas las prioridades</SelectItem>
+                    <SelectItem value="high">Alta</SelectItem>
+                    <SelectItem value="medium">Media</SelectItem>
+                    <SelectItem value="low">Baja</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Todos los tipos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos los tipos</SelectItem>
+                    <SelectItem value="investment">Inversión</SelectItem>
+                    <SelectItem value="free">Inversión Libre</SelectItem>
+                  </SelectContent>
+                </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Prioridad</Label>
-              <Select
-                value={priorityFilter}
-                onValueChange={setPriorityFilter}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="high">Alta</SelectItem>
-                  <SelectItem value="medium">Media</SelectItem>
-                  <SelectItem value="low">Baja</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="investment">Inversión</SelectItem>
-                  <SelectItem value="free">Inversión Libre</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* Table */}
-      <Card>
-        <CardContent className="pt-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Proyecto</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Sede</TableHead>
-                <TableHead>Meta</TableHead>
-                <TableHead>Recaudado</TableHead>
-                <TableHead>Progreso</TableHead>
-                <TableHead>Prioridad</TableHead>
-                <TableHead>Fecha límite</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProjects.length === 0 ? (
+            {/* Table */}
+            <Table>
+                <TableHeader>
                 <TableRow>
-                  <TableCell
-                    colSpan={10}
-                    className="text-center text-muted-foreground"
-                  >
-                    No hay proyectos registrados
-                  </TableCell>
+                  <TableHead>Proyecto</TableHead>
+                  <TableHead>Categoría</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Sede</TableHead>
+                  <TableHead>Meta</TableHead>
+                  <TableHead>Recaudado</TableHead>
+                  <TableHead>Progreso</TableHead>
+                  <TableHead>Prioridad</TableHead>
+                  <TableHead>Fecha límite</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
-              ) : (
-                filteredProjects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell className="font-medium">
-                      {project.name}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{project.category}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {project.type === "investment"
-                        ? "Inversión"
-                        : "Inversión Libre"}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Building className="h-3 w-3" />
-                        {getHqName(project.headquarters_id)}
-                      </div>
-                    </TableCell>
-                    <TableCell>{formatCurrency(project.goal)}</TableCell>
-                    <TableCell>
-                      {formatCurrency(project.raised)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Progress
-                          value={project.progress}
-                          className="w-20"
-                        />
-                        <span
-                          className={`text-xs font-medium ${getProgressColor(
-                            project.progress
-                          )}`}
-                        >
-                          {project.progress}%
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{getPriorityBadge(project.priority)}</TableCell>
-                    <TableCell className="text-sm">
-                      {project.deadline}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setDetailProject(project)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEdit(project)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => initiateDelete(project)}
-                        >
-                          <Trash2 className="h-4 w-4 text-red-600" />
-                        </Button>
-                      </div>
+              </TableHeader>
+              <TableBody>
+                {projectsLoading ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="text-center text-muted-foreground"
+                    >
+                      Cargando proyectos...
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ) : filteredProjects.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={10}
+                      className="text-center text-muted-foreground"
+                    >
+                      No hay proyectos registrados
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredProjects.map((project) => (
+                    <TableRow key={project.id}>
+                      <TableCell className="font-medium">
+                        {project.name}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{project.category}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {project.type === "investment"
+                          ? "Inversión"
+                          : "Inversión Libre"}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Building className="h-3 w-3" />
+                          {getHqName(project.headquarters_id)}
+                        </div>
+                      </TableCell>
+                      <TableCell>{formatCurrency(project.goal)}</TableCell>
+                      <TableCell>
+                        {formatCurrency(project.raised)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Progress
+                            value={project.progress}
+                            className="w-20"
+                          />
+                          <span
+                            className={`text-xs font-medium ${getProgressColor(
+                              project.progress
+                            )}`}
+                          >
+                            {project.progress}%
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getPriorityBadge(project.priority)}</TableCell>
+                      <TableCell className="text-sm">
+                        {project.deadline}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setDetailProject(project)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openEdit(project)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => initiateDelete(project)}
+                          >
+                            <Trash2 className="h-4 w-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
@@ -647,7 +647,7 @@ const ProjectsPage = () => {
                   setForm({
                     ...form,
                     headquarters_id:
-                      value === "none" ? undefined : parseInt(value),
+                      value === "none" ? undefined : value,
                   })
                 }
               >
@@ -656,8 +656,8 @@ const ProjectsPage = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">Sin sede asignada</SelectItem>
-                  {HEADQUARTERS.map((hq) => (
-                    <SelectItem key={hq.id} value={hq.id.toString()}>
+                  {headquarters.map((hq) => (
+                    <SelectItem key={hq.headquarters_id} value={hq.headquarters_id}>
                       {hq.name}
                     </SelectItem>
                   ))}
