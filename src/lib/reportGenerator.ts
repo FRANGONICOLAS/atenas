@@ -136,24 +136,30 @@ export const generateProjectsExcel = (projects: ProjectReport[], fileName = 'rep
 // Generar reporte de beneficiarios en Excel
 export const generateBeneficiariesExcel = (beneficiaries: BeneficiaryReport[], fileName = 'reporte_beneficiarios') => {
   const data = beneficiaries.map(b => ({
-    'ID': b.id,
-    'Nombre': b.name,
-    'Edad': b.age,
+    'ID': b.beneficiary_id,
+    'Nombre': `${b.first_name} ${b.last_name}`,
+    'Edad': b.age || 'N/A',
     'Categoría': b.category,
-    'Sede': b.location,
-    'Estado': b.status,
+    'Sede': b.headquarters_id,
+    'Teléfono': b.phone,
+    'Estado': b.status || 'activo',
+    'Rendimiento': b.performance ? `${b.performance}%` : 'N/A',
+    'Asistencia': b.attendance ? `${b.attendance}%` : 'N/A',
   }));
 
   const ws = XLSX.utils.json_to_sheet(data);
   const wb = XLSX.utils.book_new();
   
   ws['!cols'] = [
-    { wch: 8 },  // ID
-    { wch: 30 }, // Nombre
+    { wch: 30 }, // ID
+    { wch: 25 }, // Nombre
     { wch: 8 },  // Edad
     { wch: 15 }, // Categoría
-    { wch: 20 }, // Sede
+    { wch: 30 }, // Sede
+    { wch: 15 }, // Teléfono
     { wch: 12 }, // Estado
+    { wch: 12 }, // Rendimiento
+    { wch: 12 }, // Asistencia
   ];
   
   XLSX.utils.book_append_sheet(wb, ws, 'Beneficiarios');
@@ -288,14 +294,13 @@ export const generateBeneficiariesPDF = (beneficiaries: BeneficiaryReport[], fil
   doc.text(`Generado: ${formatDate(new Date().toISOString())}`, 14, 30);
   
   autoTable(doc, {
-    head: [['ID', 'Nombre', 'Edad', 'Categoría', 'Sede', 'Estado']],
+    head: [['Nombre', 'Edad', 'Categoría', 'Estado', 'Rendimiento']],
     body: beneficiaries.map(b => [
-      b.id,
-      b.name,
-      b.age,
+      `${b.first_name} ${b.last_name}`,
+      b.age || 'N/A',
       b.category,
-      b.location,
-      b.status,
+      b.status || 'activo',
+      b.performance ? `${b.performance}%` : 'N/A',
     ]),
     startY: 35,
     styles: { fontSize: 8, cellPadding: 2 },
