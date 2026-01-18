@@ -6,12 +6,12 @@ export { default as AuthCallback } from './Auth/AuthCallback';
 export { default as CompleteProfile } from './Auth/CompleteProfile';
 
 // Public Pages
-export { default as HomePage } from './Public/HomePage';
-export { default as AboutPage } from './Public/AboutPage';
-export { default as WhatWeDo } from './Public/WhatWeDo';
-export { default as ProjectsPage } from './Public/ProjectsPage';
-export { default as GalleryPage } from './Public/GalleryPage';
-export { default as LocationsPage } from './Public/LocationsPage';
+export { default as HomePage } from './Public/pages/HomePage';
+export { default as AboutPage } from './Public/pages/AboutPage';
+export { default as WhatWeDo } from './Public/pages/WhatWeDo';
+export { default as ProjectsPage } from './Public/pages/ProjectsPage';
+export { default as GalleryPage } from './Public/pages/GalleryPage';
+export { default as LocationsPage } from './Public/pages/LocationsPage';
 
 // Beneficiary Pages
 export { default as CategoriesPage } from './Beneficiaries/CategoriesPage';
