@@ -1,4 +1,5 @@
 import { client } from "@/api/supabase/client";
+import { storageService } from "./storage.service";
 import type {
   Headquarter,
   CreateHeadquarterData,
@@ -63,6 +64,7 @@ export const headquarterService = {
         address: headquarterData.address || null,
         city: headquarterData.city || null,
         status: headquarterData.status || "active",
+        image_url: headquarterData.image_url || null,
         user_id: headquarterData.user_id,
       }])
       .select()
@@ -153,5 +155,22 @@ export const headquarterService = {
     
     if (error) throw error;
     return data || [];
+  },
+
+  // Sube una imagen de sede y retorna la URL
+  async uploadImage(headquarterId: string, file: File): Promise<string> {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${headquarterId}-${Date.now()}.${fileExt}`;
+    const filePath = `headquarters/${fileName}`;
+
+    // Subir archivo
+    await storageService.uploadFile('images', filePath, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
+
+    // Obtener URL pública
+    const publicUrl = storageService.getPublicUrl('images', filePath);
+    return publicUrl;
   },
 };

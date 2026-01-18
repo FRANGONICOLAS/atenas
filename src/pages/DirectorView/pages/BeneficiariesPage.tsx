@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useDirectorView } from "@/hooks/useDirectorView";
+import { useBeneficiaries } from "@/hooks/useBeneficiaries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,28 +19,29 @@ import { BeneficiaryStatsCard } from "../components/BeneficiaryStatsCard";
 import { BeneficiaryTable } from "../components/BeneficiaryTable";
 import { BeneficiaryForm } from "../components/BeneficiaryForm";
 import { BeneficiaryDetail } from "../components/BeneficiaryDetail";
+import { calculateAge, getStatusBadge, getPerformanceColor } from "@/lib/beneficiaryUtils";
 
 const BeneficiariesPage = () => {
   const {
-    beneficiarySearch: search,
-    setBeneficiarySearch: setSearch,
+    filtered,
+    loading,
+    search,
+    setSearch,
     headquarterFilter,
     setHeadquarterFilter,
-    categoryBeneficiaryFilter: categoryFilter,
-    setCategoryBeneficiaryFilter: setCategoryFilter,
+    categoryFilter,
+    setCategoryFilter,
     statusFilter: statusTab,
     setStatusFilter: setStatusTab,
     headquarters,
-    calculateAge,
-    getStatusBadge,
-    getPerformanceColor,
-    filteredBeneficiaries,
-    sedeStats,
-    handleSaveBeneficiary,
-    handleDeleteBeneficiary,
-    handleExportBeneficiariesExcel,
-    handleExportBeneficiariesPDF,
-  } = useDirectorView();
+    stats,
+    statsByHeadquarter: sedeStats,
+    handleSave,
+    handleDelete,
+    handleExportExcel,
+    handleExportPDF,
+    setPhotoFile,
+  } = useBeneficiaries();
 
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Beneficiary | null>(null);
@@ -63,6 +64,7 @@ const BeneficiariesPage = () => {
     address: "",
     emergency_contact: "",
     medical_info: "",
+    photo_url: null as string | null,
   });
 
   const openCreate = () => {
@@ -82,6 +84,7 @@ const BeneficiariesPage = () => {
       address: "",
       emergency_contact: "",
       medical_info: "",
+      photo_url: null,
     });
     setShowForm(true);
   };
@@ -108,12 +111,13 @@ const BeneficiariesPage = () => {
       address: beneficiary.address || "",
       emergency_contact: beneficiary.emergency_contact || "",
       medical_info: beneficiary.medical_info || "",
+      photo_url: beneficiary.photo_url || null,
     });
     setShowForm(true);
   };
 
-  const handleSave = async () => {
-    const success = await handleSaveBeneficiary(
+  const handleSaveForm = async () => {
+    const success = await handleSave(
       form,
       !!editing,
       editing?.beneficiary_id,
@@ -123,11 +127,11 @@ const BeneficiariesPage = () => {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDeleteConfirmed = async () => {
     if (!deleteTarget) return;
 
     try {
-      await handleDeleteBeneficiary(
+      await handleDelete(
         deleteTarget.beneficiary_id,
         `${deleteTarget.first_name} ${deleteTarget.last_name}`,
       );
@@ -138,12 +142,12 @@ const BeneficiariesPage = () => {
     }
   };
 
-  const handleExportExcel = () => {
-    handleExportBeneficiariesExcel(filteredBeneficiaries);
+  const handleExportExcelClick = () => {
+    handleExportExcel(filtered);
   };
 
-  const handleExportPDF = () => {
-    handleExportBeneficiariesPDF(filteredBeneficiaries);
+  const handleExportPDFClick = () => {
+    handleExportPDF(filtered);
   };
 
   return (
@@ -159,11 +163,11 @@ const BeneficiariesPage = () => {
             <Plus className="w-4 h-4 mr-2" />
             Agregar
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportExcel}>
+          <Button variant="outline" size="sm" onClick={handleExportExcelClick}>
             <Download className="w-4 h-4 mr-2" />
             Excel
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPDF}>
+          <Button variant="outline" size="sm" onClick={handleExportPDFClick}>
             <Download className="w-4 h-4 mr-2" />
             PDF
           </Button>
@@ -252,7 +256,7 @@ const BeneficiariesPage = () => {
               </TabsList>
               <TabsContent value={statusTab} className="mt-4">
                 <BeneficiaryTable
-                  beneficiaries={filteredBeneficiaries}
+                  beneficiaries={filtered}
                   headquarters={headquarters}
                   onView={setDetail}
                   onEdit={openEdit}
@@ -274,11 +278,12 @@ const BeneficiariesPage = () => {
       <BeneficiaryForm
         open={showForm}
         onClose={() => setShowForm(false)}
-        onSave={handleSave}
+        onSave={handleSaveForm}
         isEditing={!!editing}
         form={form}
         setForm={setForm}
         headquarters={headquarters}
+        setPhotoFile={setPhotoFile}
       />
 
       {/* Detail Dialog */}
@@ -294,7 +299,7 @@ const BeneficiariesPage = () => {
       {/* Delete Confirmation */}
       <DeleteConfirmation
         open={showDelete}
-        onConfirm={handleDelete}
+        onConfirm={handleDeleteConfirmed}
         onCancel={() => {
           setShowDelete(false);
           setDeleteTarget(null);

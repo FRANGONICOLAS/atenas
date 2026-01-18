@@ -1,31 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { beneficiaryService, headquarterService, projectService } from "@/api/services";
-import type { Project, Headquarter, ProjectDB } from "@/types";
+import { headquarterService, projectService } from "@/api/services";
+import type { Project, Headquarter } from "@/types";
 import type { CreateProjectData, UpdateProjectData } from "@/api/services/project.service";
-import type {
-  Beneficiary,
-  CreateBeneficiaryData,
-  UpdateBeneficiaryData,
-} from "@/types/beneficiary.types";
-import {
-  calculateAge,
-  getStatusBadge,
-  getPerformanceColor,
-  mapToReport as mapBeneficiaryToReport,
-} from "@/lib/beneficiaryUtils";
-import {
-  createBeneficiarySchema,
-  updateBeneficiarySchema,
-} from "@/lib/schemas/beneficiary.schema";
 import {
   createProjectSchema,
   updateProjectSchema,
 } from "@/lib/schemas/project.schema";
-import {
-  generateBeneficiariesExcel,
-  generateBeneficiariesPDF,
-} from "@/lib/reportGenerator";
 
 export const useDirectorView = () => {
   // Projects state
@@ -36,20 +17,9 @@ export const useDirectorView = () => {
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
 
-  // Beneficiaries state
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
-  const [beneficiariesLoading, setBeneficiariesLoading] = useState(true);
-  const [beneficiarySearch, setBeneficiarySearch] = useState("");
-  const [headquarterFilter, setHeadquarterFilter] = useState("all");
-  const [categoryBeneficiaryFilter, setCategoryBeneficiaryFilter] =
-    useState("all");
-  const [statusFilter, setStatusFilter] = useState("all");
-
-  // Headquarters state
+  // Headquarters state (solo para listado)
   const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
   const [headquartersLoading, setHeadquartersLoading] = useState(true);
-  const [headquarterSearch, setHeadquarterSearch] = useState("");
-  const [headquarterStatusFilter, setHeadquarterStatusFilter] = useState("all");
 
   // Cargar proyectos desde Supabase
   const loadProjects = async () => {
@@ -98,20 +68,6 @@ export const useDirectorView = () => {
     }
   };
 
-  // Cargar beneficiarios desde Supabase
-  const loadBeneficiaries = async () => {
-    try {
-      setBeneficiariesLoading(true);
-      const data = await beneficiaryService.getAll();
-      setBeneficiaries(data);
-    } catch (error) {
-      console.error("Error loading beneficiaries:", error);
-      toast.error("Error al cargar beneficiarios");
-    } finally {
-      setBeneficiariesLoading(false);
-    }
-  };
-
   // Cargar sedes desde Supabase
   const loadHeadquarters = async () => {
     try {
@@ -129,52 +85,8 @@ export const useDirectorView = () => {
   // Cargar datos iniciales
   useEffect(() => {
     loadProjects();
-    loadBeneficiaries();
     loadHeadquarters();
   }, []);
-
-  // Filtrado de beneficiarios
-  const filteredBeneficiaries = useMemo(() => {
-    return beneficiaries.filter((b) => {
-      const matchesSearch =
-        b.first_name.toLowerCase().includes(beneficiarySearch.toLowerCase()) ||
-        b.last_name.toLowerCase().includes(beneficiarySearch.toLowerCase()) ||
-        (b.guardian &&
-          b.guardian.toLowerCase().includes(beneficiarySearch.toLowerCase()));
-      const matchesHeadquarter =
-        headquarterFilter === "all" || b.headquarters_id === headquarterFilter;
-      const matchesCategory =
-        categoryBeneficiaryFilter === "all" ||
-        b.category === categoryBeneficiaryFilter;
-      const matchesStatus = statusFilter === "all" || b.status === statusFilter;
-      return (
-        matchesSearch && matchesHeadquarter && matchesCategory && matchesStatus
-      );
-    });
-  }, [
-    beneficiaries,
-    beneficiarySearch,
-    headquarterFilter,
-    categoryBeneficiaryFilter,
-    statusFilter,
-  ]);
-
-  // Estadísticas por sede
-  const sedeStats = useMemo(() => {
-    return headquarters.map((hq) => {
-      const list = beneficiaries.filter(
-        (b) => b.headquarters_id === hq.headquarters_id,
-      );
-      const active = list.filter((b) => b.status === "activo").length;
-      const avgPerf = list.length
-        ? Math.round(
-            list.reduce((sum, b) => sum + (b.performance || 0), 0) /
-              list.length,
-          )
-        : 0;
-      return { name: hq.name, total: list.length, active, avgPerf };
-    });
-  }, [beneficiaries, headquarters]);
 
   // Project handlers
   const handleCreateProject = async (projectData: CreateProjectData, headquarterId?: string) => {
@@ -251,143 +163,6 @@ export const useDirectorView = () => {
     }
   };
 
-  // Beneficiary handlers
-  const handleCreateBeneficiary = () => {
-    toast.info("Crear beneficiario", {
-      description: "Abre el formulario desde el componente",
-    });
-  };
-
-  const handleEditBeneficiary = (beneficiary: Beneficiary) => {
-    toast.info("Editar beneficiario", {
-      description: `Editando: ${beneficiary.first_name} ${beneficiary.last_name}`,
-    });
-  };
-
-  const handleDeleteBeneficiary = async (
-    beneficiaryId: string,
-    beneficiaryName: string,
-  ) => {
-    try {
-      await beneficiaryService.delete(beneficiaryId);
-      await loadBeneficiaries();
-      toast.success("Beneficiario eliminado", {
-        description: `${beneficiaryName} ha sido eliminado`,
-      });
-    } catch (error) {
-      console.error("Error deleting beneficiary:", error);
-      toast.error("Error al eliminar", {
-        description: "No se pudo eliminar el beneficiario",
-      });
-      throw error;
-    }
-  };
-
-  const handleSaveBeneficiary = async (
-    beneficiaryData: CreateBeneficiaryData | UpdateBeneficiaryData,
-    isEditing: boolean,
-    editId?: string,
-  ) => {
-    try {
-      // Validar con el schema correspondiente
-      const schema = isEditing
-        ? updateBeneficiarySchema
-        : createBeneficiarySchema;
-      const result = schema.safeParse(beneficiaryData);
-
-      if (!result.success) {
-        const firstError = result.error.errors[0];
-        toast.error("Error de validación", {
-          description: firstError.message,
-        });
-        return false;
-      }
-
-      if (isEditing && editId) {
-        await beneficiaryService.update(
-          editId,
-          beneficiaryData as UpdateBeneficiaryData,
-        );
-        const data = beneficiaryData as UpdateBeneficiaryData;
-        toast.success("Beneficiario actualizado", {
-          description: `${data.first_name || ""} ${data.last_name || ""} ha sido actualizado correctamente`,
-        });
-      } else {
-        await beneficiaryService.create(
-          beneficiaryData as CreateBeneficiaryData,
-        );
-        const data = beneficiaryData as CreateBeneficiaryData;
-        toast.success("Beneficiario creado", {
-          description: `${data.first_name} ${data.last_name} ha sido agregado correctamente`,
-        });
-      }
-      await loadBeneficiaries();
-      return true;
-    } catch (error) {
-      console.error("Error saving beneficiary:", error);
-      toast.error("Error al guardar", {
-        description: "No se pudo guardar el beneficiario",
-      });
-      return false;
-    }
-  };
-
-  const handleExportBeneficiariesExcel = (beneficiaries: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiaries);
-    generateBeneficiariesExcel(data, "beneficiarios");
-    toast.success("Reporte Excel generado", {
-      description: `Se exportaron ${data.length} beneficiarios`,
-    });
-  };
-
-  const handleExportBeneficiariesPDF = (beneficiaries: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiaries);
-    generateBeneficiariesPDF(data, "beneficiarios");
-    toast.success("Reporte PDF generado", {
-      description: `Se exportaron ${data.length} beneficiarios`,
-    });
-  };
-
-  // Headquarter handlers
-  const handleCreateHeadquarter = () => {
-    toast.info("Crear sede", {
-      description: "Funcionalidad en desarrollo",
-    });
-  };
-
-  const handleEditHeadquarter = (headquarter: Headquarter) => {
-    toast.info("Editar sede", {
-      description: `Editando: ${headquarter.name}`,
-    });
-  };
-
-  const handleDeleteHeadquarter = (headquarterId: string) => {
-    setHeadquarters((prev) =>
-      prev.filter((h) => h.headquarters_id !== headquarterId),
-    );
-    toast.success("Sede eliminada");
-  };
-
-  const handleSaveHeadquarter = (headquarter: Partial<Headquarter>) => {
-    if (headquarter.headquarters_id) {
-      setHeadquarters((prev) =>
-        prev.map((h) =>
-          h.headquarters_id === headquarter.headquarters_id
-            ? ({ ...h, ...headquarter } as Headquarter)
-            : h,
-        ),
-      );
-      toast.success("Sede actualizada");
-    } else {
-      const newHeadquarter = {
-        ...headquarter,
-        headquarters_id: `hq_${Date.now()}`,
-      } as Headquarter;
-      setHeadquarters((prev) => [...prev, newHeadquarter]);
-      toast.success("Sede creada");
-    }
-  };
-
   // Utilities
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("es-CO", {
@@ -425,46 +200,10 @@ export const useDirectorView = () => {
     handleDeleteProject,
     handleSaveProject,
 
-    // Beneficiaries
-    beneficiaries,
-    setBeneficiaries,
-    beneficiariesLoading,
-    beneficiarySearch,
-    setBeneficiarySearch,
-    headquarterFilter,
-    setHeadquarterFilter,
-    categoryBeneficiaryFilter,
-    setCategoryBeneficiaryFilter,
-    statusFilter,
-    setStatusFilter,
-    loadBeneficiaries,
-    handleCreateBeneficiary,
-    handleEditBeneficiary,
-    handleDeleteBeneficiary,
-    handleSaveBeneficiary,
-    handleExportBeneficiariesExcel,
-    handleExportBeneficiariesPDF,
-    // Beneficiary utilities
-    calculateAge,
-    getStatusBadge,
-    getPerformanceColor,
-    filteredBeneficiaries,
-    sedeStats,
-    mapToReport: mapBeneficiaryToReport,
-
-    // Headquarters
+    // Headquarters (solo para listado en dropdowns)
     headquarters,
-    setHeadquarters,
     headquartersLoading,
     loadHeadquarters,
-    headquarterSearch,
-    setHeadquarterSearch,
-    headquarterStatusFilter,
-    setHeadquarterStatusFilter,
-    handleCreateHeadquarter,
-    handleEditHeadquarter,
-    handleDeleteHeadquarter,
-    handleSaveHeadquarter,
 
     // Utilities
     formatCurrency,

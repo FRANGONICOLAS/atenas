@@ -31,6 +31,7 @@ export interface Beneficiary {
   address?: string; // Dirección
   emergency_contact?: string; // Contacto de emergencia
   medical_info?: string; // Información médica
+  photo_url?: string | null; // Foto de perfil
   created_at?: string;
   updated_at?: string;
 }
@@ -48,6 +49,7 @@ export interface CreateBeneficiaryData {
   performance?: number;
   attendance?: number;
   guardian?: string;
+  photo_url?: string | null;
   address?: string;
   emergency_contact?: string;
   medical_info?: string;
@@ -66,6 +68,7 @@ export interface UpdateBeneficiaryData {
   performance?: number;
   attendance?: number;
   guardian?: string;
+  photo_url?: string | null;
   address?: string;
   emergency_contact?: string;
   medical_info?: string;

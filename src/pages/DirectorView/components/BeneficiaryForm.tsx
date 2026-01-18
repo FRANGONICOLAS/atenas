@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ImageUpload } from "@/components/common/ImageUpload";
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ type BeneficiaryFormData = Required<CreateBeneficiaryData> & {
   address: string;
   emergency_contact: string;
   medical_info: string;
+  photo_url?: string | null;
 };
 
 interface BeneficiaryFormProps {
@@ -44,6 +46,7 @@ interface BeneficiaryFormProps {
   form: BeneficiaryFormData;
   setForm: React.Dispatch<React.SetStateAction<BeneficiaryFormData>>;
   headquarters: Headquarter[];
+  setPhotoFile: (file: File | null) => void;
 }
 
 export const BeneficiaryForm = ({
@@ -54,6 +57,7 @@ export const BeneficiaryForm = ({
   form,
   setForm,
   headquarters,
+  setPhotoFile,
 }: BeneficiaryFormProps) => {
   // Calcular rango de fechas para beneficiarios entre 6 y 17 años
   const today = new Date();
@@ -83,6 +87,22 @@ export const BeneficiaryForm = ({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
+          {/* Foto de perfil */}
+          <div className="flex justify-center mb-4">
+            <div className="w-full max-w-md">
+              <ImageUpload
+                value={form.photo_url}
+                onChange={(file, previewUrl) => {
+                  setPhotoFile(file);
+                  setForm({ ...form, photo_url: previewUrl });
+                }}
+                label="Foto de perfil"
+                description="Foto del beneficiario (máximo 5MB)"
+                aspectRatio="square"
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="first_name">Nombre *</Label>

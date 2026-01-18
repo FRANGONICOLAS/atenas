@@ -1,4 +1,5 @@
 import { client } from "@/api/supabase/client";
+import { storageService } from "./storage.service";
 import type {
   Beneficiary,
   CreateBeneficiaryData,
@@ -210,5 +211,22 @@ export const beneficiaryService = {
 
     if (error) throw error;
     return count || 0;
+  },
+
+  // Sube una foto de perfil de beneficiario y retorna la URL
+  async uploadPhoto(beneficiaryId: string, file: File): Promise<string> {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${beneficiaryId}-${Date.now()}.${fileExt}`;
+    const filePath = `beneficiaries/${fileName}`;
+
+    // Subir archivo
+    await storageService.uploadFile('images', filePath, file, {
+      cacheControl: '3600',
+      upsert: true
+    });
+
+    // Obtener URL pública
+    const publicUrl = storageService.getPublicUrl('images', filePath);
+    return publicUrl;
   },
 };

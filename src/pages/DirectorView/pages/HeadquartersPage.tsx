@@ -3,6 +3,7 @@ import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ImageUpload } from "@/components/common/ImageUpload";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ const HeadquartersPage = () => {
     setShowDialog,
     setForm,
     setDeleteTarget,
+    setImageFile,
     openCreate,
     openEdit,
     handleSave,
@@ -181,6 +183,18 @@ const HeadquartersPage = () => {
                   Se recomienda incluir ciudad, departamento y país para mayor
                   precisión.
                 </p>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <ImageUpload
+                  value={form.image_url}
+                  onChange={(file, previewUrl) => {
+                    setImageFile(file);
+                    setForm({ ...form, image_url: previewUrl });
+                  }}
+                  label="Imagen de la sede"
+                  description="Imagen representativa de la sede (máximo 5MB)"
+                  aspectRatio="video"
+                />
               </div>
             </div>
           </div>

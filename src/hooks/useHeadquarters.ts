@@ -10,6 +10,7 @@ const defaultForm = {
   status: "active",
   address: "",
   city: "",
+  image_url: null as string | null,
 };
 
 const createCustomMarkerIcon = () => {
@@ -35,6 +36,7 @@ export const useHeadquarters = () => {
   const [editing, setEditing] = useState<Headquarter | null>(null);
   const [form, setForm] = useState(defaultForm);
   const [deleteTarget, setDeleteTarget] = useState<Headquarter | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerGroupRef = useRef<L.FeatureGroup | null>(null);
@@ -205,6 +207,7 @@ export const useHeadquarters = () => {
   const openCreate = () => {
     setEditing(null);
     setForm(defaultForm);
+    setImageFile(null);
     setShowDialog(true);
   };
 
@@ -215,7 +218,9 @@ export const useHeadquarters = () => {
       status: hq.status,
       address: hq.address || "",
       city: hq.city || "",
+      image_url: hq.image_url || null,
     });
+    setImageFile(null);
     setShowDialog(true);
   };
 
@@ -269,17 +274,38 @@ export const useHeadquarters = () => {
 
     try {
       console.log("Saving headquarter with data:", form);
+      
+      let imageUrl = form.image_url;
 
       if (editing) {
-        await headquarterService.update(editing.headquarters_id, form);
+        // Si hay un nuevo archivo de imagen, subirlo
+        if (imageFile) {
+          imageUrl = await headquarterService.uploadImage(editing.headquarters_id, imageFile);
+        }
+        
+        await headquarterService.update(editing.headquarters_id, {
+          ...form,
+          image_url: imageUrl,
+        });
         toast.success("Sede actualizada", {
           description: `${form.name} guardada correctamente`,
         });
       } else {
-        await headquarterService.create({
+        // Crear la sede primero
+        const newHeadquarter = await headquarterService.create({
           ...form,
           user_id: user.id,
+          image_url: null, // Temporalmente null
         });
+        
+        // Si hay imagen, subirla y actualizar
+        if (imageFile) {
+          imageUrl = await headquarterService.uploadImage(newHeadquarter.headquarters_id, imageFile);
+          await headquarterService.update(newHeadquarter.headquarters_id, {
+            image_url: imageUrl,
+          });
+        }
+        
         toast.success("Sede creada", {
           description: `${form.name} agregada correctamente`,
         });
@@ -287,6 +313,7 @@ export const useHeadquarters = () => {
 
       setShowDialog(false);
       setEditing(null);
+      setImageFile(null);
       loadHeadquarters();
     } catch (error) {
       console.error("Error saving headquarter:", error);
@@ -340,6 +367,7 @@ export const useHeadquarters = () => {
     setShowDialog,
     setForm,
     setDeleteTarget,
+    setImageFile,
     
     // Actions
     openCreate,
