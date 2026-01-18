@@ -1,65 +1,22 @@
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { useProjects } from "@/hooks/useProjects";
 import { useDirectorView } from "@/hooks/useDirectorView";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
 import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
+import { ProjectStats } from "../components/Projects/ProjectStats";
+import { ProjectFilters } from "../components/Projects/ProjectFilters";
+import { ProjectsTable } from "../components/Projects/ProjectsTable";
+import { ProjectDialog } from "../components/Projects/ProjectDialog";
+import { ProjectDetailDialog } from "../components/Projects/ProjectDetailDialog";
 import { toast } from "sonner";
-import {
-  Target,
-  Plus,
-  Edit,
-  Trash2,
-  Download,
-  X,
-  CheckCircle2,
-  TrendingUp,
-  Building,
-  Eye,
-} from "lucide-react";
+import { Target, Plus, Download } from "lucide-react";
 import {
   generateProjectsExcel,
   generateProjectsPDF,
 } from "@/lib/reportGenerator";
-import type { 
-  Project, 
-  ProjectType, 
-  ProjectPriority,
-  ProjectReport 
-} from "@/types";
+import type { Project, ProjectReport } from "@/types";
 
 const ProjectsPage = () => {
   const { user } = useAuth();
@@ -68,7 +25,6 @@ const ProjectsPage = () => {
     projectsLoading,
     handleSaveProject,
     handleDeleteProject,
-    headquarters,
     projectSearch: search,
     setProjectSearch: setSearch,
     categoryFilter,
@@ -78,14 +34,17 @@ const ProjectsPage = () => {
     typeFilter,
     setTypeFilter,
     formatCurrency,
-  } = useDirectorView();
+  } = useProjects();
+
+  const { headquarters } = useDirectorView();
 
   // Función para obtener nombre de sede
   const getHqName = (id?: number | string) => {
     if (!id) return "Sin sede";
-    const hq = headquarters.find((h) => 
-      h.headquarters_id === String(id) || 
-      String(h.headquarters_id) === String(id)
+    const hq = headquarters.find(
+      (h) =>
+        h.headquarters_id === String(id) ||
+        String(h.headquarters_id) === String(id)
     );
     return hq?.name || "Sin sede";
   };
@@ -95,57 +54,6 @@ const ProjectsPage = () => {
   const [deleteTarget, setDeleteTarget] = useState<Project | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [detailProject, setDetailProject] = useState<Project | null>(null);
-
-  const [form, setForm] = useState({
-    name: "",
-    category: "" as string,
-    type: "investment" as ProjectType,
-    goal: 0,
-    raised: 0,
-    priority: "medium" as ProjectPriority,
-    deadline: "",
-    description: "",
-    headquarters_id: undefined as number | string | undefined,
-  });
-
-  // Stats
-  const stats = useMemo(() => {
-    const total = projects.length;
-    const totalGoal = projects.reduce((sum, p) => sum + p.goal, 0);
-    const totalRaised = projects.reduce((sum, p) => sum + p.raised, 0);
-    const totalRaisedFree = projects
-      .filter((p) => p.type === "free")
-      .reduce((sum, p) => sum + p.raised, 0);
-    const completedCount = projects.filter((p) => p.progress >= 100).length;
-
-    return [
-      {
-        title: "Proyectos Totales",
-        value: total.toString(),
-        color: "bg-blue-500",
-      },
-      {
-        title: "En Curso",
-        value: (total - completedCount).toString(),
-        color: "bg-purple-500",
-      },
-      {
-        title: "Meta Total",
-        value: `$${(totalGoal / 1000000).toFixed(1)}M`,
-        color: "bg-green-500",
-      },
-      {
-        title: "Recaudado proyectos definidos",
-        value: `$${(totalRaised / 1000000).toFixed(1)}M`,
-        color: "bg-yellow-500",
-      },
-      {
-        title: "Recaudado Inversión Libre",
-        value: `$${(totalRaisedFree / 1000000).toFixed(1)}M`,
-        color: "bg-teal-500",
-      },
-    ];
-  }, [projects]);
 
   // Filtered projects
   const filteredProjects = useMemo(() => {
@@ -171,79 +79,57 @@ const ProjectsPage = () => {
   // Handlers
   const openCreate = () => {
     setEditing(null);
-    setForm({
-      name: "",
-      category: "",
-      type: "investment",
-      goal: 0,
-      raised: 0,
-      priority: "medium",
-      deadline: "",
-      description: "",
-      headquarters_id: undefined,
-    });
     setShowDialog(true);
   };
 
   const openEdit = (project: Project) => {
     setEditing(project);
-    setForm({
-      name: project.name,
-      category: project.category,
-      type: project.type,
-      goal: project.goal,
-      raised: project.raised,
-      priority: project.priority,
-      deadline: project.deadline,
-      description: project.description,
-      headquarters_id: project.headquarters_id ? String(project.headquarters_id) : undefined,
-    });
     setShowDialog(true);
   };
 
-  const handleSave = async () => {
-    if (!form.name || !form.category || !form.deadline) {
+  const handleSave = async (data: {
+    name: string;
+    category: string;
+    type: "investment" | "free";
+    goal: number;
+    priority: "high" | "medium" | "low";
+    deadline: string;
+    description: string;
+    headquarters_id?: string | number;
+  }) => {
+    if (!data.name || !data.category || !data.deadline) {
       toast.error("Campos requeridos", {
-        description:
-          "Por favor completa nombre, categoría y fecha límite",
+        description: "Por favor completa nombre, categoría y fecha límite",
       });
       return;
     }
 
     const projectData = {
-      name: form.name,
-      category: form.category,
-      type: form.type,
-      description: form.description,
-      finance_goal: form.goal,
-      start_date: form.deadline,
-      end_date: form.deadline,
+      name: data.name,
+      category: data.category,
+      type: data.type,
+      description: data.description,
+      finance_goal: data.goal,
+      start_date: data.deadline,
+      end_date: data.deadline,
       status: "active" as const,
     };
 
     // Convertir headquarters_id a string si existe
-    const headquarterId = form.headquarters_id ? String(form.headquarters_id) : undefined;
+    const headquarterId = data.headquarters_id
+      ? String(data.headquarters_id)
+      : undefined;
 
     const success = await handleSaveProject(
       projectData,
       !!editing,
       editing?.project_id,
-      headquarterId,
+      headquarterId
     );
 
     if (success) {
       setShowDialog(false);
-      setForm({
-        name: "",
-        category: "",
-        type: "investment",
-        goal: 0,
-        raised: 0,
-        priority: "medium",
-        deadline: "",
-        description: "",
-        headquarters_id: undefined,
-      });
+      setEditing(null);
     }
   };
 
@@ -264,36 +150,6 @@ const ProjectsPage = () => {
     } catch (error) {
       // Error ya manejado en el hook
     }
-  };
-
-  const getPriorityBadge = (priority: ProjectPriority) => {
-    switch (priority) {
-      case "high":
-        return (
-          <Badge variant="destructive" className="text-xs">
-            Alta
-          </Badge>
-        );
-      case "medium":
-        return (
-          <Badge variant="default" className="text-xs">
-            Media
-          </Badge>
-        );
-      case "low":
-        return (
-          <Badge variant="secondary" className="text-xs">
-            Baja
-          </Badge>
-        );
-    }
-  };
-
-  const getProgressColor = (progress: number) => {
-    if (progress >= 100) return "text-green-600";
-    if (progress >= 75) return "text-blue-600";
-    if (progress >= 50) return "text-yellow-600";
-    return "text-red-600";
   };
 
   const mapProjectsToReport = (items: Project[]): ProjectReport[] =>
@@ -348,23 +204,7 @@ const ProjectsPage = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-5">
-        {stats.map((stat, index) => (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {stat.title}
-              </CardTitle>
-              <div
-                className={`h-4 w-4 ${stat.color} rounded-full`}
-              ></div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      <ProjectStats projects={projects} />
 
       {/* Table */}
       <Card>
@@ -377,458 +217,51 @@ const ProjectsPage = () => {
         <CardContent>
           <div className="space-y-4">
             {/* Filters */}
-            <div className="flex flex-wrap gap-2">
-              <Input
-                placeholder="Buscar proyectos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-[250px]"
-              />
-              <Select
-                  value={categoryFilter}
-                  onValueChange={setCategoryFilter}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Todas las categorías" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas las categorías</SelectItem>
-                    <SelectItem value="Deportes">Deportes</SelectItem>
-                    <SelectItem value="Salud">Salud</SelectItem>
-                    <SelectItem value="Infraestructura">
-                      Infraestructura
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select
-                  value={priorityFilter}
-                  onValueChange={setPriorityFilter}
-                >
-                  <SelectTrigger className="w-[150px]">
-                    <SelectValue placeholder="Todas las prioridades" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas las prioridades</SelectItem>
-                    <SelectItem value="high">Alta</SelectItem>
-                    <SelectItem value="medium">Media</SelectItem>
-                    <SelectItem value="low">Baja</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Todos los tipos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos los tipos</SelectItem>
-                    <SelectItem value="investment">Inversión</SelectItem>
-                    <SelectItem value="free">Inversión Libre</SelectItem>
-                  </SelectContent>
-                </Select>
-            </div>
+            <ProjectFilters
+              search={search}
+              onSearchChange={setSearch}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={setCategoryFilter}
+              priorityFilter={priorityFilter}
+              onPriorityFilterChange={setPriorityFilter}
+              typeFilter={typeFilter}
+              onTypeFilterChange={setTypeFilter}
+            />
 
             {/* Table */}
-            <Table>
-                <TableHeader>
-                <TableRow>
-                  <TableHead>Proyecto</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Sede</TableHead>
-                  <TableHead>Meta</TableHead>
-                  <TableHead>Recaudado</TableHead>
-                  <TableHead>Progreso</TableHead>
-                  <TableHead>Prioridad</TableHead>
-                  <TableHead>Fecha límite</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projectsLoading ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="text-center text-muted-foreground"
-                    >
-                      Cargando proyectos...
-                    </TableCell>
-                  </TableRow>
-                ) : filteredProjects.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={10}
-                      className="text-center text-muted-foreground"
-                    >
-                      No hay proyectos registrados
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredProjects.map((project) => (
-                    <TableRow key={project.id}>
-                      <TableCell className="font-medium">
-                        {project.name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{project.category}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        {project.type === "investment"
-                          ? "Inversión"
-                          : "Inversión Libre"}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Building className="h-3 w-3" />
-                          {getHqName(project.headquarters_id)}
-                        </div>
-                      </TableCell>
-                      <TableCell>{formatCurrency(project.goal)}</TableCell>
-                      <TableCell>
-                        {formatCurrency(project.raised)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Progress
-                            value={project.progress}
-                            className="w-20"
-                          />
-                          <span
-                            className={`text-xs font-medium ${getProgressColor(
-                              project.progress
-                            )}`}
-                          >
-                            {project.progress}%
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>{getPriorityBadge(project.priority)}</TableCell>
-                      <TableCell className="text-sm">
-                        {project.deadline}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setDetailProject(project)}
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openEdit(project)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => initiateDelete(project)}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-600" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+            <ProjectsTable
+              projects={filteredProjects}
+              loading={projectsLoading}
+              onEdit={openEdit}
+              onDelete={initiateDelete}
+              onView={setDetailProject}
+              formatCurrency={formatCurrency}
+              getHqName={getHqName}
+            />
           </div>
         </CardContent>
       </Card>
 
       {/* Create/Edit Dialog */}
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              {editing ? "Editar Proyecto" : "Nuevo Proyecto"}
-            </DialogTitle>
-            <DialogDescription>
-              Completa la información del proyecto
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Nombre del proyecto *</Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(e) =>
-                  setForm({ ...form, name: e.target.value })
-                }
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="category">Categoría *</Label>
-                <Select
-                  value={form.category}
-                  onValueChange={(value) =>
-                    setForm({ ...form, category: value })
-                  }
-                >
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Selecciona..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Deportes">Deportes</SelectItem>
-                    <SelectItem value="Salud">Salud</SelectItem>
-                    <SelectItem value="Infraestructura">
-                      Infraestructura
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="type">Tipo *</Label>
-                <Select
-                  value={form.type}
-                  onValueChange={(value) =>
-                    setForm({ ...form, type: value as ProjectType })
-                  }
-                >
-                  <SelectTrigger id="type">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="investment">Inversión</SelectItem>
-                    <SelectItem value="free">Inversión Libre</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="priority">Prioridad *</Label>
-                <Select
-                  value={form.priority}
-                  onValueChange={(value) =>
-                    setForm({
-                      ...form,
-                      priority: value as ProjectPriority,
-                    })
-                  }
-                >
-                  <SelectTrigger id="priority">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="high">Alta</SelectItem>
-                    <SelectItem value="medium">Media</SelectItem>
-                    <SelectItem value="low">Baja</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="deadline">Fecha límite *</Label>
-                <Input
-                  id="deadline"
-                  value={form.deadline}
-                  onChange={(e) =>
-                    setForm({ ...form, deadline: e.target.value })
-                  }
-                  placeholder="DD Mon YYYY"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="headquarters">Sede</Label>
-              <Select
-                value={form.headquarters_id?.toString() || "none"}
-                onValueChange={(value) =>
-                  setForm({
-                    ...form,
-                    headquarters_id:
-                      value === "none" ? undefined : value,
-                  })
-                }
-              >
-                <SelectTrigger id="headquarters">
-                  <SelectValue placeholder="Selecciona una sede..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Sin sede asignada</SelectItem>
-                  {headquarters.map((hq) => (
-                    <SelectItem key={hq.headquarters_id} value={hq.headquarters_id}>
-                      {hq.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="goal">Meta ($) *</Label>
-              <Input
-                id="goal"
-                type="number"
-                value={form.goal}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    goal: parseInt(e.target.value) || 0,
-                  })
-                }
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="description">Descripción</Label>
-              <Textarea
-                id="description"
-                rows={3}
-                value={form.description}
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-              />
-            </div>
-          </div>
-
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDialog(false)}
-            >
-              Cancelar
-            </Button>
-            <Button onClick={handleSave}>
-              {editing ? "Actualizar" : "Crear"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ProjectDialog
+        open={showDialog}
+        onClose={() => {
+          setShowDialog(false);
+          setEditing(null);
+        }}
+        project={editing}
+        onSave={handleSave}
+        headquarters={headquarters}
+      />
 
       {/* Detail Dialog */}
-      <Dialog
+      <ProjectDetailDialog
+        project={detailProject}
         open={!!detailProject}
-        onOpenChange={() => setDetailProject(null)}
-      >
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-blue-600" />
-              {detailProject?.name}
-            </DialogTitle>
-            <DialogDescription>
-              Detalles completos del proyecto
-            </DialogDescription>
-          </DialogHeader>
-
-          {detailProject && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Categoría
-                  </Label>
-                  <p className="font-medium">
-                    <Badge variant="outline">
-                      {detailProject.category}
-                    </Badge>
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Tipo
-                  </Label>
-                  <p className="font-medium">
-                    {detailProject.type === "investment"
-                      ? "Inversión"
-                      : "Inversión Libre"}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Prioridad
-                  </Label>
-                  <p className="font-medium">
-                    {getPriorityBadge(detailProject.priority)}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Fecha límite
-                  </Label>
-                  <p className="font-medium">{detailProject.deadline}</p>
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-xs text-muted-foreground">Sede</Label>
-                <p className="font-medium flex items-center gap-2">
-                  <Building className="h-4 w-4" />
-                  {getHqName(detailProject.headquarters_id)}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">
-                  Financiamiento
-                </Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="border rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground">Meta</p>
-                    <p className="text-lg font-bold text-green-600">
-                      {formatCurrency(detailProject.goal)}
-                    </p>
-                  </div>
-                  <div className="border rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground">
-                      Recaudado
-                    </p>
-                    <p className="text-lg font-bold text-blue-600">
-                      {formatCurrency(detailProject.raised)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-xs text-muted-foreground">
-                  Progreso
-                </Label>
-                <div className="flex items-center gap-4">
-                  <Progress
-                    value={detailProject.progress}
-                    className="flex-1"
-                  />
-                  <span
-                    className={`text-xl font-bold ${getProgressColor(
-                      detailProject.progress
-                    )}`}
-                  >
-                    {detailProject.progress}%
-                  </span>
-                </div>
-              </div>
-
-              {detailProject.description && (
-                <div>
-                  <Label className="text-xs text-muted-foreground">
-                    Descripción
-                  </Label>
-                  <p className="text-sm mt-1">
-                    {detailProject.description}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-
-          <DialogFooter>
-            <Button onClick={() => setDetailProject(null)}>Cerrar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        onClose={() => setDetailProject(null)}
+        formatCurrency={formatCurrency}
+        getHqName={getHqName}
+      />
 
       {/* Delete Confirmation */}
       <DeleteConfirmation

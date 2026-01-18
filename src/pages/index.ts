@@ -14,9 +14,9 @@ export { default as GalleryPage } from './Public/pages/GalleryPage';
 export { default as LocationsPage } from './Public/pages/LocationsPage';
 
 // Beneficiary Pages
-export { default as CategoriesPage } from './Beneficiaries/CategoriesPage';
-export { default as PlayersPage } from './Beneficiaries/PlayersPage';
-export { default as TestimonialsPage } from './Beneficiaries/TestimonialsPage';
+export { default as CategoriesPage } from './Public/pages/CategoriesPage';
+export { default as PlayersPage } from './Public/pages/PlayersPage';
+export { default as TestimonialsPage } from './Public/pages/TestimonialsPage';
 
 // Dashboard Pages
 export { default as AdminView } from './AdminView/AdminView';

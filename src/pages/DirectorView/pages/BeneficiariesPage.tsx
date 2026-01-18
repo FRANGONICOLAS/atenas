@@ -3,23 +3,21 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBeneficiaries } from "@/hooks/useBeneficiaries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
 import { UserCheck, Users, Plus, Download } from "lucide-react";
 import type { Beneficiary } from "@/types/beneficiary.types";
-import { BeneficiaryStatsCard } from "../components/BeneficiaryStatsCard";
-import { BeneficiaryTable } from "../components/BeneficiaryTable";
-import { BeneficiaryForm } from "../components/BeneficiaryForm";
-import { BeneficiaryDetail } from "../components/BeneficiaryDetail";
-import { calculateAge, getStatusBadge, getPerformanceColor } from "@/lib/beneficiaryUtils";
+import { BeneficiaryStats } from "../components/Beneficiaries/BeneficiaryStats";
+import { BeneficiaryStatsCard } from "../components/Beneficiaries/BeneficiaryStatsCard";
+import { BeneficiaryFilters } from "../components/Beneficiaries/BeneficiaryFilters";
+import { BeneficiaryTable } from "../components/Beneficiaries/BeneficiaryTable";
+import { BeneficiaryForm } from "../components/Beneficiaries/BeneficiaryForm";
+import { BeneficiaryDetail } from "../components/Beneficiaries/BeneficiaryDetail";
+import {
+  calculateAge,
+  getStatusBadge,
+  getPerformanceColor,
+} from "@/lib/beneficiaryUtils";
 
 const BeneficiariesPage = () => {
   const {
@@ -174,6 +172,14 @@ const BeneficiariesPage = () => {
         </div>
       </div>
 
+      {/* General Stats */}
+      <BeneficiaryStats
+        total={stats.total}
+        active={stats.active}
+        avgPerformance={stats.avgPerformance}
+        avgAttendance={stats.avgAttendance}
+      />
+
       {/* Stats by Sede */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {sedeStats.map((stat) => (
@@ -196,57 +202,17 @@ const BeneficiariesPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Buscar por nombre..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="flex-1"
-              />
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <Select
-                value={headquarterFilter}
-                onValueChange={setHeadquarterFilter}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Todas las sedes" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las sedes</SelectItem>
-                  {headquarters.map((hq) => (
-                    <SelectItem
-                      key={hq.headquarters_id}
-                      value={hq.headquarters_id}
-                    >
-                      {hq.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Todas las categorías" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas las categorías</SelectItem>
-                  <SelectItem value="Categoría 1">Categoría 1 (6-7)</SelectItem>
-                  <SelectItem value="Categoría 2">Categoría 2 (8-9)</SelectItem>
-                  <SelectItem value="Categoría 3">
-                    Categoría 3 (10-11)
-                  </SelectItem>
-                  <SelectItem value="Categoría 4">
-                    Categoría 4 (12-14)
-                  </SelectItem>
-                  <SelectItem value="Categoría 5">
-                    Categoría 5 (15-17)
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <BeneficiaryFilters
+            search={search}
+            onSearchChange={setSearch}
+            headquarterFilter={headquarterFilter}
+            onHeadquarterFilterChange={setHeadquarterFilter}
+            categoryFilter={categoryFilter}
+            onCategoryFilterChange={setCategoryFilter}
+            headquarters={headquarters}
+          />
 
-            <Tabs value={statusTab} onValueChange={setStatusTab}>
+          <Tabs value={statusTab} onValueChange={setStatusTab} className="mt-4">
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="all">Todos</TabsTrigger>
                 <TabsTrigger value="activo">Activos</TabsTrigger>
@@ -270,7 +236,6 @@ const BeneficiariesPage = () => {
                 />
               </TabsContent>
             </Tabs>
-          </div>
         </CardContent>
       </Card>
 
