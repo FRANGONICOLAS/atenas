@@ -161,16 +161,52 @@ export const headquarterService = {
   async uploadImage(headquarterId: string, file: File): Promise<string> {
     const fileExt = file.name.split('.').pop();
     const fileName = `${headquarterId}-${Date.now()}.${fileExt}`;
-    const filePath = `headquarters/${fileName}`;
+    const filePath = `headquarter/${fileName}`;
 
     // Subir archivo
-    await storageService.uploadFile('images', filePath, file, {
+    await storageService.uploadFile('atenas-gallery', filePath, file, {
       cacheControl: '3600',
       upsert: true
     });
 
     // Obtener URL pública
-    const publicUrl = storageService.getPublicUrl('images', filePath);
+    const publicUrl = storageService.getPublicUrl('atenas-gallery', filePath);
     return publicUrl;
+  },
+
+  // Actualiza la imagen de una sede
+  async updateImage(headquarterId: string, file: File, oldImageUrl?: string | null): Promise<string> {
+    // Si hay una imagen anterior, extraer el path y eliminarla
+    if (oldImageUrl) {
+      try {
+        const urlParts = oldImageUrl.split('/');
+        const bucketIndex = urlParts.findIndex(part => part === 'atenas-gallery');
+        if (bucketIndex !== -1) {
+          const oldPath = urlParts.slice(bucketIndex + 1).join('/');
+          await storageService.deleteFile('atenas-gallery', [oldPath]);
+        }
+      } catch (error) {
+        console.error('Error deleting old image:', error);
+        // Continuar aunque falle el borrado
+      }
+    }
+
+    // Subir nueva imagen
+    return await this.uploadImage(headquarterId, file);
+  },
+
+  // Elimina la imagen de una sede
+  async deleteImage(imageUrl: string): Promise<void> {
+    try {
+      const urlParts = imageUrl.split('/');
+      const bucketIndex = urlParts.findIndex(part => part === 'atenas-gallery');
+      if (bucketIndex !== -1) {
+        const path = urlParts.slice(bucketIndex + 1).join('/');
+        await storageService.deleteFile('atenas-gallery', [path]);
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      throw error;
+    }
   },
 };

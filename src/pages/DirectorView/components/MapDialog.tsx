@@ -1,21 +1,11 @@
 import { MapPin } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-
-interface Location {
-  id: number;
-  name: string;
-  players: number;
-  capacity: number;
-  utilization: number;
-  status: string;
-  address: string;
-  coordinates: string;
-}
+import type { Headquarter } from '@/types';
 
 interface MapDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  locations: Location[];
+  locations: Headquarter[];
 }
 
 export const MapDialog = ({ isOpen, onClose, locations }: MapDialogProps) => {
@@ -45,15 +35,17 @@ export const MapDialog = ({ isOpen, onClose, locations }: MapDialogProps) => {
           <h4 className="font-semibold text-sm">Sedes Disponibles:</h4>
           {locations.map((location) => (
             <div
-              key={location.id}
+              key={location.headquarters_id}
               className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50"
             >
               <div>
                 <p className="font-medium">{location.name}</p>
-                <p className="text-sm text-muted-foreground">{location.address}</p>
+                <p className="text-sm text-muted-foreground">
+                  {location.address || 'Sin dirección'}
+                </p>
               </div>
               <div className="text-sm text-muted-foreground">
-                {location.players}/{location.capacity} niños
+                {location.city || 'Sin ciudad'}
               </div>
             </div>
           ))}

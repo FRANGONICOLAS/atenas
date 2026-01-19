@@ -32,4 +32,10 @@ export interface UpdateHeadquarterData {
 export interface HeadquarterWithStats extends Headquarter {
   beneficiary_count?: number;
   project_count?: number;
+  // Aliases para compatibilidad con componentes existentes
+  id?: number;
+  players?: number;
+  capacity?: number;
+  utilization?: number;
+  coordinates?: string;
 }
