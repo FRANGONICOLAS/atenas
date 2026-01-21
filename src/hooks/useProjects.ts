@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { projectService } from "@/api/services";
 import type { Project } from "@/types";
@@ -68,6 +68,27 @@ export const useProjects = () => {
   useEffect(() => {
     loadProjects();
   }, []);
+
+  // Estadísticas de proyectos
+  const stats = useMemo(() => {
+    const total = projects.length;
+    const totalGoal = projects.reduce((sum, p) => sum + p.goal, 0);
+    const totalRaised = projects.reduce((sum, p) => sum + p.raised, 0);
+    const totalRaisedFree = projects
+      .filter((p) => p.type === "free")
+      .reduce((sum, p) => sum + p.raised, 0);
+    const completedCount = projects.filter((p) => p.progress >= 100).length;
+    const inProgress = total - completedCount;
+
+    return {
+      total,
+      inProgress,
+      totalGoal,
+      totalRaised,
+      totalRaisedFree,
+      completedCount,
+    };
+  }, [projects]);
 
   // Project handlers
   const handleCreateProject = async (projectData: CreateProjectData, headquarterId?: string) => {
@@ -180,6 +201,9 @@ export const useProjects = () => {
     handleEditProject,
     handleDeleteProject,
     handleSaveProject,
+
+    // Stats
+    stats,
 
     // Utilities
     formatCurrency,

@@ -33,6 +33,7 @@ const ProjectsPage = () => {
     setPriorityFilter,
     typeFilter,
     setTypeFilter,
+    stats,
     formatCurrency,
   } = useProjects();
 
@@ -204,7 +205,7 @@ const ProjectsPage = () => {
       </div>
 
       {/* Stats */}
-      <ProjectStats projects={projects} />
+      <ProjectStats stats={stats} />
 
       {/* Table */}
       <Card>

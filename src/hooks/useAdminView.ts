@@ -1,10 +1,10 @@
-import { useState, useEffect, createElement } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
-import { Copy } from 'lucide-react';
-import { userService } from '@/api/services/user.service';
-import type { User as DBUser } from '@/api/types/database.types';
-import { client } from '@/api/supabase/client';
+import { useState, useEffect, createElement } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { Copy } from "lucide-react";
+import { userService } from "@/api/services/user.service";
+import type { User as DBUser } from "@/api/types/database.types";
+import { client } from "@/api/supabase/client";
 import {
   generateUsersExcel,
   generateUsersPDF,
@@ -13,14 +13,17 @@ import {
   generateConsolidatedExcel,
   type UserReport,
   type DonationReport,
-} from '@/lib/reportGenerator';
+} from "@/lib/reportGenerator";
+import { useBeneficiaries } from "./useBeneficiaries";
+import { ProjectStats } from "@/pages/DirectorView/components/Projects/ProjectStats";
+import { useProjects } from "./useProjects";
 
 interface ContentForm {
-  type: 'image' | 'video' | 'text';
+  type: "image" | "video" | "text";
   title: string;
   description: string;
   url: string;
-  section: 'gallery' | 'testimonials' | 'about' | 'projects';
+  section: "gallery" | "testimonials" | "about" | "projects";
 }
 
 interface UserForm {
@@ -34,34 +37,41 @@ interface UserForm {
 
 export const useAdminDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [showContentDialog, setShowContentDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [users, setUsers] = useState<DBUser[]>([]);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [editingUser, setEditingUser] = useState<DBUser | null>(null);
-  const [availableRoles, setAvailableRoles] = useState<Array<{role_id: string; role_name: string}>>([]);
+  const [availableRoles, setAvailableRoles] = useState<
+    Array<{ role_id: string; role_name: string }>
+  >([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [userForm, setUserForm] = useState<UserForm>({
-    first_name: '',
-    last_name: '',
-    username: '',
-    email: '',
-    birthdate: '',
-    phone: '',
+    first_name: "",
+    last_name: "",
+    username: "",
+    email: "",
+    birthdate: "",
+    phone: "",
   });
   const [contentForm, setContentForm] = useState<ContentForm>({
-    type: 'image',
-    title: '',
-    description: '',
-    url: '',
-    section: 'gallery',
+    type: "image",
+    title: "",
+    description: "",
+    url: "",
+    section: "gallery",
   });
+
+  const { stats: beneficiariesStats } = useBeneficiaries();
+  const { stats: projectsStats } = useProjects();
+  const beneficiaries = beneficiariesStats.active || 0;
+  const projects = projectsStats.inProgress || 0;
 
   // Update active tab from URL params
   useEffect(() => {
-    const tab = searchParams.get('tab');
+    const tab = searchParams.get("tab");
     if (tab) {
       setActiveTab(tab);
     }
@@ -69,9 +79,27 @@ export const useAdminDashboard = () => {
 
   // Mock data for donations
   const recentDonations = [
-    { id: 1, donor: 'Pedro Silva', amount: 500000, project: 'Cancha Sintética', date: '2024-12-08' },
-    { id: 2, donor: 'Laura Torres', amount: 250000, project: 'Becas Académicas', date: '2024-12-07' },
-    { id: 3, donor: 'Diego Ramírez', amount: 1000000, project: 'Inversión Libre', date: '2024-12-06' },
+    {
+      id: 1,
+      donor: "Pedro Silva",
+      amount: 500000,
+      project: "Cancha Sintética",
+      date: "2024-12-08",
+    },
+    {
+      id: 2,
+      donor: "Laura Torres",
+      amount: 250000,
+      project: "Becas Académicas",
+      date: "2024-12-07",
+    },
+    {
+      id: 3,
+      donor: "Diego Ramírez",
+      amount: 1000000,
+      project: "Inversión Libre",
+      date: "2024-12-06",
+    },
   ];
 
   // Load users and roles from Supabase
@@ -81,17 +109,17 @@ export const useAdminDashboard = () => {
         setIsLoadingUsers(true);
         const [usersData, rolesData] = await Promise.all([
           userService.getAll(),
-          client.from('role').select('role_id, role_name')
+          client.from("role").select("role_id, role_name"),
         ]);
-        
+
         setUsers(usersData);
         if (rolesData.data) {
           setAvailableRoles(rolesData.data);
         }
       } catch (error) {
-        console.error('Error loading data:', error);
-        toast.error('Error al cargar datos', {
-          description: 'No se pudieron cargar los datos de la base de datos',
+        console.error("Error loading data:", error);
+        toast.error("Error al cargar datos", {
+          description: "No se pudieron cargar los datos de la base de datos",
         });
       } finally {
         setIsLoadingUsers(false);
@@ -103,29 +131,47 @@ export const useAdminDashboard = () => {
 
   // Calculate stats from real data
   const stats = [
-    { 
-      icon: 'Users', 
-      title: 'Total Usuarios', 
-      value: users.length.toString(), 
-      change: '+0', 
-      color: 'bg-blue-500' 
+    {
+      icon: "Users",
+      title: "Total Usuarios",
+      value: users.length.toString(),
+      change: "+0",
+      color: "bg-blue-500",
     },
-    { icon: 'Trophy', title: 'Jugadores Activos', value: '0', change: '+0', color: 'bg-green-500' },
-    { icon: 'DollarSign', title: 'Donaciones Este Mes', value: '$0', change: '+0%', color: 'bg-yellow-500' },
-    { icon: 'BarChart3', title: 'Proyectos Activos', value: '0', change: '+0', color: 'bg-purple-500' },
+    {
+      icon: "Trophy",
+      title: "Jugadores Activos",
+      value: beneficiaries.toString(),
+      change: "+0",
+      color: "bg-green-500",
+    },
+    {
+      icon: "DollarSign",
+      title: "Donaciones Este Mes",
+      value: "$0",
+      change: "+0%",
+      color: "bg-yellow-500",
+    },
+    {
+      icon: "BarChart3",
+      title: "Proyectos Activos",
+      value: projects.toString(),
+      change: "+0",
+      color: "bg-purple-500",
+    },
   ];
 
   // User CRUD handlers
   const handleCreateUser = () => {
     setEditingUser(null);
-    setSelectedRoles(['donator']);
+    setSelectedRoles(["donator"]);
     setUserForm({
-      first_name: '',
-      last_name: '',
-      username: '',
-      email: '',
-      birthdate: '',
-      phone: '',
+      first_name: "",
+      last_name: "",
+      username: "",
+      email: "",
+      birthdate: "",
+      phone: "",
     });
     setShowUserDialog(true);
   };
@@ -133,45 +179,54 @@ export const useAdminDashboard = () => {
   const handleEditUser = async (user: DBUser) => {
     setEditingUser(user);
     setUserForm({
-      first_name: user.first_name || '',
-      last_name: user.last_name || '',
+      first_name: user.first_name || "",
+      last_name: user.last_name || "",
       username: user.username,
       email: user.email,
-      birthdate: user.birthdate || '',
-      phone: user.phone || '',
+      birthdate: user.birthdate || "",
+      phone: user.phone || "",
     });
-    
+
     try {
       const roles = await userService.getUserRoles(user.id);
       setSelectedRoles(roles);
     } catch (error) {
-      console.error('Error loading user roles:', error);
+      console.error("Error loading user roles:", error);
       setSelectedRoles([]);
     }
-    
+
     setShowUserDialog(true);
   };
 
   const handleDeleteUser = async (userId: string) => {
     try {
       await userService.delete(userId);
-      setUsers(users.filter(u => u.id !== userId));
-      toast.success('Usuario eliminado', {
-        description: 'El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación',
+      setUsers(users.filter((u) => u.id !== userId));
+      toast.success("Usuario eliminado", {
+        description:
+          "El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación",
       });
     } catch (error: unknown) {
-      console.error('Error deleting user:', error);
-      const errorMessage = error instanceof Error ? error.message : 'No se pudo eliminar el usuario';
-      toast.error('Error al eliminar usuario', {
+      console.error("Error deleting user:", error);
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "No se pudo eliminar el usuario";
+      toast.error("Error al eliminar usuario", {
         description: errorMessage,
       });
     }
   };
 
   const handleSaveUser = async () => {
-    if (!userForm.first_name || !userForm.last_name || !userForm.username || !userForm.email) {
-      toast.error('Campos requeridos', {
-        description: 'Por favor completa todos los campos obligatorios',
+    if (
+      !userForm.first_name ||
+      !userForm.last_name ||
+      !userForm.username ||
+      !userForm.email
+    ) {
+      toast.error("Campos requeridos", {
+        description: "Por favor completa todos los campos obligatorios",
       });
       return;
     }
@@ -179,16 +234,16 @@ export const useAdminDashboard = () => {
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userForm.email)) {
-      toast.error('Email inválido', {
-        description: 'Por favor ingresa un email válido',
+      toast.error("Email inválido", {
+        description: "Por favor ingresa un email válido",
       });
       return;
     }
 
     // Validar que tenga al menos un rol
     if (selectedRoles.length === 0) {
-      toast.error('Rol requerido', {
-        description: 'El usuario debe tener al menos un rol asignado',
+      toast.error("Rol requerido", {
+        description: "El usuario debe tener al menos un rol asignado",
       });
       return;
     }
@@ -203,72 +258,80 @@ export const useAdminDashboard = () => {
           birthdate: userForm.birthdate || null,
           phone: userForm.phone || null,
         });
-        
+
         // Actualizar roles
-        await client.from('user_role').delete().eq('user_id', editingUser.id);
-        
+        await client.from("user_role").delete().eq("user_id", editingUser.id);
+
         if (selectedRoles.length > 0) {
-          const roleInserts = selectedRoles.map(role_id => ({
+          const roleInserts = selectedRoles.map((role_id) => ({
             user_id: editingUser.id,
-            role_id: role_id
+            role_id: role_id,
           }));
-          await client.from('user_role').insert(roleInserts);
+          await client.from("user_role").insert(roleInserts);
         }
-        
+
         const refreshedUsers = await userService.getAll();
         setUsers(refreshedUsers);
-        
-        toast.success('Usuario actualizado', {
+
+        toast.success("Usuario actualizado", {
           description: `${userForm.first_name} ${userForm.last_name} ha sido actualizado correctamente`,
         });
       } else {
         // Crear nuevo usuario usando Edge Function
         const tempPassword = `Temp${Math.random().toString(36).slice(-8)}!`;
-        
+
         // Obtener la URL de Supabase y la sesión actual
         const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        const { data: { session } } = await client.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await client.auth.getSession();
+
         if (!session) {
-          toast.error('Sesión expirada', {
-            description: 'Por favor inicia sesión nuevamente',
+          toast.error("Sesión expirada", {
+            description: "Por favor inicia sesión nuevamente",
           });
           return;
         }
 
         // Llamar a la Edge Function
-        const response = await fetch(`${supabaseUrl}/functions/v1/admin-create-user`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`
+        const response = await fetch(
+          `${supabaseUrl}/functions/v1/admin-create-user`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              email: userForm.email,
+              password: tempPassword,
+              username: userForm.username,
+              first_name: userForm.first_name,
+              last_name: userForm.last_name,
+              birthdate: userForm.birthdate || null,
+              phone: userForm.phone || null,
+              roles: selectedRoles,
+            }),
           },
-          body: JSON.stringify({
-            email: userForm.email,
-            password: tempPassword,
-            username: userForm.username,
-            first_name: userForm.first_name,
-            last_name: userForm.last_name,
-            birthdate: userForm.birthdate || null,
-            phone: userForm.phone || null,
-            roles: selectedRoles
-          })
-        });
+        );
 
         const result = await response.json();
 
         if (!response.ok) {
-          if (result.error?.includes('already registered') || result.error?.includes('already exists')) {
-            toast.error('Usuario duplicado', {
+          if (
+            result.error?.includes("already registered") ||
+            result.error?.includes("already exists")
+          ) {
+            toast.error("Usuario duplicado", {
               description: result.error,
             });
-          } else if (result.error?.includes('administradores')) {
-            toast.error('Permisos insuficientes', {
-              description: 'Solo los administradores pueden crear usuarios',
+          } else if (result.error?.includes("administradores")) {
+            toast.error("Permisos insuficientes", {
+              description: "Solo los administradores pueden crear usuarios",
             });
           } else {
-            toast.error('Error al crear usuario', {
-              description: result.error || 'No se pudo crear el usuario',
+            toast.error("Error al crear usuario", {
+              description: result.error || "No se pudo crear el usuario",
             });
           }
           return;
@@ -277,42 +340,42 @@ export const useAdminDashboard = () => {
         // Recargar lista de usuarios
         const refreshedUsers = await userService.getAll();
         setUsers(refreshedUsers);
-        
-        toast.success('Usuario creado exitosamente', {
+
+        toast.success("Usuario creado exitosamente", {
           description: `${userForm.first_name} ${userForm.last_name} - Contraseña: ${tempPassword}`,
           duration: 15000,
           action: {
-            label: createElement(Copy, { className: 'h-4 w-4' }),
+            label: createElement(Copy, { className: "h-4 w-4" }),
             onClick: () => {
               navigator.clipboard.writeText(tempPassword);
-              toast.success('Contraseña copiada', {
+              toast.success("Contraseña copiada", {
                 description: tempPassword,
                 duration: 3000,
               });
-            }
+            },
           },
         });
       }
-      
+
       setShowUserDialog(false);
       setEditingUser(null);
       setSelectedRoles([]);
     } catch (error) {
-      console.error('Error saving user:', error);
-      
+      console.error("Error saving user:", error);
+
       // Manejo de errores específicos
       const err = error as { message?: string; code?: string };
-      if (err.message?.includes('duplicate') || err.code === '23505') {
-        toast.error('Usuario duplicado', {
-          description: 'Ya existe un usuario con ese email o username',
+      if (err.message?.includes("duplicate") || err.code === "23505") {
+        toast.error("Usuario duplicado", {
+          description: "Ya existe un usuario con ese email o username",
         });
-      } else if (err.message?.includes('permission')) {
-        toast.error('Permisos insuficientes', {
-          description: 'No tienes permisos para realizar esta acción',
+      } else if (err.message?.includes("permission")) {
+        toast.error("Permisos insuficientes", {
+          description: "No tienes permisos para realizar esta acción",
         });
       } else {
-        toast.error('Error al guardar usuario', {
-          description: err.message || 'No se pudo guardar el usuario',
+        toast.error("Error al guardar usuario", {
+          description: err.message || "No se pudo guardar el usuario",
         });
       }
     }
@@ -321,96 +384,111 @@ export const useAdminDashboard = () => {
   const handleExportUsersExcel = () => {
     const reportData: UserReport[] = users.map((u, index) => ({
       id: index + 1,
-      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
+      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
       email: u.email,
-      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
-      status: 'Activo',
-      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+      role:
+        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
+      status: "Activo",
+      date: u.created_at
+        ? u.created_at.split("T")[0]
+        : new Date().toISOString().split("T")[0],
     }));
 
-    generateUsersExcel(reportData, 'reporte_usuarios');
-    toast.success('Reporte de usuarios generado', {
-      description: 'El archivo Excel se ha descargado correctamente',
+    generateUsersExcel(reportData, "reporte_usuarios");
+    toast.success("Reporte de usuarios generado", {
+      description: "El archivo Excel se ha descargado correctamente",
     });
   };
 
   const handleExportUsersPDF = () => {
     const reportData: UserReport[] = users.map((u, index) => ({
       id: index + 1,
-      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
+      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
       email: u.email,
-      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
-      status: 'Activo',
-      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+      role:
+        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
+      status: "Activo",
+      date: u.created_at
+        ? u.created_at.split("T")[0]
+        : new Date().toISOString().split("T")[0],
     }));
 
-    generateUsersPDF(reportData, 'reporte_usuarios');
-    toast.success('Reporte de usuarios generado', {
-      description: 'El archivo PDF se ha descargado correctamente',
+    generateUsersPDF(reportData, "reporte_usuarios");
+    toast.success("Reporte de usuarios generado", {
+      description: "El archivo PDF se ha descargado correctamente",
     });
   };
 
   const handleExportDonationsExcel = () => {
-    const reportData: DonationReport[] = recentDonations.map(d => ({
+    const reportData: DonationReport[] = recentDonations.map((d) => ({
       id: d.id,
       donor: d.donor,
       amount: d.amount,
       project: d.project,
       date: d.date,
-      status: 'Completado',
+      status: "Completado",
     }));
 
-    generateDonationsExcel(reportData, 'reporte_donaciones');
-    toast.success('Reporte de donaciones generado', {
-      description: 'El archivo Excel se ha descargado correctamente',
+    generateDonationsExcel(reportData, "reporte_donaciones");
+    toast.success("Reporte de donaciones generado", {
+      description: "El archivo Excel se ha descargado correctamente",
     });
   };
 
   const handleExportDonationsPDF = () => {
-    const reportData: DonationReport[] = recentDonations.map(d => ({
+    const reportData: DonationReport[] = recentDonations.map((d) => ({
       id: d.id,
       donor: d.donor,
       amount: d.amount,
       project: d.project,
       date: d.date,
-      status: 'Completado',
+      status: "Completado",
     }));
 
-    generateDonationsPDF(reportData, 'reporte_donaciones');
-    toast.success('Reporte de donaciones generado', {
-      description: 'El archivo PDF se ha descargado correctamente',
+    generateDonationsPDF(reportData, "reporte_donaciones");
+    toast.success("Reporte de donaciones generado", {
+      description: "El archivo PDF se ha descargado correctamente",
     });
   };
 
   const handleExportConsolidated = () => {
     const userReports: UserReport[] = users.map((u, index) => ({
       id: index + 1,
-      name: `${u.first_name || ''} ${u.last_name || ''}`.trim(),
+      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
       email: u.email,
-      role: (u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : 'DONATOR'),
-      status: 'Activo',
-      date: u.created_at ? u.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+      role:
+        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
+      status: "Activo",
+      date: u.created_at
+        ? u.created_at.split("T")[0]
+        : new Date().toISOString().split("T")[0],
     }));
 
-    const donationReports: DonationReport[] = recentDonations.map(d => ({
+    const donationReports: DonationReport[] = recentDonations.map((d) => ({
       id: d.id,
       donor: d.donor,
       amount: d.amount,
       project: d.project,
       date: d.date,
-      status: 'Completado',
+      status: "Completado",
     }));
 
-    generateConsolidatedExcel(donationReports, userReports, [], 'reporte_consolidado');
-    toast.success('Reporte consolidado generado', {
-      description: 'El archivo Excel con todas las hojas se ha descargado correctamente',
+    generateConsolidatedExcel(
+      donationReports,
+      userReports,
+      [],
+      "reporte_consolidado",
+    );
+    toast.success("Reporte consolidado generado", {
+      description:
+        "El archivo Excel con todas las hojas se ha descargado correctamente",
     });
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
       minimumFractionDigits: 0,
     }).format(value);
   };
@@ -437,7 +515,7 @@ export const useAdminDashboard = () => {
     setContentForm,
     stats,
     recentDonations,
-    
+
     // Handlers
     handleCreateUser,
     handleEditUser,
