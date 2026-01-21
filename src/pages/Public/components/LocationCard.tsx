@@ -1,14 +1,19 @@
 import L from 'leaflet';
-import { MapPin, Phone, Mail, Clock, Users } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Users, Building2 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import 'leaflet/dist/leaflet.css';
 
-const createCustomMarkerIcon = () => {
+const createCustomMarkerIcon = (status: string = "active") => {
+  // Color según el estado usando los colores del sistema de diseño
+  // primary: hsl(200 98% 39%) = #0284c7 (azul para active)
+  // secondary: hsl(142 70.5628% 45.2941%) = #23a55a (verde para maintenance)
+  const color = status === "maintenance" ? "#23a55a" : "#0284c7";
+  
   return L.divIcon({
     html: `<svg width='32' height='40' viewBox='0 0 32 40' xmlns='http://www.w3.org/2000/svg' style='filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2))'>
-      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='#3b82f6' stroke='white' stroke-width='1'/>
+      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='${color}' stroke='white' stroke-width='1'/>
       <circle cx='16' cy='15' r='5' fill='white'/>
     </svg>`,
     iconSize: [32, 40],
@@ -42,11 +47,28 @@ export const LocationCard = ({ location, index }: LocationCardProps) => {
       <div className={`grid lg:grid-cols-2 gap-0 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
         {/* Image */}
         <div className={`relative h-64 lg:h-auto ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-          <img 
-            src={location.image} 
-            alt={location.name}
-            className="w-full h-full object-cover"
-          />
+          {location.image ? (
+            <img 
+              src={location.image} 
+              alt={location.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  const placeholder = document.createElement('div');
+                  placeholder.className = 'w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10';
+                  placeholder.innerHTML = '<svg class="w-24 h-24 text-muted-foreground/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>';
+                  parent.appendChild(placeholder);
+                }
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Building2 className="w-24 h-24 text-muted-foreground/50" />
+            </div>
+          )}
           <div className="absolute top-4 left-4">
             <Badge className="bg-primary text-lg px-4 py-2">
               {location.name}
@@ -54,11 +76,20 @@ export const LocationCard = ({ location, index }: LocationCardProps) => {
           </div>
           <div className="absolute top-4 right-4">
             <Badge 
-              variant={location.status === 'active' ? 'default' : 'secondary'}
+              variant={
+                location.status === "active"
+                  ? "default"
+                  : location.status === "maintenance"
+                  ? "secondary"
+                  : "outline"
+              }
               className="text-sm px-3 py-1"
             >
-              {location.status === 'active' ? 'Activa' : 
-               location.status === 'maintenance' ? 'Mantenimiento' : 'Inactiva'}
+              {location.status === "active"
+                ? "Activa"
+                : location.status === "maintenance"
+                ? "Mantenimiento"
+                : "Inactiva"}
             </Badge>
           </div>
         </div>
@@ -129,7 +160,7 @@ export const LocationCard = ({ location, index }: LocationCardProps) => {
                   <Marker 
                     position={[location.lat, location.lng] as [number, number]}
                     // @ts-expect-error - react-leaflet types issue
-                    icon={createCustomMarkerIcon()}
+                    icon={createCustomMarkerIcon(location.status)}
                   >
                     <Popup>
                       <div className="text-sm">

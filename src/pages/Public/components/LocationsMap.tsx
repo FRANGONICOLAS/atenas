@@ -3,10 +3,12 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 // Icono personalizado consistente con el resto de la aplicación
-const createCustomMarkerIcon = () => {
+const createCustomMarkerIcon = (status: string = "active") => {
+  const color = status === "maintenance" ? "#23a55a" : "#0284c7";
+  
   return L.divIcon({
     html: `<svg width='32' height='40' viewBox='0 0 32 40' xmlns='http://www.w3.org/2000/svg' style='filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2))'>
-      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='#3b82f6' stroke='white' stroke-width='1'/>
+      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='${color}' stroke='white' stroke-width='1'/>
       <circle cx='16' cy='15' r='5' fill='white'/>
     </svg>`,
     iconSize: [32, 40],
@@ -21,6 +23,7 @@ interface LocationData {
   name: string;
   address: string | null;
   city: string | null;
+  status: string;
   lat: number | null;
   lng: number | null;
   beneficiaryCount: number;
@@ -31,8 +34,13 @@ interface LocationsMapProps {
 }
 
 export const LocationsMap = ({ locations }: LocationsMapProps) => {
+  // Filtrar solo sedes activas y en mantenimiento
+  const visibleLocations = locations.filter(
+    l => l.status === "active" || l.status === "maintenance"
+  );
+  
   // Calcular el centro basado en las coordenadas válidas
-  const validLocations = locations.filter(l => l.lat && l.lng);
+  const validLocations = visibleLocations.filter(l => l.lat && l.lng);
   const center: [number, number] = validLocations.length > 0
     ? [
         validLocations.reduce((sum, l) => sum + (l.lat || 0), 0) / validLocations.length,
@@ -40,7 +48,7 @@ export const LocationsMap = ({ locations }: LocationsMapProps) => {
       ]
     : [3.4516, -76.5320]; // Default: Cali, Colombia
 
-  if (locations.length === 0) {
+  if (visibleLocations.length === 0) {
     return null;
   }
 
@@ -63,13 +71,13 @@ export const LocationsMap = ({ locations }: LocationsMapProps) => {
               // @ts-expect-error - react-leaflet types issue
               maxZoom={19}
             />
-            {locations.map((location) => (
+            {visibleLocations.map((location) => (
               location.lat && location.lng && (
                 <Marker 
                   key={location.headquarters_id}
                   position={[location.lat, location.lng] as [number, number]}
                   // @ts-expect-error - react-leaflet types issue
-                  icon={createCustomMarkerIcon()}
+                  icon={createCustomMarkerIcon(location.status)}
                 >
                   <Popup>
                     <div className="text-sm">

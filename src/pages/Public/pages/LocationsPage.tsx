@@ -6,21 +6,13 @@ import { LocationsHero, LocationsMap, LocationCard } from "../components";
 
 interface LocationWithStats extends Headquarter {
   beneficiaryCount: number;
-  image: string;
+  image: string | null;
   phone?: string;
   email?: string;
   schedule?: string;
   lat: number | null;
   lng: number | null;
 }
-
-// Imágenes por defecto para las sedes
-const defaultImages = [
-  "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=600&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop",
-  "https://images.unsplash.com/photo-1486286701208-1d58e9338013?w=600&h=400&fit=crop",
-];
 
 const LocationsPage = () => {
   const [locations, setLocations] = useState<LocationWithStats[]>([]);
@@ -77,7 +69,7 @@ const LocationsPage = () => {
           return {
             ...hq,
             beneficiaryCount,
-            image: defaultImages[index % defaultImages.length],
+            image: hq.image_url,
             phone: "+57 300 123 4567", // Estos campos pueden agregarse a la BD después
             email: `${hq.name.toLowerCase().replace(/\s+/g, "")}@fundaciondeportiva.org`,
             schedule: "Lun - Sáb: 2:00 PM - 8:00 PM",
