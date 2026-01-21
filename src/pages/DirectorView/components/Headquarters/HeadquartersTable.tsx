@@ -91,22 +91,6 @@ export const HeadquartersTable = ({
                     <Edit className="w-4 h-4" />
                   </Button>
                   <Button
-                    size="sm"
-                    className={
-                      hq.status === "active"
-                        ? "bg-red-500 hover:bg-red-600 text-white"
-                        : "bg-green-600 hover:bg-green-700 text-white"
-                    }
-                    onClick={() =>
-                      onToggleStatus(
-                        hq.headquarters_id,
-                        hq.status === "active" ? "inactive" : "active"
-                      )
-                    }
-                  >
-                    {hq.status === "active" ? "Desactivar" : "Activar"}
-                  </Button>
-                  <Button
                     size="icon"
                     variant="ghost"
                     className="h-8 w-8 hover:text-red-600"

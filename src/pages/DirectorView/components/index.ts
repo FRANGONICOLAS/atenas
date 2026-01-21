@@ -7,4 +7,5 @@ export { ProjectDialog } from "./Projects/ProjectDialog";
 export { MapDialog } from "./MapDialog";
 export { CalendarDialog } from "./CalendarDialog";
 export { HeadquartersMap } from "./Headquarters/HeadquartersMap";
+export { HeadquarterDetail } from "./Headquarters/HeadquarterDetail";
 export { HeadquartersTable } from "./Headquarters/HeadquartersTable";

@@ -1,9 +1,10 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import { headquarterService } from "@/api/services";
+import { headquarterService, beneficiaryService } from "@/api/services";
 import { useAuth } from "@/hooks/useAuth";
 import L from "leaflet";
 import { toast } from "sonner";
 import type { Headquarter } from "@/types";
+import type { Beneficiary } from "@/types/beneficiary.types";
 
 const defaultForm = {
   name: "",
@@ -13,10 +14,12 @@ const defaultForm = {
   image_url: null as string | null,
 };
 
-const createCustomMarkerIcon = () => {
+const createCustomMarkerIcon = (status: string = "active") => {
+  const color = status === "maintenance" ? "#23a55a" : "#0284c7";
+  
   return L.divIcon({
     html: `<svg width='32' height='40' viewBox='0 0 32 40' xmlns='http://www.w3.org/2000/svg' style='filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2))'>
-      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='#3b82f6' stroke='white' stroke-width='1'/>
+      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='${color}' stroke='white' stroke-width='1'/>
       <circle cx='16' cy='15' r='5' fill='white'/>
     </svg>`,
     iconSize: [32, 40],
@@ -29,6 +32,7 @@ const createCustomMarkerIcon = () => {
 export const useHeadquarters = () => {
   const { user } = useAuth();
   const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -37,6 +41,7 @@ export const useHeadquarters = () => {
   const [form, setForm] = useState(defaultForm);
   const [deleteTarget, setDeleteTarget] = useState<Headquarter | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [selectedHeadquarter, setSelectedHeadquarter] = useState<Headquarter | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markerGroupRef = useRef<L.FeatureGroup | null>(null);
@@ -45,6 +50,7 @@ export const useHeadquarters = () => {
   // Load headquarters
   useEffect(() => {
     loadHeadquarters();
+    loadBeneficiaries();
   }, []);
 
   const loadHeadquarters = async () => {
@@ -58,6 +64,15 @@ export const useHeadquarters = () => {
       toast.error("Error al cargar las sedes");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadBeneficiaries = async () => {
+    try {
+      const data = await beneficiaryService.getAll();
+      setBeneficiaries(data);
+    } catch (error) {
+      console.error("Error loading beneficiaries:", error);
     }
   };
 
@@ -102,7 +117,13 @@ export const useHeadquarters = () => {
 
     // Process headquarters and geocode if needed
     const processHeadquarters = async () => {
-      const coordinatesPromises = headquarters.map(async (hq) => {
+      // Filtrar sedes activas y en mantenimiento
+      const visibleHeadquarters = headquarters.filter(
+        hq => hq.status === "active" || hq.status === "maintenance"
+      );
+      console.log("Visible headquarters for markers:", visibleHeadquarters);
+      
+      const coordinatesPromises = visibleHeadquarters.map(async (hq) => {
         // Requiere dirección para geocoding
         if (!hq.address) {
           console.log(`Headquarter ${hq.name} has no address`);
@@ -165,11 +186,20 @@ export const useHeadquarters = () => {
         const markerGroup = L.featureGroup();
         coordinates.forEach((coord) => {
           console.log("Adding marker at:", coord.lat, coord.lng);
+          const hq = visibleHeadquarters.find(h => h.name === coord.name);
           const marker = L.marker([coord.lat, coord.lng], {
-            icon: createCustomMarkerIcon(),
+            icon: createCustomMarkerIcon(hq?.status),
           }).bindPopup(
             `<div class="text-sm"><strong>${coord.name}</strong><br/>${coord.address}</div>`
           );
+          
+          // Agregar evento click para mostrar información detallada
+          marker.on('click', () => {
+            if (hq) {
+              setSelectedHeadquarter(hq);
+            }
+          });
+          
           markerGroup.addLayer(marker);
         });
 
@@ -203,6 +233,27 @@ export const useHeadquarters = () => {
     const active = headquarters.filter((h) => h.status === "active").length;
     return { total, active };
   }, [headquarters]);
+
+  // Estadísticas de beneficiarios por sede
+  const beneficiariesByHeadquarter = useMemo(() => {
+    const statsMap = new Map<string, { total: number; active: number }>();
+    
+    headquarters.forEach((hq) => {
+      const beneficiariesInHQ = beneficiaries.filter(
+        (b) => b.headquarters_id === hq.headquarters_id
+      );
+      const activeBeneficiaries = beneficiariesInHQ.filter(
+        (b) => b.status === "activo"
+      ).length;
+      
+      statsMap.set(hq.headquarters_id, {
+        total: beneficiariesInHQ.length,
+        active: activeBeneficiaries,
+      });
+    });
+    
+    return statsMap;
+  }, [headquarters, beneficiaries]);
 
   const openCreate = () => {
     setEditing(null);
@@ -357,6 +408,8 @@ export const useHeadquarters = () => {
     deleteTarget,
     filtered,
     stats,
+    selectedHeadquarter,
+    beneficiariesByHeadquarter,
     
     // Refs
     mapRef,
@@ -368,6 +421,7 @@ export const useHeadquarters = () => {
     setForm,
     setDeleteTarget,
     setImageFile,
+    setSelectedHeadquarter,
     
     // Actions
     openCreate,

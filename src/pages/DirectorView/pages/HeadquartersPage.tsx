@@ -23,12 +23,15 @@ const HeadquartersPage = () => {
     filtered,
     stats,
     mapRef,
+    selectedHeadquarter,
+    beneficiariesByHeadquarter,
     setSearch,
     setStatusFilter,
     setShowDialog,
     setForm,
     setDeleteTarget,
     setImageFile,
+    setSelectedHeadquarter,
     openCreate,
     openEdit,
     handleSave,
@@ -84,7 +87,13 @@ const HeadquartersPage = () => {
       </Card>
 
       {/* Map with all headquarters */}
-      <HeadquartersMap mapRef={mapRef} headquarters={headquarters} />
+      <HeadquartersMap 
+        mapRef={mapRef} 
+        headquarters={headquarters}
+        selectedHeadquarter={selectedHeadquarter}
+        beneficiariesByHeadquarter={beneficiariesByHeadquarter}
+        onCloseDetail={() => setSelectedHeadquarter(null)}
+      />
 
       {/* Dialog */}
       <HeadquartersDialog
