@@ -14,7 +14,6 @@ import type { Project, ProjectPriority } from "@/types";
 
 interface ProjectsTableProps {
   projects: Project[];
-  loading: boolean;
   onEdit: (project: Project) => void;
   onDelete: (project: Project) => void;
   onView: (project: Project) => void;
@@ -24,7 +23,6 @@ interface ProjectsTableProps {
 
 export const ProjectsTable = ({
   projects,
-  loading,
   onEdit,
   onDelete,
   onView,
@@ -78,16 +76,7 @@ export const ProjectsTable = ({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {loading ? (
-          <TableRow>
-            <TableCell
-              colSpan={10}
-              className="text-center text-muted-foreground"
-            >
-              Cargando proyectos...
-            </TableCell>
-          </TableRow>
-        ) : projects.length === 0 ? (
+        {projects.length === 0 ? (
           <TableRow>
             <TableCell
               colSpan={10}

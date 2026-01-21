@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from '@/components/CTA';
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { galleryService } from '@/api/services';
 import type { GalleryItem, GalleryItemType } from '@/types';
 import { toast } from 'sonner';
@@ -41,6 +42,10 @@ const GalleryPage = () => {
   const filteredItems = filter === 'all' 
     ? galleryItems 
     : galleryItems.filter(item => item.type === filter);
+
+  if (loading) {
+    return <FullScreenLoader message="Cargando galería..." />;
+  }
 
   return (
     <div className="min-h-screen pt-20">
@@ -89,11 +94,7 @@ const GalleryPage = () => {
       {/* Gallery Grid */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="text-center py-12 text-muted-foreground">
-              <p>Cargando galería...</p>
-            </div>
-          ) : filteredItems.length === 0 ? (
+          {filteredItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p>No hay elementos para mostrar</p>
             </div>

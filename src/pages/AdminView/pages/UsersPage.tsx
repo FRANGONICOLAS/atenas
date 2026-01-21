@@ -1,5 +1,6 @@
 import { UserPlus, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { UsersView } from "../components";
 import { UserDialog } from "../components";
 import { ExportButton } from "../components";
@@ -30,6 +31,10 @@ const UsersPage = () => {
     handleExportDonationsPDF,
     handleExportConsolidated,
   } = useAdminDashboard();
+
+  if (isLoadingUsers) {
+    return <FullScreenLoader message="Cargando usuarios..." />;
+  }
 
   return (
     <div className="space-y-6">
@@ -62,7 +67,6 @@ const UsersPage = () => {
       {/* Users Table */}
       <UsersView
         users={users}
-        isLoadingUsers={isLoadingUsers}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         onEditUser={handleEditUser}

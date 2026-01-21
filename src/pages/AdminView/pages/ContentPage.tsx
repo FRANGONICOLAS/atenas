@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Upload, Download, FileText, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Table,
@@ -184,6 +185,10 @@ const ContentPage = () => {
       setFormData({ ...formData, file });
     }
   };
+
+  if (loading) {
+    return <FullScreenLoader message="Cargando galería..." />;
+  }
 
   return (
     <div className="space-y-6">

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { useDirectorView } from "@/hooks/useDirectorView";
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
@@ -180,6 +181,10 @@ const ProjectsPage = () => {
     });
   };
 
+  if (projectsLoading) {
+    return <FullScreenLoader message="Cargando proyectos..." />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -232,7 +237,6 @@ const ProjectsPage = () => {
             {/* Table */}
             <ProjectsTable
               projects={filteredProjects}
-              loading={projectsLoading}
               onEdit={openEdit}
               onDelete={initiateDelete}
               onView={setDetailProject}

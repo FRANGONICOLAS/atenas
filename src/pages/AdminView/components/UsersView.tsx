@@ -28,7 +28,6 @@ interface User {
 
 interface UsersViewProps {
   users: User[];
-  isLoadingUsers: boolean;
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onEditUser: (user: User) => void;
@@ -37,7 +36,6 @@ interface UsersViewProps {
 
 export const UsersView = ({
   users,
-  isLoadingUsers,
   searchTerm,
   onSearchChange,
   onEditUser,
@@ -99,16 +97,7 @@ export const UsersView = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoadingUsers ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    <span className="text-muted-foreground">Cargando usuarios...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
+            {filteredUsers.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8">
                   <div className="text-muted-foreground">

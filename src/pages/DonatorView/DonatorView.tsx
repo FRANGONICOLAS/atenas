@@ -1,13 +1,17 @@
 import { DollarSign, Heart, Trophy, TrendingUp, Calendar, PiggyBank, Box } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useDonations } from '@/hooks/useDonations';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { DonatorStatCard } from './components';
 import { DonationsPage, ProjectsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { User } from '@/api/types/database.types';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 const DonatorView = () => {
   const { user } = useAuth();
@@ -28,73 +32,60 @@ const DonatorView = () => {
 };
 
 const MainDashboard = ({ user }: { user: User }) => {
-  const stats = [
+  const { stats, loading, error } = useDonations();
+
+  const formatCurrency = (value: number, currency: string = 'USD') => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+    }).format(value);
+  };
+
+  if (loading) {
+    return <FullScreenLoader message="Cargando estadísticas de donaciones..." />;
+  }
+
+  if (error) {
+    return (
+      <div className="w-full">
+        <DashboardHeader
+          title="Panel de Donación"
+          firstName={user?.first_name}
+          lastName={user?.last_name}
+          role={user?.roles[0]}
+          icon={Box}
+          roleIcon={Heart}
+        />
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  const statsCards = [
     {
       icon: DollarSign,
       title: 'Total Donado',
-      value: '$2,500,000',
+      value: formatCurrency(stats?.totalDonated || 0),
       color: 'bg-green-500',
     },
     {
       icon: Trophy,
       title: 'Proyectos Apoyados',
-      value: '5',
+      value: stats?.projectsSupported || 0,
       color: 'bg-blue-500',
     },
     {
       icon: Heart,
       title: 'Niños Beneficiados',
-      value: '43',
+      value: stats?.beneficiariesImpacted || 0,
       color: 'bg-red-500',
     },
   ];
-
-  // Proyectos apoyados
-  const proyectosApoyados = [
-    {
-      id: 1,
-      nombre: 'Torneo Interbarrial',
-      donacion: 500000,
-      progreso: 75,
-      categoria: 'Deportes',
-    },
-    {
-      id: 2,
-      nombre: 'Programa Nutrición Infantil',
-      donacion: 1000000,
-      progreso: 50,
-      categoria: 'Salud',
-    },
-    {
-      id: 3,
-      nombre: 'Mejora Instalaciones',
-      donacion: 1000000,
-      progreso: 30,
-      categoria: 'Infraestructura',
-    },
-  ];
-
-  // Donaciones recientes
-  const donacionesRecientes = [
-    { fecha: '2025-01-05', monto: 200000, proyecto: 'Torneo Interbarrial' },
-    { fecha: '2024-12-20', monto: 500000, proyecto: 'Programa Nutrición' },
-    { fecha: '2024-12-10', monto: 300000, proyecto: 'Mejora Instalaciones' },
-  ];
-
-  // Impacto generado
-  const impacto = [
-    { metrica: 'Niños con alimentación balanceada', valor: 28 },
-    { metrica: 'Participantes en torneos', valor: 15 },
-    { metrica: 'Mejoras en infraestructura', valor: 3 },
-  ];
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
 
   return (
     <div className="w-full">
@@ -110,7 +101,7 @@ const MainDashboard = ({ user }: { user: User }) => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {stats.map((stat, index) => (
+        {statsCards.map((stat, index) => (
           <DonatorStatCard
             key={index}
             icon={stat.icon}
@@ -133,24 +124,30 @@ const MainDashboard = ({ user }: { user: User }) => {
             <CardDescription>Estado de tus contribuciones</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {proyectosApoyados.map((proyecto) => (
-              <div key={proyecto.id} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-sm">{proyecto.nombre}</p>
-                    <p className="text-xs text-muted-foreground">{proyecto.categoria}</p>
+            {stats?.supportedProjects && stats.supportedProjects.length > 0 ? (
+              stats.supportedProjects.map((proyecto) => (
+                <div key={proyecto.project_id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-sm">{proyecto.project_name}</p>
+                      <p className="text-xs text-muted-foreground">{proyecto.category}</p>
+                    </div>
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      {formatCurrency(proyecto.totalDonated)}
+                    </Badge>
                   </div>
-                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                    {formatCurrency(proyecto.donacion)}
-                  </Badge>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Progreso</span>
+                    <span>{proyecto.progress}%</span>
+                  </div>
+                  <Progress value={proyecto.progress} className="h-2" />
                 </div>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>Progreso</span>
-                  <span>{proyecto.progreso}%</span>
-                </div>
-                <Progress value={proyecto.progreso} className="h-2" />
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No has apoyado proyectos aún
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -164,24 +161,30 @@ const MainDashboard = ({ user }: { user: User }) => {
             <CardDescription>Últimas contribuciones</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {donacionesRecientes.map((donacion, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                <PiggyBank className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div className="flex-1 space-y-1">
-                  <p className="font-medium text-sm">{donacion.proyecto}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(donacion.fecha).toLocaleDateString('es-CO', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })}
-                  </p>
+            {stats?.recentDonations && stats.recentDonations.length > 0 ? (
+              stats.recentDonations.map((donacion, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                  <PiggyBank className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <div className="flex-1 space-y-1">
+                    <p className="font-medium text-sm">{donacion.project?.name || 'Proyecto'}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(donacion.date).toLocaleDateString('es-CO', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="shrink-0 bg-blue-50 text-blue-700 border-blue-200">
+                    {formatCurrency(parseFloat(donacion.amount), donacion.currency)}
+                  </Badge>
                 </div>
-                <Badge variant="outline" className="shrink-0 bg-blue-50 text-blue-700 border-blue-200">
-                  {formatCurrency(donacion.monto)}
-                </Badge>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No tienes donaciones recientes
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -199,12 +202,18 @@ const MainDashboard = ({ user }: { user: User }) => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {impacto.map((item, index) => (
-              <div key={index} className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
-                <p className="text-3xl font-bold text-primary">{item.valor}</p>
-                <p className="text-sm text-muted-foreground">{item.metrica}</p>
-              </div>
-            ))}
+            <div className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
+              <p className="text-3xl font-bold text-primary">{stats?.beneficiariesImpacted || 0}</p>
+              <p className="text-sm text-muted-foreground">Niños beneficiados</p>
+            </div>
+            <div className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
+              <p className="text-3xl font-bold text-primary">{stats?.projectsSupported || 0}</p>
+              <p className="text-sm text-muted-foreground">Proyectos apoyados</p>
+            </div>
+            <div className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
+              <p className="text-3xl font-bold text-primary">{stats?.recentDonations?.length || 0}</p>
+              <p className="text-sm text-muted-foreground">Donaciones realizadas</p>
+            </div>
           </div>
         </CardContent>
       </Card>

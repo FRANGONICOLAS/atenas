@@ -1,5 +1,6 @@
 import { MapPin, Plus, Pencil, Trash2, Eye, Users, MapPinned, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { MapDialog } from '../components';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
@@ -89,6 +90,10 @@ const LocationsPage = () => {
     }
   };
 
+  if (loading) {
+    return <FullScreenLoader message="Cargando sedes..." />;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -104,9 +109,7 @@ const LocationsPage = () => {
       </div>
 
       {/* Locations Grid */}
-      {loading ? (
-        <div className="text-center py-8">Cargando sedes...</div>
-      ) : headquarters.length === 0 ? (
+      {headquarters.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center">
             <p className="text-muted-foreground">No hay sedes registradas</p>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useBeneficiaries } from "@/hooks/useBeneficiaries";
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -147,6 +148,10 @@ const BeneficiariesPage = () => {
   const handleExportPDFClick = () => {
     handleExportPDF(filtered);
   };
+
+  if (loading) {
+    return <FullScreenLoader message="Cargando beneficiarios..." />;
+  }
 
   return (
     <div className="space-y-6">

@@ -1,5 +1,6 @@
 import "leaflet/dist/leaflet.css";
 import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Plus } from "lucide-react";
@@ -38,6 +39,10 @@ const HeadquartersPage = () => {
     handleDelete,
     toggleStatus,
   } = useHeadquarters();
+
+  if (loading) {
+    return <FullScreenLoader message="Cargando sedes..." />;
+  }
 
   return (
     <div className="space-y-6">

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from '@/components/CTA';
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { projectService } from '@/api/services';
 import type { ProjectDB } from '@/types/project.types';
 
@@ -86,6 +87,10 @@ const ProjectsPage = () => {
   const totalGoal = projects.reduce((acc, p) => acc + (p.finance_goal || 0), 0);
   const activeProjects = projects.filter(p => p.status === 'active').length;
 
+  if (loading) {
+    return <FullScreenLoader message="Cargando proyectos..." />;
+  }
+
   return (
     <div className="min-h-screen pt-20">
       {/* Hero */}
@@ -103,45 +108,35 @@ const ProjectsPage = () => {
       {/* Summary Stats */}
       <section className="py-12 bg-card">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">Cargando proyectos...</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground">{projects.length}</div>
+              <div className="text-muted-foreground">Proyectos Totales</div>
             </div>
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-foreground">{projects.length}</div>
-                <div className="text-muted-foreground">Proyectos Totales</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-secondary">{activeProjects}</div>
-                <div className="text-muted-foreground">Proyectos Activos</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-foreground">
-                  {formatCurrency(totalRaised)}
-                </div>
-                <div className="text-muted-foreground">Total Recaudado</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-foreground">
-                  {formatCurrency(totalGoal)}
-                </div>
-                <div className="text-muted-foreground">Meta Total</div>
-              </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-secondary">{activeProjects}</div>
+              <div className="text-muted-foreground">Proyectos Activos</div>
             </div>
-          )}
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground">
+                {formatCurrency(totalRaised)}
+              </div>
+              <div className="text-muted-foreground">Total Recaudado</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-bold text-foreground">
+                {formatCurrency(totalGoal)}
+              </div>
+              <div className="text-muted-foreground">Meta Total</div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Projects Grid */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-xl text-muted-foreground">Cargando proyectos...</p>
-            </div>
-          ) : projects.length === 0 ? (
+          {projects.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-xl text-muted-foreground">No hay proyectos disponibles</p>
             </div>

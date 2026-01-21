@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import CTA from "@/components/CTA";
+import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { headquarterService } from "@/api/services";
 import type { Headquarter } from "@/types/headquarter.types";
 import { LocationsHero, LocationsMap, LocationCard } from "../components";
@@ -91,6 +92,10 @@ const LocationsPage = () => {
     loadHeadquarters();
   }, [loadHeadquarters]);
 
+  if (loading) {
+    return <FullScreenLoader message="Cargando sedes..." />;
+  }
+
   return (
     <div className="min-h-screen pt-20">
       <LocationsHero />
@@ -98,11 +103,7 @@ const LocationsPage = () => {
       {/* Locations */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="text-center py-12">
-              <p className="text-xl text-muted-foreground">Cargando sedes...</p>
-            </div>
-          ) : locations.length === 0 ? (
+          {locations.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-xl text-muted-foreground">
                 No hay sedes disponibles
@@ -123,7 +124,7 @@ const LocationsPage = () => {
       </section>
 
       {/* General Map - Ubicado antes de las sedes individuales */}
-      {!loading && <LocationsMap locations={locations} />}
+      <LocationsMap locations={locations} />
       
       <CTA />
     </div>
