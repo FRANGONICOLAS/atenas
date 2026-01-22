@@ -10,3 +10,4 @@ export * from './user.types';
 export * from './form.types';
 export * from './gallery.types';
 export * from './bold.types';
+export * from './testimonial.types';

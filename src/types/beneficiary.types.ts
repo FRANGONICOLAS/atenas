@@ -96,3 +96,16 @@ export interface SedeStats {
   active: number;
   avgPerf: number;
 }
+
+// Interfaz para vista pública de beneficiarios (con edad calculada)
+export interface BeneficiaryPublic {
+  id: string;
+  firstName: string;
+  lastName: string;
+  age: number;
+  category: string;
+  performance: number;
+  photoUrl: string | null;
+  status?: string;
+  registryDate: string;
+}
