@@ -36,6 +36,7 @@ import {
   DonatorView,
   // Common Pages
   DonationPage,
+  DonationResultPage,
   NotFound,
 } from "@/pages";
 
@@ -67,6 +68,8 @@ const App = () => (
                 <Route path="/galeria" element={<GalleryPage />} />
                 <Route path="/testimonios" element={<TestimonialsPage />} />
                 <Route path="/donar" element={<DonationPage />} />
+                <Route path="/donation" element={<DonationPage />} />
+                <Route path="/donation/result" element={<DonationResultPage />} />
                 <Route path="/sedes" element={<LocationsPage />} />
 
                 {/* Rutas de autenticación */}

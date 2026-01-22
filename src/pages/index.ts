@@ -26,5 +26,6 @@ export { default as DonatorView } from './DonatorView/DonatorView';
 
 // Common Pages
 export { default as DonationPage } from './Common/DonationPage';
+export { default as DonationResultPage } from './Common/DonationResultPage';
 export { default as ProfilePage } from './Common/ProfilePage';
 export { default as NotFound } from './Common/NotFound';

@@ -1,6 +1,6 @@
 export type DonationStatus = 'completed' | 'pending' | 'processing' | 'cancelled' | 'approved';
 export type DonationType = 'monetary' | 'equipment' | 'infrastructure' | 'sponsorship';
-export type PaymentMethod = 'transfer' | 'card' | 'cash' | 'check' | 'pay_pal';
+export type PaymentMethod = 'transfer' | 'card' | 'cash' | 'check' | 'pay_pal' | 'bold';
 
 export interface Donation {
   id: number;
