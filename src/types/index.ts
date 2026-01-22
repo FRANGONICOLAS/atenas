@@ -9,3 +9,4 @@ export * from './event.types';
 export * from './user.types';
 export * from './form.types';
 export * from './gallery.types';
+export * from './testimonial.types';
