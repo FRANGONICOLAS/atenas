@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Search, Filter, Trophy, Target, Zap, Medal, ChevronDown } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { Search, Filter, Trophy, Target, Zap, Medal, ChevronDown, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,129 +20,56 @@ import {
 } from '@/components/ui/dialog';
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from '@/components/CTA';
-
-interface Player {
-  id: number;
-  name: string;
-  age: number;
-  category: string;
-  position: string;
-  image: string;
-  tournaments: number;
-  goals: number;
-  assists: number;
-  progress: number;
-  joinDate: string;
-  attitude: string;
-  achievements: string[];
-}
+import { useBeneficiaries } from '@/hooks/useBeneficiaries';
+import { BeneficiaryPublic } from '@/types/beneficiary.types';
 
 const PlayersPage = () => {
   const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<BeneficiaryPublic | null>(null);
+  
+  // Usar el hook para obtener beneficiarios
+  const { beneficiaries, loading, categoryFilter, setCategoryFilter } = useBeneficiaries();
 
-  const players: Player[] = [
-    {
-      id: 1,
-      name: 'Santiago López',
-      age: 14,
-      category: 'Categoria 3',
-      position: 'Delantero',
-      image: 'public/image1.jpg',
-      tournaments: 12,
-      goals: 23,
-      assists: 8,
-      progress: 85,
-      joinDate: '2020-03-15',
-      attitude: 'Excelente',
-      achievements: ['Goleador del torneo municipal 2023', 'Mejor jugador sub-14', 'Convocado a selección departamental'],
-    },
-    {
-      id: 2,
-      name: 'Mario García',
-      age: 12,
-      category: 'Categoria 3',
-      position: 'Mediocampista',
-      image: 'public/image2.jpg',
-      tournaments: 8,
-      goals: 15,
-      assists: 22,
-      progress: 78,
-      joinDate: '2021-01-10',
-      attitude: 'Muy buena',
-      achievements: ['Mejor asistidora 2023', 'Premio al juego limpio'],
-    },
-    {
-      id: 3,
-      name: 'Andrés Rodríguez',
-      age: 16,
-      category: 'Categoria 5',
-      position: 'Portero',
-      image: 'public/image3.jpg',
-      tournaments: 15,
-      goals: 0,
-      assists: 2,
-      progress: 92,
-      joinDate: '2019-06-20',
-      attitude: 'Excelente',
-      achievements: ['Portero menos goleado 2023', 'Capitán del equipo', 'En pruebas con club profesional'],
-    },
-    {
-      id: 4,
-      name: 'Valentina Torres',
-      age: 10,
-      category: 'Categoria 2',
-      position: 'Defensa',
-      image: 'public/image6.jpg',
-      tournaments: 5,
-      goals: 3,
-      assists: 5,
-      progress: 65,
-      joinDate: '2022-02-28',
-      attitude: 'Muy buena',
-      achievements: ['Mejor defensa torneo local', 'Premio al esfuerzo'],
-    },
-    {
-      id: 5,
-      name: 'Juan Pablo Méndez',
-      age: 8,
-      category: 'Categoria 1',
-      position: 'Mediocampista',
-      image: 'public/image4.jpg',
-      tournaments: 3,
-      goals: 7,
-      assists: 4,
-      progress: 55,
-      joinDate: '2023-01-15',
-      attitude: 'Buena',
-      achievements: ['Jugador revelación 2023'],
-    },
-    {
-      id: 6,
-      name: 'Martin Jiménez',
-      age: 15,
-      category: 'Categoria 5',
-      position: 'Delantero',
-      image: 'public/image5.jpg',
-      tournaments: 14,
-      goals: 28,
-      assists: 12,
-      progress: 88,
-      joinDate: '2020-08-05',
-      attitude: 'Excelente',
-      achievements: ['Máxima goleadora histórica', 'Selección nacional sub-15', 'Premio talento deportivo'],
-    },
-  ];
+  // Función para calcular edad a partir de fecha de nacimiento
+  const calculateAge = (birthDate: string): number => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
 
-  const categories = ['all', 'Categoria 1', 'Categoria 2', 'Categoria 3', 'Categoria 4', 'Categoria 5'];
+  // Mapear beneficiarios a jugadores
+  const players: BeneficiaryPublic[] = useMemo(() => {
+    return beneficiaries
+      .filter(b => b.status === 'activo') // Solo mostrar activos
+      .map(beneficiary => ({
+        id: beneficiary.beneficiary_id,
+        firstName: beneficiary.first_name,
+        lastName: beneficiary.last_name,
+        age: calculateAge(beneficiary.birth_date),
+        category: beneficiary.category,
+        performance: beneficiary.performance || 0,
+        photoUrl: beneficiary.photo_url,
+        status: beneficiary.status,
+        registryDate: beneficiary.registry_date,
+      }));
+  }, [beneficiaries]);
 
-  const filteredPlayers = players.filter(player => {
-    const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || player.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const categories = ['all', 'Categoría 1', 'Categoría 2', 'Categoría 3', 'Categoría 4', 'Categoría 5'];
+
+  const filteredPlayers = useMemo(() => {
+    return players.filter(player => {
+      const fullName = `${player.firstName} ${player.lastName}`.toLowerCase();
+      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || player.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [players, searchTerm, categoryFilter]);
 
   return (
     <div className="min-h-screen pt-20">
@@ -191,62 +118,67 @@ const PlayersPage = () => {
       {/* Players Grid */}
       <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredPlayers.map((player) => (
-              <Card 
-                key={player.id} 
-                className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-                onClick={() => setSelectedPlayer(player)}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img 
-                    src={player.image} 
-                    alt={player.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
-                  <Badge className="absolute top-3 right-3 bg-primary">
-                    {player.category}
-                  </Badge>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="font-bold text-xl text-primary-foreground">{player.name}</h3>
-                    <p className="text-primary-foreground/80">{player.position} • {player.age} años</p>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="text-center">
-                      <Trophy className="w-5 h-5 mx-auto mb-1 text-primary" />
-                      <div className="font-bold text-foreground">{player.tournaments}</div>
-                      <div className="text-xs text-muted-foreground">{t.players.tournaments}</div>
-                    </div>
-                    <div className="text-center">
-                      <Target className="w-5 h-5 mx-auto mb-1 text-secondary" />
-                      <div className="font-bold text-foreground">{player.goals}</div>
-                      <div className="text-xs text-muted-foreground">{t.players.goals}</div>
-                    </div>
-                    <div className="text-center">
-                      <Zap className="w-5 h-5 mx-auto mb-1 text-chart-1" />
-                      <div className="font-bold text-foreground">{player.assists}</div>
-                      <div className="text-xs text-muted-foreground">{t.players.assists}</div>
-                    </div>
-                  </div>
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-muted-foreground">{t.players.progress}</span>
-                      <span className="font-medium text-foreground">{player.progress}%</span>
-                    </div>
-                    <Progress value={player.progress} className="h-2" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredPlayers.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">No se encontraron jugadores</p>
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPlayers.map((player) => (
+                  <Card 
+                    key={player.id} 
+                    className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
+                    onClick={() => setSelectedPlayer(player)}
+                  >
+                    <div className="relative h-48 overflow-hidden bg-muted">
+                      {player.photoUrl ? (
+                        <img 
+                          src={player.photoUrl} 
+                          alt={`${player.firstName} ${player.lastName}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+                          <User className="w-20 h-20 text-muted-foreground/50" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+                      <Badge className="absolute top-3 right-3 bg-primary">
+                        {player.category}
+                      </Badge>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h3 className="font-bold text-xl text-primary-foreground">
+                          {player.firstName} {player.lastName}
+                        </h3>
+                        <p className="text-primary-foreground/80">{player.age} años</p>
+                      </div>
+                    </div>
+                    <CardContent className="p-4">
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-sm text-muted-foreground">Rendimiento</span>
+                          <span className="font-bold text-foreground">{player.performance}%</span>
+                        </div>
+                        <Progress value={player.performance} className="h-2" />
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Miembro desde: {new Date(player.registryDate).toLocaleDateString('es-ES', { 
+                          year: 'numeric', 
+                          month: 'short' 
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {filteredPlayers.length === 0 && !loading && (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground text-lg">No se encontraron jugadores</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
@@ -257,68 +189,57 @@ const PlayersPage = () => {
           {selectedPlayer && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl">{selectedPlayer.name}</DialogTitle>
+                <DialogTitle className="text-2xl">
+                  {selectedPlayer.firstName} {selectedPlayer.lastName}
+                </DialogTitle>
               </DialogHeader>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <img 
-                    src={selectedPlayer.image} 
-                    alt={selectedPlayer.name}
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
+                  {selectedPlayer.photoUrl ? (
+                    <img 
+                      src={selectedPlayer.photoUrl} 
+                      alt={`${selectedPlayer.firstName} ${selectedPlayer.lastName}`}
+                      className="w-full h-64 object-cover rounded-lg"
+                    />
+                  ) : (
+                    <div className="w-full h-64 flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg">
+                      <User className="w-24 h-24 text-muted-foreground/50" />
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-4">
                   <div>
                     <Badge className="mb-2">{selectedPlayer.category}</Badge>
-                    <p className="text-muted-foreground">{selectedPlayer.position} • {selectedPlayer.age} años</p>
+                    <p className="text-muted-foreground">{selectedPlayer.age} años</p>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
                     <div className="p-3 bg-muted/50 rounded-lg text-center">
-                      <div className="font-bold text-xl text-foreground">{selectedPlayer.tournaments}</div>
-                      <div className="text-xs text-muted-foreground">Torneos</div>
+                      <div className="font-bold text-xl text-foreground">{selectedPlayer.performance}%</div>
+                      <div className="text-xs text-muted-foreground">Rendimiento</div>
                     </div>
                     <div className="p-3 bg-muted/50 rounded-lg text-center">
-                      <div className="font-bold text-xl text-foreground">{selectedPlayer.goals}</div>
-                      <div className="text-xs text-muted-foreground">Goles</div>
-                    </div>
-                    <div className="p-3 bg-muted/50 rounded-lg text-center">
-                      <div className="font-bold text-xl text-foreground">{selectedPlayer.assists}</div>
-                      <div className="text-xs text-muted-foreground">Asistencias</div>
-                    </div>
-                    <div className="p-3 bg-muted/50 rounded-lg text-center">
-                      <div className="font-bold text-xl text-foreground">{selectedPlayer.attitude}</div>
-                      <div className="text-xs text-muted-foreground">Actitud</div>
+                      <div className="font-bold text-xl text-foreground">{selectedPlayer.category}</div>
+                      <div className="text-xs text-muted-foreground">Categoría</div>
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="text-muted-foreground">Progreso general</span>
-                      <span className="font-medium text-foreground">{selectedPlayer.progress}%</span>
+                      <span className="font-medium text-foreground">{selectedPlayer.performance}%</span>
                     </div>
-                    <Progress value={selectedPlayer.progress} className="h-3" />
+                    <Progress value={selectedPlayer.performance} className="h-3" />
+                  </div>
+
+                  <div className="text-sm text-muted-foreground mt-4">
+                    Miembro desde: {new Date(selectedPlayer.registryDate).toLocaleDateString('es-ES', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-4">
-                <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Medal className="w-5 h-5 text-secondary" />
-                  Logros y reconocimientos
-                </h4>
-                <ul className="space-y-2">
-                  {selectedPlayer.achievements.map((achievement, i) => (
-                    <li key={i} className="flex items-center gap-2 text-muted-foreground">
-                      <div className="w-2 h-2 rounded-full bg-secondary" />
-                      {achievement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="text-sm text-muted-foreground mt-4">
-                Miembro desde: {new Date(selectedPlayer.joinDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
               </div>
             </>
           )}
