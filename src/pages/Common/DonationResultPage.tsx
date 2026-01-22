@@ -31,7 +31,7 @@ const DonationResultPage = () => {
           title: '¡Pago Exitoso!',
           message: 'Tu donación ha sido procesada correctamente. ¡Gracias por tu generosidad!',
           buttonText: 'Ver mis donaciones',
-          buttonLink: '/donator',
+          buttonLink: '/donator?tab=donations',
         };
       case 'declined':
         return {
@@ -49,7 +49,7 @@ const DonationResultPage = () => {
           title: 'Pago Pendiente',
           message: 'Tu pago está siendo procesado. Recibirás una confirmación por correo cuando se complete.',
           buttonText: 'Ver mis donaciones',
-          buttonLink: '/donator',
+          buttonLink: '/donator?tab=donations',
         };
       default:
         return {
