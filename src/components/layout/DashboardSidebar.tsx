@@ -62,6 +62,12 @@ const navSections: NavSection[] = [
         href: '/admin?tab=content',
         icon: ImageIcon,
         description: 'Gestión de contenido'
+      },
+      {
+        title: 'Imágenes Públicas',
+        href: '/admin?tab=site-content',
+        icon: ImageIcon,
+        description: 'Imágenes de páginas públicas'
       }
     ]
   },

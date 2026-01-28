@@ -9,7 +9,7 @@ import {
   DonationsView,
   AnalyticsView,
 } from './components';
-import { UsersPage, ContentPage } from './pages';
+import { UsersPage, ContentPage, SiteContentPage } from './pages';
 import { User } from '@/types';
 
 const AdminView = () => {
@@ -24,6 +24,10 @@ const AdminView = () => {
   
   if (tab === 'content') {
     return <ContentPage />;
+  }
+  
+  if (tab === 'site-content') {
+    return <SiteContentPage />;
   }
 
   // Dashboard principal (sin tab)

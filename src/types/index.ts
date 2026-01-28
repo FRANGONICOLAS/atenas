@@ -11,3 +11,4 @@ export * from './form.types';
 export * from './gallery.types';
 export * from './bold.types';
 export * from './testimonial.types';
+export * from './siteContent.types';
