@@ -18,16 +18,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DatePicker } from "@/components/ui/date-picker";
-import { UserCheck } from "lucide-react";
+import { UserCheck, User, Ruler, Activity, Brain } from "lucide-react";
 import type { Headquarter } from "@/types";
 import type {
   CreateBeneficiaryData,
   BeneficiaryStatus,
 } from "@/types/beneficiary.types";
+import type { Json } from "@/api/types";
+import { BeneficiaryAntropometricForm } from "./BeneficiaryAntropometricForm";
+import { TechnicalTecticalForm } from "./TechnicalTecticalForm";
+import { EmotionalForm } from "./EmotionalForm";
+import { useState } from "react";
+import { calculatePerformance } from "@/lib/beneficiaryCalculations";
+import type { TechnicalTacticalData, AntropometricData } from "@/types/beneficiary.types";
 
-type BeneficiaryFormData = Required<CreateBeneficiaryData> & {
+type BeneficiaryFormData = {
+  first_name: string;
+  last_name: string;
+  birth_date: string;
+  category: string;
+  headquarters_id: string;
+  phone: string;
   status: BeneficiaryStatus;
+  sex?: string;
   performance: number;
   attendance: number;
   registry_date: string;
@@ -36,6 +51,10 @@ type BeneficiaryFormData = Required<CreateBeneficiaryData> & {
   emergency_contact: string;
   medical_info: string;
   photo_url?: string | null;
+  observation?: string;
+  anthropometric_detail?: Json;
+  technical_tactic_detail?: Json;
+  emotional_detail?: Json;
 };
 
 interface BeneficiaryFormProps {
@@ -59,6 +78,8 @@ export const BeneficiaryForm = ({
   headquarters,
   setPhotoFile,
 }: BeneficiaryFormProps) => {
+  const [activeTab, setActiveTab] = useState("general");
+  
   // Calcular rango de fechas para beneficiarios entre 6 y 17 años
   const today = new Date();
   const minDate = new Date(
@@ -74,7 +95,7 @@ export const BeneficiaryForm = ({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserCheck className="w-5 h-5" />
@@ -86,7 +107,29 @@ export const BeneficiaryForm = ({
               : "Completa los datos para registrar un beneficiario"}
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <User className="w-4 h-4" />
+              General
+            </TabsTrigger>
+            <TabsTrigger value="anthropometric" className="flex items-center gap-2">
+              <Ruler className="w-4 h-4" />
+              Antropométrico
+            </TabsTrigger>
+            <TabsTrigger value="technical" className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Técnico-Táctico
+            </TabsTrigger>
+            <TabsTrigger value="emotional" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              Psicológico
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Tab 1: Información General */}
+          <TabsContent value="general" className="space-y-4 py-4">
           {/* Foto de perfil */}
           <div className="flex justify-center mb-4">
             <div className="w-full max-w-md">
@@ -249,18 +292,19 @@ export const BeneficiaryForm = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="performance">Rendimiento (%)</Label>
+              <Label htmlFor="performance" className="flex items-center gap-2">
+                Rendimiento (%) 
+                <span className="text-xs text-muted-foreground font-normal">
+                  (Calculado automáticamente)
+                </span>
+              </Label>
               <Input
                 id="performance"
                 type="number"
                 value={form.performance}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    performance: parseInt(e.target.value) || 0,
-                  })
-                }
-                placeholder="85"
+                disabled
+                className="bg-muted cursor-not-allowed"
+                placeholder="Se calcula del formulario técnico"
               />
             </div>
             <div className="space-y-2">
@@ -337,7 +381,50 @@ export const BeneficiaryForm = ({
               </div>
             </div>
           )}
-        </div>
+          </TabsContent>
+
+          {/* Tab 2: Detalles Antropométricos */}
+          <TabsContent value="anthropometric" className="py-4">
+            <BeneficiaryAntropometricForm
+              data={form.anthropometric_detail}
+              onChange={(data) => {
+                const antropometricData = data as AntropometricData;
+                setForm({ 
+                  ...form, 
+                  anthropometric_detail: data as Json,
+                  sex: antropometricData?.genero || form.sex
+                });
+              }}
+            />
+          </TabsContent>
+
+          {/* Tab 3: Detalles Técnico-Tácticos */}
+          <TabsContent value="technical" className="py-4">
+            <TechnicalTecticalForm
+              data={form.technical_tactic_detail}
+              onChange={(data) => {
+                const technicalData = data as TechnicalTacticalData;
+                // Calcular performance automáticamente del promedio técnico
+                const performance = calculatePerformance(technicalData);
+                
+                setForm({ 
+                  ...form, 
+                  technical_tactic_detail: data as Json,
+                  performance: performance
+                });
+              }}
+            />
+          </TabsContent>
+
+          {/* Tab 4: Detalles Psicológicos/Emocionales */}
+          <TabsContent value="emotional" className="py-4">
+            <EmotionalForm
+              data={form.emotional_detail}
+              onChange={(data) => setForm({ ...form, emotional_detail: data as Json })}
+            />
+          </TabsContent>
+        </Tabs>
+
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancelar

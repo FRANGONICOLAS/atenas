@@ -9,7 +9,7 @@ const CategoriesPage = () => {
 
   const categories = [
     {
-      name: 'Categoria 1',
+      name: 'Categoria Sub 6',
       ageRange: '6-8',
       players: 45,
       trainers: 3,
@@ -20,7 +20,18 @@ const CategoriesPage = () => {
       color: 'bg-chart-1',
     },
     {
-      name: 'Categoria 2',
+      name: 'Categoria Sub 8',
+      ageRange: '6-8',
+      players: 45,
+      trainers: 3,
+      schedule: 'Lunes, Miércoles, Viernes - 3:00 PM',
+      description: 'Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.',
+      achievements: ['Participación en 5 torneos locales', 'Formación de 15 jugadores para categoría superior'],
+      image: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop',
+      color: 'bg-chart-1',
+    },
+    {
+      name: 'Categoria Sub 10',
       ageRange: '8-10',
       players: 52,
       trainers: 4,
@@ -31,7 +42,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-2',
     },
     {
-      name: 'Categoria 3',
+      name: 'Categoria Sub 12',
       ageRange: '10-12',
       players: 48,
       trainers: 4,
@@ -42,8 +53,8 @@ const CategoriesPage = () => {
       color: 'bg-chart-3',
     },
     {
-      name: 'Categoria 4',
-      ageRange: '12-15',
+      name: 'Categoria Sub 14',
+      ageRange: '12-14',
       players: 60,
       trainers: 5,
       schedule: 'Lunes a Sábado - 4:30 PM',
@@ -53,7 +64,7 @@ const CategoriesPage = () => {
       color: 'bg-chart-4',
     },
     {
-      name: 'Categoria 5',
+      name: 'Categoria Sub 16',
       ageRange: '15-17',
       players: 38,
       trainers: 3,
@@ -63,6 +74,17 @@ const CategoriesPage = () => {
       image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&h=400&fit=crop',
       color: 'bg-chart-5',
     },
+    {
+      name: 'Categoria Sub 18',
+      ageRange: '15-17',
+      players: 38,
+      trainers: 3,
+      schedule: 'Lunes a Sábado - 5:00 PM',
+      description: 'Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.',
+      achievements: ['3 jugadores en divisiones inferiores de clubes profesionales', 'Campeones nacionales sub-17'],
+      image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&h=400&fit=crop',
+      color: 'bg-chart-5',
+    }
   ];
 
   return (

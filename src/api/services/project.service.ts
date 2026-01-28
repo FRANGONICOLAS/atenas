@@ -1,5 +1,5 @@
 import { client } from "@/api/supabase/client";
-import type { Database } from "@/api/types/database.types";
+import type { Database } from "@/api/types";
 
 // Tipos basados en la base de datos
 type ProjectRow = Database["public"]["Tables"]["project"]["Row"];

@@ -140,12 +140,17 @@ export const beneficiaryService = {
             beneficiaryData.registry_date ||
             new Date().toISOString().split("T")[0],
           status: beneficiaryData.status || "activo",
+          sex: beneficiaryData.sex,
           performance: beneficiaryData.performance,
           attendance: beneficiaryData.attendance,
           guardian: beneficiaryData.guardian,
           address: beneficiaryData.address,
           emergency_contact: beneficiaryData.emergency_contact,
           medical_info: beneficiaryData.medical_info,
+          observation: beneficiaryData.observation,
+          anthropometric_detail: beneficiaryData.anthropometric_detail,
+          technical_tactic_detail: beneficiaryData.technical_tactic_detail,
+          emotional_detail: beneficiaryData.emotional_detail,
         },
       ])
       .select()

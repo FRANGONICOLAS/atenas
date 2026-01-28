@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
 import { userService } from "@/api/services/user.service";
-import type { User as DBUser } from "@/api/types/database.types";
+import type { User as DBUser } from "@/api/types";
 import { client } from "@/api/supabase/client";
 import {
   generateUsersExcel,

@@ -1,4 +1,4 @@
-import type { Database } from "@/api/types/database.types";
+import type { Database } from "@/api/types";
 
 export type ProjectType = 'investment' | 'free';
 export type ProjectPriority = 'high' | 'medium' | 'low';

@@ -4,7 +4,7 @@ import type {
   CreateUserData,
   UpdateUserData,
   UserRole,
-} from "@/api/types/database.types";
+} from "@/api/types";
 
 /**
  * Servicio para operaciones con la tabla 'user'

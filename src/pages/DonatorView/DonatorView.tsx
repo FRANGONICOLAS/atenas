@@ -9,7 +9,7 @@ import { DonationsPage, ProjectsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { User } from '@/api/types/database.types';
+import { User } from '@/api/types';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
