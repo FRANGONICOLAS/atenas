@@ -52,12 +52,10 @@ export const contentService = {
       .select("*")
       .eq("content_key", contentKey)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
-    if (error) {
-      if (error.code === "PGRST116") return null; // No encontrado
-      throw error;
-    }
+    if (error) throw error;
+    if (!data) return null;
 
     return {
       ...data,

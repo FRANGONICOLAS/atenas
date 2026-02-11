@@ -22,7 +22,7 @@ export interface DonationFromDB {
   user_id: string;
   project_id: string;
   currency: string;
-  amount: string;
+  amount?: string;
   status: string;
   date: string;
   pay_method: string;

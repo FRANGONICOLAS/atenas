@@ -86,8 +86,8 @@ export const ProjectsTable = ({
             </TableCell>
           </TableRow>
         ) : (
-          projects.map((project) => (
-            <TableRow key={project.id}>
+          projects.map((project, index) => (
+            <TableRow key={`${project.id}-${index}`}>
               <TableCell className="font-medium">{project.name}</TableCell>
               <TableCell>
                 <Badge variant="outline">{project.category}</Badge>
