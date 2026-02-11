@@ -163,6 +163,7 @@ export const useSiteContentManagement = () => {
     const labels: Record<string, string> = {
       home: 'Inicio',
       about: 'Quiénes Somos',
+      categories: 'Categorías',
       contact: 'Contacto',
       donation: 'Donaciones',
       gallery: 'Galería',

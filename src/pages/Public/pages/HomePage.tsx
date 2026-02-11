@@ -5,23 +5,32 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSiteContent } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
-import heroImage from '@/assets/WhatsApp Image 2025-12-11 at 22.10.38.jpeg';
-import impacto from '@/assets/WhatsApp Image 2025-12-11 at 22.10.24.jpeg';
 
 const HomePage = () => {
   const { t } = useLanguage();
   
   // Dynamic content loading
-  const { imageUrl: heroImageUrl } = useSiteContent('home_hero', heroImage);
-  const { imageUrl: problemUrl } = useSiteContent('home_problem', impacto);
-  const { imageUrl: impactUrl } = useSiteContent('home_impact', impacto);
-  const { imageUrl: pruebaUrl } = useSiteContent('home_projects', impacto);
-  const { imageUrl: transformacion1Url } = useSiteContent('home_transformation_1', impacto);
-  const { imageUrl: transformacion2Url } = useSiteContent('home_transformation_2', impacto);
-  const { imageUrl: transformacion3Url } = useSiteContent('home_transformation_3', impacto);
-  const { imageUrl: transformacion4Url } = useSiteContent('home_transformation_4', impacto);
-  const { imageUrl: transformacion5Url } = useSiteContent('home_transformation_5', impacto);
-  const { imageUrl: transformacion6Url } = useSiteContent('home_transformation_6', impacto);
+  const { imageUrl: heroImageUrl } = useSiteContent('home_hero');
+  const { imageUrl: problemUrl } = useSiteContent('home_problem');
+  const { imageUrl: impactUrl } = useSiteContent('home_impact');
+  const { imageUrl: pruebaUrl } = useSiteContent('home_projects');
+  const { imageUrl: transformacion1Url } = useSiteContent('home_transformation_1');
+  const { imageUrl: transformacion2Url } = useSiteContent('home_transformation_2');
+  const { imageUrl: transformacion3Url } = useSiteContent('home_transformation_3');
+  const { imageUrl: transformacion4Url } = useSiteContent('home_transformation_4');
+  const { imageUrl: transformacion5Url } = useSiteContent('home_transformation_5');
+  const { imageUrl: transformacion6Url } = useSiteContent('home_transformation_6');
+
+  const renderPlaceholder = (
+    label: string,
+    iconClassName = 'w-10 h-10',
+    textClassName = 'text-sm',
+  ) => (
+    <div className="text-center p-4">
+      <AlertTriangle className={`${iconClassName} mx-auto mb-2 text-muted-foreground/60`} />
+      <p className={`${textClassName} text-muted-foreground italic`}>{label}</p>
+    </div>
+  );
 
   const impactStats = [
     { icon: Users, value: '200+', label: t.home.beneficiaries },
@@ -48,10 +57,20 @@ const HomePage = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImageUrl})` }}
-        >
+        <div className="absolute inset-0">
+          {heroImageUrl ? (
+            <div
+              className="absolute inset-0 bg-cover bg-center"
+              style={{ backgroundImage: `url(${heroImageUrl})` }}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-muted/30" />
+          )}
+          {!heroImageUrl && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {renderPlaceholder('Imagen de portada', 'w-14 h-14', 'text-base')}
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/50" />
         </div>
         
@@ -100,18 +119,26 @@ const HomePage = () => {
           {/* Image Grid */}
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto mb-8">
             <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-              <img
-                src={problemUrl}
-                alt="Problemática de la comunidad"
-                className="w-full h-full object-cover"
-              />
+              {problemUrl ? (
+                <img
+                  src={problemUrl}
+                  alt="Problemática de la comunidad"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                renderPlaceholder('Imagen de la problemática')
+              )}
             </div>
             <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-              <img
-                src={impactUrl}
-                alt="Impacto en jóvenes"
-                className="w-full h-full object-cover"
-              />
+              {impactUrl ? (
+                <img
+                  src={impactUrl}
+                  alt="Impacto en jóvenes"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                renderPlaceholder('Imagen de impacto')
+              )}
             </div>
           </div>
 
@@ -203,11 +230,15 @@ const HomePage = () => {
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion1Url} 
-                  alt="Sentido de pertenencia"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion1Url ? (
+                  <img
+                    src={transformacion1Url}
+                    alt="Sentido de pertenencia"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Sentido de pertenencia')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Sentido de Pertenencia</h3>
@@ -217,11 +248,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion2Url} 
-                  alt="Manejo de emociones"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion2Url ? (
+                  <img
+                    src={transformacion2Url}
+                    alt="Manejo de emociones"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Manejo de emociones')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Manejo de Emociones</h3>
@@ -231,11 +266,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion3Url} 
-                  alt="Salud física y mental"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion3Url ? (
+                  <img
+                    src={transformacion3Url}
+                    alt="Salud física y mental"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Salud física y mental')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Salud Física y Mental</h3>
@@ -245,11 +284,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion4Url} 
-                  alt="Disciplina y metas"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion4Url ? (
+                  <img
+                    src={transformacion4Url}
+                    alt="Disciplina y metas"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Disciplina y metas')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Disciplina y Metas</h3>
@@ -259,11 +302,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion5Url} 
-                  alt="Trabajo en equipo"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion5Url ? (
+                  <img
+                    src={transformacion5Url}
+                    alt="Trabajo en equipo"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Trabajo en equipo')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Trabajo en Equipo</h3>
@@ -273,11 +320,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={transformacion6Url} 
-                  alt="Oportunidades y futuro"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {transformacion6Url ? (
+                  <img
+                    src={transformacion6Url}
+                    alt="Oportunidades y futuro"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Oportunidades y futuro')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Oportunidades y Futuro</h3>
@@ -304,11 +355,15 @@ const HomePage = () => {
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={problemUrl}
-                  alt="Equipo deportivo"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {pruebaUrl ? (
+                  <img
+                    src={pruebaUrl}
+                    alt="Equipo deportivo"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Imagen de equipo deportivo')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Equipo Deportivo</h3>
@@ -318,11 +373,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={heroImage}
-                  alt="Torneos"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {pruebaUrl ? (
+                  <img
+                    src={pruebaUrl}
+                    alt="Torneos"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Imagen de torneos')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Torneos</h3>
@@ -332,11 +391,15 @@ const HomePage = () => {
 
             <Card className="overflow-hidden group hover:shadow-lg transition-all">
               <div className="relative h-56 overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img 
-                  src={pruebaUrl}
-                  alt="Proyectos definidos"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {pruebaUrl ? (
+                  <img
+                    src={pruebaUrl}
+                    alt="Proyectos definidos"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  renderPlaceholder('Imagen de proyectos')
+                )}
               </div>
               <CardContent className="p-4 text-center">
                 <h3 className="font-bold text-foreground mb-1">Proyectos Definidos</h3>
@@ -349,11 +412,15 @@ const HomePage = () => {
           <div className="mt-12 max-w-4xl mx-auto">
             <div className="grid md:grid-cols-2 gap-6 items-center">
               <div className="relative h-64 rounded-lg overflow-hidden bg-muted/30 flex items-center justify-center">
-                <img
-                  src={impactUrl}
-                  alt="Comunidad unida"
-                  className="w-full h-full object-cover"
-                />
+                {impactUrl ? (
+                  <img
+                    src={impactUrl}
+                    alt="Comunidad unida"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  renderPlaceholder('Imagen de comunidad')
+                )}
               </div>
               <div>
                 <p className="text-lg text-foreground leading-relaxed mb-3">

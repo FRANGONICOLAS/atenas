@@ -1,12 +1,19 @@
-import { Link } from 'react-router-dom';
-import { Target, BookOpen, Heart, Apple, Trophy, Users } from 'lucide-react';
+import { Target, Heart, Trophy, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const QueHacemosPage = () => {
   const { t } = useLanguage();
+
+  const { imageUrl: activity1Url } = useSiteContent('what_we_do_activity_1');
+  const { imageUrl: activity2Url } = useSiteContent('what_we_do_activity_2');
+  const { imageUrl: activity3Url } = useSiteContent('what_we_do_activity_3');
+  const { imageUrl: activity4Url } = useSiteContent('what_we_do_activity_4');
+  const { imageUrl: mainImageUrl } = useSiteContent('what_we_do_main');
+  const { imageUrl: community1Url } = useSiteContent('what_we_do_community_1');
+  const { imageUrl: community2Url } = useSiteContent('what_we_do_community_2');
 
   const activities = [
     {
@@ -14,24 +21,28 @@ const QueHacemosPage = () => {
       title: t.whatWeDo.training.title,
       description: t.whatWeDo.training.description,
       imagePlaceholder: 'Imagen de entrenamiento deportivo',
+      imageUrl: activity1Url,
     },
     {
       icon: Heart,
       title: t.whatWeDo.values.title,
       description: t.whatWeDo.values.description,
       imagePlaceholder: 'Imagen de formación en valores',
+      imageUrl: activity2Url,
     },
     {
       icon: Trophy,
       title: t.whatWeDo.tournaments.title,
       description: t.whatWeDo.tournaments.description,
       imagePlaceholder: 'Imagen de participación en torneos',
+      imageUrl: activity3Url,
     },
     {
       icon: Users,
       title: t.whatWeDo.community.title,
       description: t.whatWeDo.community.description,
       imagePlaceholder: 'Imagen de trabajo comunitario',
+      imageUrl: activity4Url,
     },
   ];
 
@@ -56,21 +67,22 @@ const QueHacemosPage = () => {
             {activities.map((activity, index) => (
               <Card key={index} className="overflow-hidden group hover:shadow-lg transition-all">
                 <div className="relative h-64 overflow-hidden bg-muted/30 flex items-center justify-center">
-                  {/* Placeholder for image */}
-                  <div className="text-center p-4">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                      <activity.icon className="w-8 h-8 text-primary" />
+                  {activity.imageUrl ? (
+                    <img
+                      src={activity.imageUrl}
+                      alt={activity.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="text-center p-4">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                        <activity.icon className="w-8 h-8 text-primary" />
+                      </div>
+                      <p className="text-sm text-muted-foreground italic">
+                        {activity.imagePlaceholder}
+                      </p>
                     </div>
-                    <p className="text-sm text-muted-foreground italic">
-                      {activity.imagePlaceholder}
-                    </p>
-                  </div>
-                  {/* Image will go here - replace the div above with: */}
-                  {/* <img 
-                    src="/path/to/image.jpg" 
-                    alt={activity.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  /> */}
+                  )}
                 </div>
                 <CardHeader>
                   <CardTitle className="text-xl text-foreground flex items-center gap-3">
@@ -94,21 +106,22 @@ const QueHacemosPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="relative h-96 overflow-hidden rounded-lg bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for main image */}
-              <div className="text-center p-8">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Users className="w-12 h-12 text-primary" />
+              {mainImageUrl ? (
+                <img
+                  src={mainImageUrl}
+                  alt="Actividades de la fundación"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center p-8">
+                  <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Users className="w-12 h-12 text-primary" />
+                  </div>
+                  <p className="text-lg text-muted-foreground italic">
+                    Imagen principal de actividades de la fundación
+                  </p>
                 </div>
-                <p className="text-lg text-muted-foreground italic">
-                  Imagen principal de actividades de la fundación
-                </p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/main-image.jpg" 
-                alt="Actividades de la fundación"
-                className="w-full h-full object-cover"
-              /> */}
+              )}
             </div>
           </div>
         </div>
@@ -119,38 +132,40 @@ const QueHacemosPage = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <div className="relative h-80 overflow-hidden rounded-lg bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for image */}
-              <div className="text-center p-6">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
-                  <Heart className="w-10 h-10 text-secondary" />
+              {community1Url ? (
+                <img
+                  src={community1Url}
+                  alt="Impacto comunitario"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center p-6">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary/10 flex items-center justify-center">
+                    <Heart className="w-10 h-10 text-secondary" />
+                  </div>
+                  <p className="text-sm text-muted-foreground italic">
+                    Imagen de impacto comunitario
+                  </p>
                 </div>
-                <p className="text-sm text-muted-foreground italic">
-                  Imagen de impacto comunitario
-                </p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/community-image.jpg" 
-                alt="Impacto comunitario"
-                className="w-full h-full object-cover"
-              /> */}
+              )}
             </div>
             <div className="relative h-80 overflow-hidden rounded-lg bg-muted/30 flex items-center justify-center">
-              {/* Placeholder for image */}
-              <div className="text-center p-6">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Trophy className="w-10 h-10 text-primary" />
+              {community2Url ? (
+                <img
+                  src={community2Url}
+                  alt="Logros y reconocimientos"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="text-center p-6">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Trophy className="w-10 h-10 text-primary" />
+                  </div>
+                  <p className="text-sm text-muted-foreground italic">
+                    Imagen de logros y reconocimientos
+                  </p>
                 </div>
-                <p className="text-sm text-muted-foreground italic">
-                  Imagen de logros y reconocimientos
-                </p>
-              </div>
-              {/* Image will go here - replace the div above with: */}
-              {/* <img 
-                src="/path/to/achievements-image.jpg" 
-                alt="Logros y reconocimientos"
-                className="w-full h-full object-cover"
-              /> */}
+              )}
             </div>
           </div>
         </div>

@@ -1,10 +1,17 @@
 import { Heart, Target, Eye, Users, Award, Shield, Handshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const AboutPage = () => {
   const { t } = useLanguage();
+
+  const { imageUrl: aboutHeroUrl } = useSiteContent('about_hero');
+  const { imageUrl: team1Url } = useSiteContent('about_team_1');
+  const { imageUrl: team2Url } = useSiteContent('about_team_2');
+  const { imageUrl: team3Url } = useSiteContent('about_team_3');
+  const { imageUrl: team4Url } = useSiteContent('about_team_4');
 
   const values = [
     { icon: Heart, title: 'Pasión', description: 'Amamos lo que hacemos y lo transmitimos a cada joven' },
@@ -15,17 +22,23 @@ const AboutPage = () => {
   ];
 
   const team = [
-    { name: 'Hector Sanchez', role: 'Director General', image: '/hector.jpg' },
-    { name: 'Omar', role: 'Director General', image: '/image1.jpg' },
-    { name: 'Roberto Silva', role: 'Director Sede Norte', image: '/image2.jpg' },
-    { name: 'María Fernández', role: 'Directora Sede Sur', image: '/image3.jpg' },
+    { name: 'Hector Sanchez', role: 'Director General', image: team1Url },
+    { name: 'Omar', role: 'Director General', image: team2Url },
   ];
 
   return (
     <div className="min-h-screen pt-20">
       {/* Hero */}
-      <section className="py-20 bg-primary">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative py-20 bg-primary overflow-hidden">
+        {aboutHeroUrl ? (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${aboutHeroUrl})` }}
+          >
+            <div className="absolute inset-0 bg-primary/80" />
+          </div>
+        ) : null}
+        <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
             {t.about.title}
           </h1>
@@ -93,15 +106,15 @@ const AboutPage = () => {
       </section>
 
       {/* Team */}
-      <section className="py-20 bg-background">
+      <section className="py-20 items-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             {t.about.structure}
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
             {team.map((member, index) => (
-              <Card key={index} className="overflow-hidden group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20">
-                <div className="relative h-64 overflow-hidden bg-muted/30">
+              <Card key={index} className="w-full max-w-sm overflow-hidden group hover:shadow-xl transition-all duration-300 border-2 hover:border-primary/20 md:w-[320px]">
+                <div className="relative h-64 overflow-hidden bg-muted/30 flex items-center justify-center">
                   {member.image ? (
                     <img 
                       src={member.image} 
@@ -114,7 +127,7 @@ const AboutPage = () => {
                       }}
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-secondary/10">
+                    <div className="w-full h-full flex items-center justify-center">
                       <Users className="w-16 h-16 text-muted-foreground/30" />
                     </div>
                   )}

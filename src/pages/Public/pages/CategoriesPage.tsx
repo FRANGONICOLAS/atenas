@@ -2,10 +2,25 @@ import { Trophy, Users, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSiteContent } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const CategoriesPage = () => {
   const { t } = useLanguage();
+
+  const { imageUrl: sub6Url } = useSiteContent('categories_sub6');
+  const { imageUrl: sub8Url } = useSiteContent('categories_sub8');
+  const { imageUrl: sub10Url } = useSiteContent('categories_sub10');
+  const { imageUrl: sub12Url } = useSiteContent('categories_sub12');
+  const { imageUrl: sub14Url } = useSiteContent('categories_sub14');
+  const { imageUrl: sub16Url } = useSiteContent('categories_sub16');
+  const { imageUrl: sub18Url } = useSiteContent('categories_sub18');
+
+  const renderPlaceholder = (label: string) => (
+    <div className="h-full w-full flex items-center justify-center bg-muted/30">
+      <p className="text-sm text-muted-foreground italic">{label}</p>
+    </div>
+  );
 
   const categories = [
     {
@@ -16,7 +31,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes, Miércoles, Viernes - 3:00 PM',
       description: 'Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.',
       achievements: ['Participación en 5 torneos locales', 'Formación de 15 jugadores para categoría superior'],
-      image: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop',
+      image: sub6Url,
       color: 'bg-chart-1',
     },
     {
@@ -27,7 +42,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes, Miércoles, Viernes - 3:00 PM',
       description: 'Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.',
       achievements: ['Participación en 5 torneos locales', 'Formación de 15 jugadores para categoría superior'],
-      image: 'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=600&h=400&fit=crop',
+      image: sub8Url,
       color: 'bg-chart-1',
     },
     {
@@ -38,7 +53,7 @@ const CategoriesPage = () => {
       schedule: 'Martes, Jueves, Sábado - 3:30 PM',
       description: 'Desarrollo de fundamentos técnicos del fútbol. Introducción a tácticas básicas de juego.',
       achievements: ['Campeones torneo municipal 2023', '8 jugadores seleccionados para selección departamental'],
-      image: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop',
+      image: sub10Url,
       color: 'bg-chart-2',
     },
     {
@@ -49,7 +64,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes a Viernes - 4:00 PM',
       description: 'Perfeccionamiento técnico y táctico. Desarrollo de la visión de juego y posicionamiento.',
       achievements: ['Subcampeones liga regional', '12 convocados a pruebas de clubes profesionales'],
-      image: 'https://images.unsplash.com/photo-1551958219-acbc608c6377?w=600&h=400&fit=crop',
+      image: sub12Url,
       color: 'bg-chart-3',
     },
     {
@@ -60,7 +75,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes a Sábado - 4:30 PM',
       description: 'Especialización por posición. Preparación física específica y desarrollo mental.',
       achievements: ['Participación en torneos nacionales', '5 jugadores fichados por academias profesionales'],
-      image: 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&h=400&fit=crop',
+      image: sub14Url,
       color: 'bg-chart-4',
     },
     {
@@ -71,7 +86,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes a Sábado - 5:00 PM',
       description: 'Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.',
       achievements: ['3 jugadores en divisiones inferiores de clubes profesionales', 'Campeones nacionales sub-17'],
-      image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&h=400&fit=crop',
+      image: sub16Url,
       color: 'bg-chart-5',
     },
     {
@@ -82,7 +97,7 @@ const CategoriesPage = () => {
       schedule: 'Lunes a Sábado - 5:00 PM',
       description: 'Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.',
       achievements: ['3 jugadores en divisiones inferiores de clubes profesionales', 'Campeones nacionales sub-17'],
-      image: 'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=600&h=400&fit=crop',
+      image: sub18Url,
       color: 'bg-chart-5',
     }
   ];
@@ -109,11 +124,15 @@ const CategoriesPage = () => {
               <Card key={index} className="overflow-hidden">
                 <div className={`grid md:grid-cols-2 gap-0 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
                   <div className={`relative h-64 md:h-auto ${index % 2 === 1 ? 'md:order-2' : ''}`}>
-                    <img 
-                      src={category.image} 
-                      alt={category.name}
-                      className="w-full h-full object-cover"
-                    />
+                    {category.image ? (
+                      <img
+                        src={category.image}
+                        alt={category.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      renderPlaceholder('Imagen de categoria')
+                    )}
                     <div className="absolute top-4 left-4">
                       <Badge className={`${category.color} text-card text-lg px-4 py-2`}>
                         {category.ageRange} {t.categories.age}

@@ -96,15 +96,12 @@ export const SiteContentDialog = ({
                   <select
                     id="page_section"
                     value={formData.page_section}
-                    onChange={(e) => setFormData({ ...formData, page_section: e.target.value as 'home' | 'about' | 'contact' | 'donation' | 'gallery' | 'projects' })}
+                    onChange={(e) => setFormData({ ...formData, page_section: e.target.value as 'home' | 'about' | 'categories' })}
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   >
                     <option value="home">Inicio</option>
                     <option value="about">Quiénes Somos</option>
-                    <option value="contact">Contacto</option>
-                    <option value="donation">Donaciones</option>
-                    <option value="gallery">Galería</option>
-                    <option value="projects">Proyectos</option>
+                    <option value="categories">Categorías</option>
                   </select>
                 </div>
 

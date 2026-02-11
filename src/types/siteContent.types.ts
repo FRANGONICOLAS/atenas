@@ -1,5 +1,5 @@
 export type ContentType = "image" | "video";
-export type PageSection = "home" | "about" | "contact" | "donation" | "gallery" | "projects";
+export type PageSection = "home" | "about" | "categories" | "contact" | "donation" | "gallery" | "projects";
 
 // Interfaz para contenido del sitio almacenado en la base de datos
 export interface SiteContent {

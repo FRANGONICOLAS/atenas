@@ -1,5 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HomePagePreview } from './HomePagePreview';
+import { AboutWhatWeDoPreview } from './AboutWhatWeDoPreview';
+import { CategoriesPagePreview } from './CategoriesPagePreview';
 import { ContentRequiredSummary } from './ContentRequiredSummary';
 import type { SiteContent, SiteContentFormData } from '@/types';
 
@@ -32,13 +34,10 @@ export const SiteContentPageTabs = ({
 }: SiteContentPageTabsProps) => {
   return (
     <Tabs value={activePageTab} onValueChange={setActivePageTab}>
-      <TabsList className="grid w-full grid-cols-6">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="home">Inicio</TabsTrigger>
         <TabsTrigger value="about">Quiénes Somos</TabsTrigger>
-        <TabsTrigger value="contact">Contacto</TabsTrigger>
-        <TabsTrigger value="donation">Donaciones</TabsTrigger>
-        <TabsTrigger value="gallery">Galería</TabsTrigger>
-        <TabsTrigger value="projects">Proyectos</TabsTrigger>
+        <TabsTrigger value="categories">Categorías</TabsTrigger>
       </TabsList>
 
       <TabsContent value="home">
@@ -66,33 +65,29 @@ export const SiteContentPageTabs = ({
       </TabsContent>
 
       <TabsContent value="about">
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">Vista previa de la página "Quiénes Somos" en desarrollo</p>
-        </div>
+        <AboutWhatWeDoPreview
+          contents={contents}
+          handleOpenEdit={handleOpenEdit}
+          setIsCreating={setIsCreating}
+          setFile={setFile}
+          setPreviewUrl={setPreviewUrl}
+          setFormData={setFormData}
+          setShowDialog={setShowDialog}
+          setEditingContent={setEditingContent}
+        />
       </TabsContent>
 
-      <TabsContent value="contact">
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">Vista previa de la página "Contacto" en desarrollo</p>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="donation">
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">Vista previa de la página "Donaciones" en desarrollo</p>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="gallery">
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">Vista previa de la página "Galería" en desarrollo</p>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="projects">
-        <div className="text-center py-12 text-muted-foreground">
-          <p className="text-sm">Vista previa de la página "Proyectos" en desarrollo</p>
-        </div>
+      <TabsContent value="categories">
+        <CategoriesPagePreview
+          contents={contents}
+          handleOpenEdit={handleOpenEdit}
+          setIsCreating={setIsCreating}
+          setFile={setFile}
+          setPreviewUrl={setPreviewUrl}
+          setFormData={setFormData}
+          setShowDialog={setShowDialog}
+          setEditingContent={setEditingContent}
+        />
       </TabsContent>
     </Tabs>
   );
