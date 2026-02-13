@@ -1,9 +1,7 @@
 import { DollarSign } from 'lucide-react';
-import { useDonatorView } from '@/hooks/useDonatorView';
+import { DonationsHistory } from '../components/DonationsHistory';
 
 const DonationsPage = () => {
-  const { donations, donorName, stats } = useDonatorView();
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -14,10 +12,7 @@ const DonationsPage = () => {
         </div>
       </div>
 
-      <div className="text-center py-12 text-muted-foreground">
-        <DollarSign className="w-16 h-16 mx-auto mb-4 opacity-50" />
-        <p>Vista de donaciones en desarrollo</p>
-      </div>
+      <DonationsHistory />
     </div>
   );
 };
