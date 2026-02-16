@@ -9,6 +9,7 @@ interface UserWithRole extends User {
   username?: string;
   first_name?: string;
   last_name?: string;
+  headquarter_id?: string | null;
   hasCompletedProfile?: boolean;
 }
 
@@ -35,6 +36,7 @@ const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> =
       username: dbUser?.username,
       first_name: dbUser?.first_name,
       last_name: dbUser?.last_name,
+      headquarter_id: dbUser?.headquarter_id ?? null,
       hasCompletedProfile,
     };
   } catch (err) {

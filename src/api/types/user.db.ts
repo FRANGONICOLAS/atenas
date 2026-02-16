@@ -7,6 +7,7 @@ export interface UserRow {
   created_at: string
   email: string
   first_name: string | null
+  headquarter_id: string | null
   id: string
   last_name: string | null
   phone: string | null
@@ -19,6 +20,7 @@ export interface UserInsert {
   created_at?: string
   email: string
   first_name?: string | null
+  headquarter_id?: string | null
   id?: string
   last_name?: string | null
   phone?: string | null
@@ -31,6 +33,7 @@ export interface UserUpdate {
   created_at?: string
   email?: string
   first_name?: string | null
+  headquarter_id?: string | null
   id?: string
   last_name?: string | null
   phone?: string | null

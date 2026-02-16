@@ -122,6 +122,7 @@ export interface User {
   username: string
   phone: string | null
   email: string
+  headquarter_id?: string | null
   profile_images_id?: string | null
   created_at?: string
   updated_at?: string
@@ -137,6 +138,7 @@ export interface CreateUserData {
   phone?: string
   email: string
   role: UserRole
+  headquarter_id?: string | null
 }
 
 export interface UpdateUserData {
@@ -146,6 +148,7 @@ export interface UpdateUserData {
   username?: string
   phone?: string
   profile_images_id?: string
+  headquarter_id?: string | null
 }
 
 // Tipos para jugadores (no autenticados)

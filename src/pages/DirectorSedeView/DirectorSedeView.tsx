@@ -1,8 +1,7 @@
-import { Users, Trophy, Award, TrendingUp, Calendar, Star, Box, UserCheck } from 'lucide-react';
+import { Trophy, TrendingUp, Calendar, Star, Box, UserCheck } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { SedeStatCard } from './components';
 import { BeneficiariesPage, EvaluationsPage, SedeReportsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -32,29 +31,6 @@ const DirectorSedeView = () => {
 };
 
 const MainDashboard = ({ user }: { user: User }) => {
-  const stats = [
-    {
-      icon: Users,
-      title: 'Total Jugadores',
-      value: '45',
-      color: 'bg-blue-500',
-      change: '+2',
-    },
-    {
-      icon: Trophy,
-      title: 'Entrenadores',
-      value: '3',
-      color: 'bg-green-500',
-      change: '+1',
-    },
-    {
-      icon: Award,
-      title: 'Jugadores Activos',
-      value: '42',
-      color: 'bg-yellow-500',
-      change: '93%',
-    },
-  ];
 
   // Categorías resumen
   const categoriasResumen = [
@@ -106,20 +82,6 @@ const MainDashboard = ({ user }: { user: User }) => {
         roleIcon={UserCheck}
         subtitle="Sede Norte"
       />
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        {stats.map((stat, index) => (
-          <SedeStatCard
-            key={index}
-            icon={stat.icon}
-            title={stat.title}
-            value={stat.value}
-            color={stat.color}
-            change={stat.change}
-          />
-        ))}
-      </div>
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
