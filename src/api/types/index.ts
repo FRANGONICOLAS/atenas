@@ -25,6 +25,20 @@ export type {
   BeneficiaryUpdate,
 } from './beneficiary.db'
 
+// Evaluation
+export type {
+  EvaluationRow,
+  EvaluationInsert,
+  EvaluationUpdate,
+} from './evaluation.db'
+
+// Beneficiary Evaluation (junction)
+export type {
+  BeneficiaryEvaluationRow,
+  BeneficiaryEvaluationInsert,
+  BeneficiaryEvaluationUpdate,
+} from './beneficiary-evaluation.db'
+
 // Bold Transactions
 export type {
   BoldTransactionsRow,

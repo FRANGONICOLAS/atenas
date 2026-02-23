@@ -81,6 +81,15 @@ export interface EmotionalData {
   [key: string]: any;
 }
 
+// Detalle de evaluacion vinculada al beneficiario
+export interface BeneficiaryEvaluationDetail {
+  id: string;
+  created_at?: string | null;
+  anthropometric_detail?: AntropometricData | null;
+  technical_tactic_detail?: TechnicalTacticalData | null;
+  emotional_detail?: EmotionalData | null;
+}
+
 // Interfaz principal de beneficiario basada en la estructura de la base de datos
 export interface Beneficiary {
   idx?: number;
@@ -102,9 +111,10 @@ export interface Beneficiary {
   medical_info?: string; // Información médica
   photo_url?: string | null; // Foto de perfil
   observation?: string; // Observaciones generales
-  anthropometric_detail?: AntropometricData; // Json - Detalles antropométricos
-  technical_tactic_detail?: TechnicalTacticalData; // Json - Detalles técnico-tácticos
-  emotional_detail?: EmotionalData; // Json - Detalles psicológicos/emocionales
+  anthropometric_detail?: AntropometricData; // Ultima evaluacion antropometrica
+  technical_tactic_detail?: TechnicalTacticalData; // Ultima evaluacion tecnico-tactica
+  emotional_detail?: EmotionalData; // Ultima evaluacion emocional
+  latest_evaluation?: BeneficiaryEvaluationDetail; // Ultima evaluacion completa
   created_at?: string;
   updated_at?: string;
 }

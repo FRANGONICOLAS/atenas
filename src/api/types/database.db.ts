@@ -5,6 +5,8 @@
 
 import type { Json } from './base.db'
 import type { BeneficiaryRow, BeneficiaryInsert, BeneficiaryUpdate } from './beneficiary.db'
+import type { EvaluationRow, EvaluationInsert, EvaluationUpdate } from './evaluation.db'
+import type { BeneficiaryEvaluationRow, BeneficiaryEvaluationInsert, BeneficiaryEvaluationUpdate } from './beneficiary-evaluation.db'
 import type { BoldTransactionsRow, BoldTransactionsInsert, BoldTransactionsUpdate } from './bold-transactions.db'
 import type { DonationRow, DonationInsert, DonationUpdate } from './donation.db'
 import type { DonationReportRow, DonationReportInsert, DonationReportUpdate } from './donation-report.db'
@@ -35,6 +37,33 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "headquarters"
             referencedColumns: ["headquarters_id"]
+          },
+        ]
+      }
+      evaluation: {
+        Row: EvaluationRow
+        Insert: EvaluationInsert
+        Update: EvaluationUpdate
+        Relationships: []
+      }
+      "beneficiary's_evaluation": {
+        Row: BeneficiaryEvaluationRow
+        Insert: BeneficiaryEvaluationInsert
+        Update: BeneficiaryEvaluationUpdate
+        Relationships: [
+          {
+            foreignKeyName: "beneficiary's_evaluation_beneficiary_id_fkey"
+            columns: ["beneficiary_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiary"
+            referencedColumns: ["beneficiary_id"]
+          },
+          {
+            foreignKeyName: "beneficiary's_evaluation_evaluation_id_fkey"
+            columns: ["evaluation_id"]
+            isOneToOne: false
+            referencedRelation: "evaluation"
+            referencedColumns: ["id"]
           },
         ]
       }
