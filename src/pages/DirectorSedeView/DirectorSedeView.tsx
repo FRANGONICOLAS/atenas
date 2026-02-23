@@ -2,7 +2,7 @@ import { Trophy, TrendingUp, Calendar, Star, Box, UserCheck } from 'lucide-react
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { BeneficiariesPage, EvaluationsPage, SedeReportsPage } from './pages';
+import { BeneficiariesPage, EvaluationsPage, HeadquarterProjectPage, SedeReportsPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,10 @@ const DirectorSedeView = () => {
 
   if (tab === 'evaluations') {
     return <EvaluationsPage />;
+  }
+
+  if (tab === 'projects') {
+    return <HeadquarterProjectPage />;
   }
 
   if (tab === 'reports') {

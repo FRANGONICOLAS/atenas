@@ -124,6 +124,12 @@ const navSections: NavSection[] = [
         description: 'Beneficiarios de la sede'
       },
       {
+        title: 'Proyectos',
+        href: '/director-sede?tab=projects',
+        icon: Target,
+        description: 'Proyectos de la sede'
+      },
+      {
         title: 'Evaluaciones',
         href: '/director-sede?tab=evaluations',
         icon: ClipboardList,
