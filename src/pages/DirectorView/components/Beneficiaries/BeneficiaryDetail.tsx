@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { Activity, Calendar, Eye, Home, MapPin, Phone } from "lucide-react";
+import { Activity, Eye, Home, MapPin, Phone } from "lucide-react";
 import type { Beneficiary } from "@/types/beneficiary.types";
 import type { Headquarter } from "@/types";
 
@@ -123,24 +123,6 @@ export const BeneficiaryDetail = ({
                       )}`}
                     >
                       {beneficiary.performance || 0}%
-                    </span>
-                  </div>
-                </div>
-                <div className="p-3 shadow-md bg-foreground/15 rounded-lg">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="w-4 h-4" /> Asistencia
-                  </div>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Progress
-                      value={beneficiary.attendance || 0}
-                      className="w-32"
-                    />
-                    <span
-                      className={`text-sm font-semibold ${getPerformanceColor(
-                        beneficiary.attendance || 0,
-                      )}`}
-                    >
-                      {beneficiary.attendance || 0}%
                     </span>
                   </div>
                 </div>

@@ -52,7 +52,6 @@ export const BeneficiaryTable = ({
             <TableHead>Categoría</TableHead>
             <TableHead>Sede</TableHead>
             <TableHead>Rendimiento</TableHead>
-            <TableHead>Asistencia</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -86,15 +85,6 @@ export const BeneficiaryTable = ({
                       {b.performance || 0}%
                     </span>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`text-sm font-medium ${getPerformanceColor(
-                      b.attendance || 0,
-                    )}`}
-                  >
-                    {b.attendance || 0}%
-                  </span>
                 </TableCell>
                 <TableCell>{getStatusBadge(b.status || "inactivo")}</TableCell>
                 <TableCell className="text-right space-x-2">

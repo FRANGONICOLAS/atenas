@@ -50,7 +50,6 @@ export const mapToReport = (items: Beneficiary[]): BeneficiaryReport[] =>
     registry_date: b.registry_date,
     status: b.status,
     performance: b.performance,
-    attendance: b.attendance,
   }));
 
 // Obtiene la categoría de edad basada en la fecha de nacimiento

@@ -54,8 +54,6 @@ const BeneficiariesPage = () => {
     headquarters_id: assignedHeadquarterId || "",
     status: "activo" as "activo" | "pendiente" | "inactivo" | "suspendido",
     sex: "",
-    performance: 0,
-    attendance: 0,
     registry_date: "",
     guardian: "",
     phone: "",
@@ -64,9 +62,6 @@ const BeneficiariesPage = () => {
     medical_info: "",
     photo_url: null as string | null,
     observation: "",
-    anthropometric_detail: undefined as any,
-    technical_tactic_detail: undefined as any,
-    emotional_detail: undefined as any,
   });
 
   const openCreate = () => {
@@ -79,8 +74,6 @@ const BeneficiariesPage = () => {
       headquarters_id: assignedHeadquarterId || "",
       status: "activo",
       sex: "",
-      performance: 0,
-      attendance: 0,
       registry_date: new Date().toISOString().split("T")[0],
       guardian: "",
       phone: "",
@@ -89,9 +82,6 @@ const BeneficiariesPage = () => {
       medical_info: "",
       photo_url: null,
       observation: "",
-      anthropometric_detail: undefined,
-      technical_tactic_detail: undefined,
-      emotional_detail: undefined,
     });
     setShowForm(true);
   };
@@ -111,8 +101,6 @@ const BeneficiariesPage = () => {
           | "inactivo"
           | "suspendido") || "activo",
       sex: beneficiary.sex || "",
-      performance: beneficiary.performance || 0,
-      attendance: beneficiary.attendance || 0,
       registry_date: beneficiary.registry_date,
       guardian: beneficiary.guardian || "",
       phone: beneficiary.phone,
@@ -121,9 +109,6 @@ const BeneficiariesPage = () => {
       medical_info: beneficiary.medical_info || "",
       photo_url: beneficiary.photo_url || null,
       observation: beneficiary.observation || "",
-      anthropometric_detail: beneficiary.anthropometric_detail,
-      technical_tactic_detail: beneficiary.technical_tactic_detail,
-      emotional_detail: beneficiary.emotional_detail,
     });
     setShowForm(true);
   };
@@ -191,7 +176,6 @@ const BeneficiariesPage = () => {
         total={stats.total}
         active={stats.active}
         avgPerformance={stats.avgPerformance}
-        avgAttendance={stats.avgAttendance}
       />
 
       {/* Controls and Table */}

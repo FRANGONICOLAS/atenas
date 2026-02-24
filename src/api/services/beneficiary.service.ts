@@ -224,20 +224,6 @@ export const beneficiaryService = {
     return await attachLatestEvaluation(data || []);
   },
 
-  /**
-   * Obtiene beneficiarios con baja asistencia
-   */
-  async getLowAttendance(threshold: number = 80): Promise<Beneficiary[]> {
-    const { data, error } = await client
-      .from("beneficiary")
-      .select("*")
-      .lt("attendance", threshold)
-      .order("attendance", { ascending: true });
-
-    if (error) throw error;
-    return await attachLatestEvaluation(data || []);
-  },
-
   // Crea un nuevo beneficiario
   async create(beneficiaryData: CreateBeneficiaryData): Promise<Beneficiary> {
     const evaluationPayload = extractEvaluationPayload(beneficiaryData);
@@ -260,7 +246,6 @@ export const beneficiaryService = {
           status: beneficiaryPayload.status || "activo",
           sex: beneficiaryPayload.sex,
           performance: beneficiaryPayload.performance,
-          attendance: beneficiaryPayload.attendance,
           guardian: beneficiaryPayload.guardian,
           address: beneficiaryPayload.address,
           emergency_contact: beneficiaryPayload.emergency_contact,

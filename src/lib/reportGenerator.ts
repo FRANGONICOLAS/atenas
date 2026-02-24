@@ -144,7 +144,6 @@ export const generateBeneficiariesExcel = (beneficiaries: BeneficiaryReport[], f
     'Teléfono': b.phone,
     'Estado': b.status || 'activo',
     'Rendimiento': b.performance ? `${b.performance}%` : 'N/A',
-    'Asistencia': b.attendance ? `${b.attendance}%` : 'N/A',
   }));
 
   const ws = XLSX.utils.json_to_sheet(data);
@@ -159,7 +158,6 @@ export const generateBeneficiariesExcel = (beneficiaries: BeneficiaryReport[], f
     { wch: 15 }, // Teléfono
     { wch: 12 }, // Estado
     { wch: 12 }, // Rendimiento
-    { wch: 12 }, // Asistencia
   ];
   
   XLSX.utils.book_append_sheet(wb, ws, 'Beneficiarios');

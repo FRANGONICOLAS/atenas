@@ -35,7 +35,6 @@ interface Beneficiary {
   location: string;
   status: string;
   performance: number;
-  attendance: number;
   evaluations?: Evaluation[];
   achievements?: Achievement[];
   academicProgress?: AcademicProgress[];
@@ -112,7 +111,7 @@ export const BeneficiaryDialog = ({
         </div>
 
         {/* Métricas */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 gap-4 mb-6">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-2">
@@ -122,17 +121,6 @@ export const BeneficiaryDialog = ({
                 </span>
               </div>
               <Progress value={beneficiary.performance} />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-muted-foreground">Asistencia</span>
-                <span className={`font-bold ${getPerformanceColor(beneficiary.attendance)}`}>
-                  {beneficiary.attendance}%
-                </span>
-              </div>
-              <Progress value={beneficiary.attendance} />
             </CardContent>
           </Card>
         </div>

@@ -72,7 +72,7 @@ export const useDirectorSedeView = () => {
     });
   };
 
-  const handleDeleteEvaluation = (evaluationId: number) => {
+  const handleDeleteEvaluation = (evaluationId: string) => {
     setEvaluations(prev => prev.filter(e => e.id !== evaluationId));
     toast.success('Evaluación eliminada');
   };
@@ -84,7 +84,7 @@ export const useDirectorSedeView = () => {
     } else {
       const newEvaluation = {
         ...evaluation,
-        id: Math.max(...evaluations.map(e => e.id), 0) + 1,
+        id: `${Date.now()}`,
       } as Evaluation;
       setEvaluations(prev => [...prev, newEvaluation]);
       toast.success('Evaluación registrada');

@@ -4,7 +4,6 @@
 
 export interface BeneficiaryRow {
   address: string | null
-  attendance: number | null
   beneficiary_id: string
   birth_date: string | null
   category: string | null
@@ -26,7 +25,6 @@ export interface BeneficiaryRow {
 
 export interface BeneficiaryInsert {
   address?: string | null
-  attendance?: number | null
   beneficiary_id?: string
   birth_date?: string | null
   category?: string | null
@@ -48,7 +46,6 @@ export interface BeneficiaryInsert {
 
 export interface BeneficiaryUpdate {
   address?: string | null
-  attendance?: number | null
   beneficiary_id?: string
   birth_date?: string | null
   category?: string | null

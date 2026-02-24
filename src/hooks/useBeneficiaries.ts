@@ -102,13 +102,7 @@ export const useBeneficiaries = () => {
             beneficiaries.length
         )
       : 0;
-    const avgAttendance = beneficiaries.length
-      ? Math.round(
-          beneficiaries.reduce((sum, b) => sum + (b.attendance || 0), 0) /
-            beneficiaries.length
-        )
-      : 0;
-    return { total, active, avgPerformance, avgAttendance };
+    return { total, active, avgPerformance };
   }, [beneficiaries]);
 
   // Estadísticas por sede

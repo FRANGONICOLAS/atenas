@@ -104,7 +104,6 @@ export interface Beneficiary {
   status?: BeneficiaryStatus | string;
   sex?: string; // Género (hombre/mujer)
   performance?: number; // Rendimiento (%) - Calculado automáticamente del promedio técnico
-  attendance?: number; // Asistencia (%)
   guardian?: string; // Acudiente
   address?: string; // Dirección
   emergency_contact?: string; // Contacto de emergencia
@@ -131,7 +130,6 @@ export interface CreateBeneficiaryData {
   status?: BeneficiaryStatus | string;
   sex?: string;
   performance?: number;
-  attendance?: number;
   guardian?: string;
   photo_url?: string | null;
   address?: string;
@@ -155,7 +153,6 @@ export interface UpdateBeneficiaryData {
   status?: BeneficiaryStatus | string;
   sex?: string;
   performance?: number;
-  attendance?: number;
   guardian?: string;
   photo_url?: string | null;
   address?: string;
@@ -179,7 +176,6 @@ export interface BeneficiaryReport {
   registry_date: string;
   status?: string;
   performance?: number;
-  attendance?: number;
 }
 
 // Interfaz para estadísticas por sede

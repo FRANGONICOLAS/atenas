@@ -58,11 +58,6 @@ export const createBeneficiarySchema = z.object({
     .min(0, "El rendimiento debe ser al menos 0")
     .max(100, "El rendimiento no puede exceder 100")
     .optional(),
-  attendance: z
-    .number()
-    .min(0, "La asistencia debe ser al menos 0")
-    .max(100, "La asistencia no puede exceder 100")
-    .optional(),
   guardian: z
     .string()
     .max(100, "El nombre del acudiente no debe exceder 100 caracteres")
@@ -106,11 +101,6 @@ export const updateBeneficiarySchema = z.object({
     .number()
     .min(0, "El rendimiento debe ser al menos 0")
     .max(100, "El rendimiento no puede exceder 100")
-    .optional(),
-  attendance: z
-    .number()
-    .min(0, "La asistencia debe ser al menos 0")
-    .max(100, "La asistencia no puede exceder 100")
     .optional(),
   guardian: z
     .string()
