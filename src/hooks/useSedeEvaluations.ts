@@ -16,10 +16,14 @@ interface EvaluationJoinRow {
 }
 
 const resolveEvaluationType = (evaluation: EvaluationRow): EvaluationType => {
-  if (evaluation.technical_tactic_detail) return "technical";
-  if (evaluation.anthropometric_detail) return "physical";
-  if (evaluation.emotional_detail) return "psychological";
-  return "technical";
+  switch (evaluation.type) {
+    case 'anthropometric':
+      return 'anthropometric';
+    case 'technical_tactic':
+      return 'technical_tactic';
+    case 'psychological_emotional':
+      return 'psychological_emotional';
+  }
 };
 
 const extractObservations = (detail: unknown): string | undefined => {
@@ -29,16 +33,21 @@ const extractObservations = (detail: unknown): string | undefined => {
 };
 
 const extractComments = (evaluation: EvaluationRow): string => {
-  const emotional = extractObservations(evaluation.emotional_detail);
-  const technical = extractObservations(evaluation.technical_tactic_detail);
-  return emotional || technical || "";
+  if (!evaluation.questions_answers || typeof evaluation.questions_answers !== 'object') {
+    return '';
+  }
+  const val = (evaluation.questions_answers as Record<string, unknown>).observaciones;
+  return typeof val === 'string' ? val : '';
 };
 
 const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
   if (!row.evaluation || !row.beneficiary || !row.beneficiary_id) return null;
 
   const beneficiaryName = `${row.beneficiary.first_name ?? ""} ${row.beneficiary.last_name ?? ""}`.trim();
-  const technicalDetail = row.evaluation.technical_tactic_detail as TechnicalTacticalData | null;
+  const techData =
+    row.evaluation.type === 'technical_tactic'
+      ? (row.evaluation.questions_answers as TechnicalTacticalData | null)
+      : null;
 
   return {
     id: row.evaluation.id,
@@ -46,7 +55,7 @@ const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
     beneficiaryName: beneficiaryName || "Beneficiario",
     date: row.evaluation.created_at || new Date().toISOString(),
     type: resolveEvaluationType(row.evaluation),
-    score: calculatePerformance(technicalDetail),
+    score: calculatePerformance(techData),
     comments: extractComments(row.evaluation),
     evaluator: "",
   };
@@ -207,13 +216,12 @@ export const useSedeEvaluations = () => {
   };
 
   const getEvaluationTypeLabel = (type: EvaluationType) => {
-    const labels = {
-      physical: "Fisica",
-      technical: "Tecnica",
-      tactical: "Tactica",
-      psychological: "Psicologica",
+    const labels: Record<EvaluationType, string> = {
+      anthropometric: "Antropométrica",
+      technical_tactic: "Técnico‑Táctica",
+      psychological_emotional: "Psicológica/Emocional",
     };
-    return labels[type];
+    return labels[type] || type;
   };
 
   return {

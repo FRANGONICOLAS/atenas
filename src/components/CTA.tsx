@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 
 const CTA = () => {
   const { t } = useLanguage();
-  const { imageUrl: ctaBackgroundUrl } = useSiteContent('home_cta');
+  const { imageMap } = useSiteContentsByKeys(['home_cta']);
+  const ctaBackgroundUrl = imageMap['home_cta'];
 
   return (
     <section className="relative py-20 overflow-hidden">

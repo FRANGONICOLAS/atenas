@@ -39,11 +39,11 @@ export const TechnicalTecticalForm = ({
 }: TechnicalTecticalFormProps) => {
   const technicalData = (data as TechnicalTacticalData) || {};
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: number | string) => {
     onChange({
       ...technicalData,
       [field]: value,
-    });
+    } as Json);
   };
 
   const SkillSlider = ({

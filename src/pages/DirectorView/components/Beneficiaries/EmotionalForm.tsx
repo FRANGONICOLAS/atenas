@@ -17,11 +17,11 @@ export const EmotionalForm = ({
 }: EmotionalFormProps) => {
   const emotionalData = (data as EmotionalData) || {};
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: number | string) => {
     onChange({
       ...emotionalData,
       [field]: value,
-    });
+    } as Json);
   };
 
   const QuestionWithOptions = ({

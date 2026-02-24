@@ -1,47 +1,59 @@
-import { Target, Heart, Trophy, Users } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useSiteContent } from '@/hooks/useSiteContent';
-import CTA from '@/components/CTA';
+import { Target, Heart, Trophy, Users } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContentsByKeys } from "@/hooks/useSiteContent";
+import CTA from "@/components/CTA";
 
 const QueHacemosPage = () => {
   const { t } = useLanguage();
 
-  const { imageUrl: activity1Url } = useSiteContent('what_we_do_activity_1');
-  const { imageUrl: activity2Url } = useSiteContent('what_we_do_activity_2');
-  const { imageUrl: activity3Url } = useSiteContent('what_we_do_activity_3');
-  const { imageUrl: activity4Url } = useSiteContent('what_we_do_activity_4');
-  const { imageUrl: mainImageUrl } = useSiteContent('what_we_do_main');
-  const { imageUrl: community1Url } = useSiteContent('what_we_do_community_1');
-  const { imageUrl: community2Url } = useSiteContent('what_we_do_community_2');
+  // Dynamic content loading{
+  const keys = [
+    "what_we_do_activity_1",
+    "what_we_do_activity_2",
+    "what_we_do_activity_3",
+    "what_we_do_activity_4",
+    "what_we_do_main",
+    "what_we_do_community_1",
+    "what_we_do_community_2",
+  ];
+  const { imageMap } = useSiteContentsByKeys(keys);
+
+  const activity1Url = imageMap["what_we_do_activity_1"];
+  const activity2Url = imageMap["what_we_do_activity_2"];
+  const activity3Url = imageMap["what_we_do_activity_3"];
+  const activity4Url = imageMap["what_we_do_activity_4"];
+  const mainImageUrl = imageMap["what_we_do_main"];
+  const community1Url = imageMap["what_we_do_community_1"];
+  const community2Url = imageMap["what_we_do_community_2"];
 
   const activities = [
     {
       icon: Target,
       title: t.whatWeDo.training.title,
       description: t.whatWeDo.training.description,
-      imagePlaceholder: 'Imagen de entrenamiento deportivo',
+      imagePlaceholder: "Imagen de entrenamiento deportivo",
       imageUrl: activity1Url,
     },
     {
       icon: Heart,
       title: t.whatWeDo.values.title,
       description: t.whatWeDo.values.description,
-      imagePlaceholder: 'Imagen de formación en valores',
+      imagePlaceholder: "Imagen de formación en valores",
       imageUrl: activity2Url,
     },
     {
       icon: Trophy,
       title: t.whatWeDo.tournaments.title,
       description: t.whatWeDo.tournaments.description,
-      imagePlaceholder: 'Imagen de participación en torneos',
+      imagePlaceholder: "Imagen de participación en torneos",
       imageUrl: activity3Url,
     },
     {
       icon: Users,
       title: t.whatWeDo.community.title,
       description: t.whatWeDo.community.description,
-      imagePlaceholder: 'Imagen de trabajo comunitario',
+      imagePlaceholder: "Imagen de trabajo comunitario",
       imageUrl: activity4Url,
     },
   ];
@@ -65,7 +77,10 @@ const QueHacemosPage = () => {
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {activities.map((activity, index) => (
-              <Card key={index} className="overflow-hidden group hover:shadow-lg transition-all">
+              <Card
+                key={index}
+                className="overflow-hidden group hover:shadow-lg transition-all"
+              >
                 <div className="relative h-64 overflow-hidden bg-muted/30 flex items-center justify-center">
                   {activity.imageUrl ? (
                     <img
@@ -177,4 +192,3 @@ const QueHacemosPage = () => {
 };
 
 export default QueHacemosPage;
-

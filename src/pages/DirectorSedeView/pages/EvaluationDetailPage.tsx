@@ -2,11 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { evaluationService } from "@/api/services";
-import type {
-  AntropometricData,
-  EmotionalData,
-  TechnicalTacticalData,
-} from "@/types/beneficiary.types";
+// import types if needed for question parsing
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,19 +14,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 interface EvaluationDetailState {
   beneficiaryName: string;
   createdAt: string;
-  anthropometric?: AntropometricData;
-  technical?: TechnicalTacticalData;
-  emotional?: EmotionalData;
+  type: 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
+  questions?: Record<string, unknown> | null;
 }
 
 const formatDate = (dateString: string) => {
@@ -96,9 +85,8 @@ const EvaluationDetailPage = () => {
         setDetail({
           beneficiaryName: beneficiaryName || "Beneficiario",
           createdAt: data.evaluation?.created_at || new Date().toISOString(),
-          anthropometric: (data.evaluation?.anthropometric_detail as AntropometricData) || undefined,
-          technical: (data.evaluation?.technical_tactic_detail as TechnicalTacticalData) || undefined,
-          emotional: (data.evaluation?.emotional_detail as EmotionalData) || undefined,
+          type: data.evaluation?.type as EvaluationDetailState['type'],
+          questions: (data.evaluation?.questions_answers as Record<string, unknown> | null) ?? null,
         });
       } catch (error) {
         console.error("Error loading evaluation detail:", error);
@@ -173,29 +161,14 @@ const EvaluationDetailPage = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Resultados por area</CardTitle>
+          <CardTitle>Detalle de evaluacion</CardTitle>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple" className="w-full">
-            <AccordionItem value="anthropometric">
-              <AccordionTrigger>Evaluacion antropometrica</AccordionTrigger>
-              <AccordionContent>
-                {renderDetailList(detail.anthropometric as Record<string, unknown>)}
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="technical">
-              <AccordionTrigger>Evaluacion tecnico-tactica</AccordionTrigger>
-              <AccordionContent>
-                {renderDetailList(detail.technical as Record<string, unknown>)}
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="emotional">
-              <AccordionTrigger>Evaluacion emocional</AccordionTrigger>
-              <AccordionContent>
-                {renderDetailList(detail.emotional as Record<string, unknown>)}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+          <div className="mb-4">
+            <span className="font-semibold">Tipo:</span>{' '}
+            <span>{detail.type.replace(/_/g, ' ')}</span>
+          </div>
+          {renderDetailList(detail.questions as Record<string, unknown>)}
         </CardContent>
       </Card>
 

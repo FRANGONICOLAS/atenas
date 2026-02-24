@@ -80,6 +80,23 @@ export const contentService = {
     }));
   },
 
+  // Obtiene varios contenidos por un arreglo de claves (una sola llamada)
+  async getContentsByKeys(keys: string[]): Promise<SiteContent[]> {
+    if (keys.length === 0) return [];
+    const { data, error } = await client
+      .from("site_contents")
+      .select("*")
+      .in("content_key", keys)
+      .eq("is_active", true);
+
+    if (error) throw error;
+
+    return (data || []).map((item) => ({
+      ...item,
+      public_url: storageService.getPublicUrl(BUCKET_NAME, item.bucket_path),
+    }));
+  },
+
   // Crea un nuevo contenido
   async createContent(contentData: CreateSiteContentDto): Promise<SiteContent> {
     const {

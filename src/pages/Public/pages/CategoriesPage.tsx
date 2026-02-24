@@ -2,19 +2,30 @@ import { Trophy, Users, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const CategoriesPage = () => {
   const { t } = useLanguage();
 
-  const { imageUrl: sub6Url } = useSiteContent('categories_sub6');
-  const { imageUrl: sub8Url } = useSiteContent('categories_sub8');
-  const { imageUrl: sub10Url } = useSiteContent('categories_sub10');
-  const { imageUrl: sub12Url } = useSiteContent('categories_sub12');
-  const { imageUrl: sub14Url } = useSiteContent('categories_sub14');
-  const { imageUrl: sub16Url } = useSiteContent('categories_sub16');
-  const { imageUrl: sub18Url } = useSiteContent('categories_sub18');
+  // Dynamic content loading
+  const keys = [
+    'categories_sub6',
+    'categories_sub8',
+    'categories_sub10',
+    'categories_sub12',
+    'categories_sub14',
+    'categories_sub16',
+    'categories_sub18',
+  ];
+  const { imageMap } = useSiteContentsByKeys(keys);
+  const sub6Url = imageMap['categories_sub6'];
+  const sub8Url = imageMap['categories_sub8'];
+  const sub10Url = imageMap['categories_sub10'];
+  const sub12Url = imageMap['categories_sub12'];
+  const sub14Url = imageMap['categories_sub14'];
+  const sub16Url = imageMap['categories_sub16'];
+  const sub18Url = imageMap['categories_sub18'];
 
   const renderPlaceholder = (label: string) => (
     <div className="h-full w-full flex items-center justify-center bg-muted/30">

@@ -39,14 +39,10 @@ export const EditEvaluationModal = ({
 	onClose,
 	onSaved,
 }: EditEvaluationModalProps) => {
-	const [activeTab, setActiveTab] = useState("anthropometric");
-	const [anthropometricDetail, setAnthropometricDetail] = useState<
-		AntropometricData | undefined
-	>();
-	const [technicalDetail, setTechnicalDetail] = useState<
-		TechnicalTacticalData | undefined
-	>();
-	const [emotionalDetail, setEmotionalDetail] = useState<EmotionalData | undefined>();
+	const [activeTab, setActiveTab] = useState<
+	"anthropometric" | "technical_tactic" | "psychological_emotional"
+>("anthropometric");
+	const [detailPayload, setDetailPayload] = useState<Record<string, unknown> | undefined>();
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 
@@ -57,23 +53,29 @@ export const EditEvaluationModal = ({
 			try {
 				setLoading(true);
 				const data = await evaluationService.getById(evaluationId);
-				setAnthropometricDetail(
-					(data.anthropometric_detail as AntropometricData | null) || undefined,
-				);
-				setTechnicalDetail(
-					(data.technical_tactic_detail as TechnicalTacticalData | null) || undefined,
-				);
-				setEmotionalDetail(
-					(data.emotional_detail as EmotionalData | null) || undefined,
-				);
-				setActiveTab("anthropometric");
-			} catch (error) {
+					setDetailPayload(
+						(data.questions_answers as Record<string, unknown> | null) || undefined,
+					);
+					switch (data.type) {
+						case 'anthropometric':
+							setActiveTab('anthropometric');
+							break;
+						case 'technical_tactic':
+							setActiveTab('technical_tactic');
+							break;
+						case 'psychological_emotional':
+							setActiveTab('psychological_emotional');
+							break;
+						default:
+							setActiveTab('anthropometric');
+					}
+				setLoading(false);
+			}
+				catch (error) {
 				console.error("Error loading evaluation:", error);
 				toast.error("Error al cargar evaluacion", {
-					description: "No se pudo obtener la informacion de la evaluacion",
+					description: "No se pudo cargar la evaluacion",
 				});
-			} finally {
-				setLoading(false);
 			}
 		};
 
@@ -89,17 +91,31 @@ export const EditEvaluationModal = ({
 	const handleSave = async () => {
 		if (!evaluationId) return;
 
-		if (!anthropometricDetail && !technicalDetail && !emotionalDetail) {
-			toast.error("Completa al menos una evaluacion");
+		if (!detailPayload) {
+			toast.error("Completa la evaluacion");
 			return;
+		}
+
+		let typeKey: 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
+		switch (activeTab) {
+			case 'anthropometric':
+				typeKey = 'anthropometric';
+				break;
+			case 'technical_tactic':
+				typeKey = 'technical_tactic';
+				break;
+			case 'psychological_emotional':
+				typeKey = 'psychological_emotional';
+				break;
+			default:
+				typeKey = 'anthropometric';
 		}
 
 		try {
 			setSaving(true);
 			await evaluationService.updateEvaluation(evaluationId, {
-				anthropometric_detail: anthropometricDetail ?? null,
-				technical_tactic_detail: technicalDetail ?? null,
-				emotional_detail: emotionalDetail ?? null,
+				type: typeKey,
+				questions_answers: detailPayload as Json,
 			});
 			toast.success("Evaluacion actualizada", {
 				description: beneficiaryName
@@ -139,17 +155,17 @@ export const EditEvaluationModal = ({
 							Cargando evaluacion...
 						</div>
 					) : (
-						<Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+						<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "anthropometric" | "technical_tactic" | "psychological_emotional")} className="w-full">
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger value="anthropometric" className="flex items-center gap-2">
 									<Ruler className="w-4 h-4" />
 									Antropometrico
 								</TabsTrigger>
-								<TabsTrigger value="technical" className="flex items-center gap-2">
+								<TabsTrigger value="technical_tactic" className="flex items-center gap-2">
 									<Activity className="w-4 h-4" />
 									Tecnico-Tactico
 								</TabsTrigger>
-								<TabsTrigger value="emotional" className="flex items-center gap-2">
+								<TabsTrigger value="psychological_emotional" className="flex items-center gap-2">
 									<Brain className="w-4 h-4" />
 									Emocional
 								</TabsTrigger>
@@ -157,26 +173,26 @@ export const EditEvaluationModal = ({
 
 							<TabsContent value="anthropometric" className="py-4">
 								<BeneficiaryAntropometricForm
-									data={anthropometricDetail as Json | undefined}
+									data={detailPayload as Json | undefined}
 									onChange={(data) =>
-										setAnthropometricDetail(data as AntropometricData)
+										setDetailPayload(data as AntropometricData)
 									}
 								/>
 							</TabsContent>
 
-							<TabsContent value="technical" className="py-4">
+							<TabsContent value="technical_tactic" className="py-4">
 								<TechnicalTecticalForm
-									data={technicalDetail as Json | undefined}
+									data={detailPayload as Json | undefined}
 									onChange={(data) =>
-										setTechnicalDetail(data as TechnicalTacticalData)
+										setDetailPayload(data as TechnicalTacticalData)
 									}
 								/>
 							</TabsContent>
 
-							<TabsContent value="emotional" className="py-4">
+							<TabsContent value="psychological_emotional" className="py-4">
 								<EmotionalForm
-									data={emotionalDetail as Json | undefined}
-									onChange={(data) => setEmotionalDetail(data as EmotionalData)}
+									data={detailPayload as Json | undefined}
+									onChange={(data) => setDetailPayload(data as EmotionalData)}
 								/>
 							</TabsContent>
 						</Tabs>

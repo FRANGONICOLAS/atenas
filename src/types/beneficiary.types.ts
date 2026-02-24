@@ -55,7 +55,7 @@ export interface AntropometricData {
   mesomorfina?: number;
   ectomorfina?: number;
   
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Interfaz para datos técnico-tácticos
@@ -66,7 +66,7 @@ export interface TechnicalTacticalData {
   regate?: number;
   ubicacion_espacio_temporal?: number;
   observaciones?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Interfaz para datos emocionales
@@ -78,7 +78,7 @@ export interface EmotionalData {
   poca_energia?: string;
   apoyo_social?: string;
   observaciones?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // Detalle de evaluacion vinculada al beneficiario

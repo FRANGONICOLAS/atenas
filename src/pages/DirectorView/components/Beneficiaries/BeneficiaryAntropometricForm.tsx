@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { cn } from "@/lib/utils";
 
 interface ExtendedAntropometricData extends AntropometricData {
-  [key: string]: any;
+  [key: string]: Json;
 }
 
 interface BeneficiaryAntropometricFormProps {
@@ -84,7 +84,7 @@ export const BeneficiaryAntropometricForm = ({
   const antropometricData = (data as ExtendedAntropometricData) || {};
   const genero = antropometricData.genero || "hombre";
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: Json) => {
     const newData = {
       ...antropometricData,
       [field]: value,

@@ -3,23 +3,37 @@ import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, C
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const HomePage = () => {
   const { t } = useLanguage();
   
   // Dynamic content loading
-  const { imageUrl: heroImageUrl } = useSiteContent('home_hero');
-  const { imageUrl: problemUrl } = useSiteContent('home_problem');
-  const { imageUrl: impactUrl } = useSiteContent('home_impact');
-  const { imageUrl: pruebaUrl } = useSiteContent('home_projects');
-  const { imageUrl: transformacion1Url } = useSiteContent('home_transformation_1');
-  const { imageUrl: transformacion2Url } = useSiteContent('home_transformation_2');
-  const { imageUrl: transformacion3Url } = useSiteContent('home_transformation_3');
-  const { imageUrl: transformacion4Url } = useSiteContent('home_transformation_4');
-  const { imageUrl: transformacion5Url } = useSiteContent('home_transformation_5');
-  const { imageUrl: transformacion6Url } = useSiteContent('home_transformation_6');
+  const keys = [
+    'home_hero',
+    'home_problem',
+    'home_impact',
+    'home_projects',
+    'home_transformation_1',
+    'home_transformation_2',
+    'home_transformation_3',
+    'home_transformation_4',
+    'home_transformation_5',
+    'home_transformation_6',
+  ];
+  const { imageMap } = useSiteContentsByKeys(keys);
+
+  const heroImageUrl = imageMap['home_hero'];
+  const problemUrl = imageMap['home_problem'];
+  const impactUrl = imageMap['home_impact'];
+  const pruebaUrl = imageMap['home_projects'];
+  const transformacion1Url = imageMap['home_transformation_1'];
+  const transformacion2Url = imageMap['home_transformation_2'];
+  const transformacion3Url = imageMap['home_transformation_3'];
+  const transformacion4Url = imageMap['home_transformation_4'];
+  const transformacion5Url = imageMap['home_transformation_5'];
+  const transformacion6Url = imageMap['home_transformation_6'];
 
   const renderPlaceholder = (
     label: string,

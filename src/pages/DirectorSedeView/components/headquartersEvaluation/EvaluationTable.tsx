@@ -18,6 +18,7 @@ interface EvaluationTableProps {
   onDelete: (evaluation: Evaluation) => void;
   formatDate: (dateString: string) => string;
   getPerformanceColor: (value: number) => string;
+  getTypeLabel: (type: Evaluation['type']) => string;
 }
 
 export const EvaluationTable = ({
@@ -27,6 +28,7 @@ export const EvaluationTable = ({
   onDelete,
   formatDate,
   getPerformanceColor,
+  getTypeLabel,
 }: EvaluationTableProps) => {
   if (evaluations.length === 0) {
     return (
@@ -42,7 +44,7 @@ export const EvaluationTable = ({
         <TableHeader>
           <TableRow>
             <TableHead>Beneficiario</TableHead>
-            <TableHead>Rendimiento calculado</TableHead>
+            <TableHead>Tipo</TableHead>
             <TableHead>Fecha</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -54,16 +56,7 @@ export const EvaluationTable = ({
                 {evaluation.beneficiaryName}
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
-                  <Progress value={evaluation.score} className="w-24" />
-                  <span
-                    className={`text-sm font-medium ${getPerformanceColor(
-                      evaluation.score,
-                    )}`}
-                  >
-                    {evaluation.score}%
-                  </span>
-                </div>
+                {getTypeLabel(evaluation.type)}
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
                 {formatDate(evaluation.date)}

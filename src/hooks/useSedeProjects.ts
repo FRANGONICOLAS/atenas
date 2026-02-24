@@ -133,7 +133,20 @@ export const useSedeProjects = () => {
     }
   };
 
-  const mapProjectRow = async (projectRow: any, headquarterId: string) => {
+  const mapProjectRow = async (
+    projectRow: {
+      project_id: string;
+      finance_goal?: number;
+      name: string;
+      category?: string;
+      type?: "investment" | "free";
+      end_date?: string;
+      description?: string;
+      status: "active" | "completed" | "pending";
+      start_date?: string;
+    },
+    headquarterId: string,
+  ) => {
     const raised = await projectService.getTotalRaised(projectRow.project_id);
     const goal = projectRow.finance_goal || 0;
     const progress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
@@ -169,7 +182,11 @@ export const useSedeProjects = () => {
       setLoading(true);
       const data = await projectService.getByHeadquarter(headquarterId);
       const mapped = await Promise.all(
-        data.map((projectRow) => mapProjectRow(projectRow, headquarterId)),
+        data.map((projectRow) => mapProjectRow({
+          ...projectRow,
+          type: (projectRow.type as "investment" | "free" | undefined),
+          status: (projectRow.status as "active" | "completed" | "pending"),
+        }, headquarterId)),
       );
       setProjects(mapped);
     } catch (error) {

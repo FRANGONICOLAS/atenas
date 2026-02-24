@@ -1,10 +1,6 @@
 import { client } from "@/api/supabase/client";
 import type { EvaluationRow } from "@/api/types";
-import type {
-  AntropometricData,
-  EmotionalData,
-  TechnicalTacticalData,
-} from "@/types/beneficiary.types";
+import type { EvaluationPayload } from "@/types";
 
 interface EvaluationJoinRow {
   beneficiary_id: string | null;
@@ -29,7 +25,7 @@ export const evaluationService = {
   async getById(evaluationId: string): Promise<EvaluationRow> {
     const { data, error } = await client
       .from("evaluation")
-      .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
+      .select("id, created_at, type, questions_answers")
       .eq("id", evaluationId)
       .single();
 
@@ -41,7 +37,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail), beneficiary: beneficiary_id (first_name, last_name)",
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id (first_name, last_name)",
       )
       .eq("evaluation_id", evaluationId)
       .single();
@@ -52,35 +48,29 @@ export const evaluationService = {
 
   async createForBeneficiary(
     beneficiaryId: string,
-    payload: {
-      anthropometric_detail?: AntropometricData;
-      technical_tactic_detail?: TechnicalTacticalData;
-      emotional_detail?: EmotionalData;
-    },
+    payload: EvaluationPayload,
   ): Promise<EvaluationRow> {
-    const { data, error } = await client
-      .from("evaluation")
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (client.from("evaluation") as any)
       .insert([
         {
-          anthropometric_detail: payload.anthropometric_detail ?? null,
-          technical_tactic_detail: payload.technical_tactic_detail ?? null,
-          emotional_detail: payload.emotional_detail ?? null,
+          type: payload.type,
+          questions_answers: payload.questions_answers ?? null,
         },
       ])
-      .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
+      .select("id, created_at, type, questions_answers")
       .single();
 
     if (error) throw error;
+    if (!data) throw new Error("Failed to create evaluation");
 
-    const { error: linkError } = await client
-      .from("beneficiary's_evaluation")
+    const { error: linkError } = await (client.from("beneficiary's_evaluation"))
       .insert([
         {
           beneficiary_id: beneficiaryId,
           evaluation_id: data.id,
         },
       ]);
-
     if (linkError) throw linkError;
 
     return data;
@@ -90,7 +80,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail), beneficiary: beneficiary_id (first_name, last_name, headquarters_id)",
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id (first_name, last_name, headquarters_id)",
       )
       .eq("beneficiary.headquarters_id", headquarterId)
       .order("evaluation_id", { ascending: false });
@@ -117,21 +107,16 @@ export const evaluationService = {
 
   async updateEvaluation(
     evaluationId: string,
-    payload: {
-      anthropometric_detail?: AntropometricData | null;
-      technical_tactic_detail?: TechnicalTacticalData | null;
-      emotional_detail?: EmotionalData | null;
-    },
+    payload: EvaluationPayload,
   ): Promise<EvaluationRow> {
     const { data, error } = await client
       .from("evaluation")
       .update({
-        anthropometric_detail: payload.anthropometric_detail ?? null,
-        technical_tactic_detail: payload.technical_tactic_detail ?? null,
-        emotional_detail: payload.emotional_detail ?? null,
+        type: payload.type,
+        questions_answers: payload.questions_answers ?? null,
       })
       .eq("id", evaluationId)
-      .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
+      .select("id, created_at, type, questions_answers")
       .single();
 
     if (error) throw error;

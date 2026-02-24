@@ -10,6 +10,16 @@ import { useTestimonials } from '@/hooks/useTestimonial';
 import { useAuth } from '@/hooks/useAuth';
 import { CreateTestimonialModal } from '@/pages/Public/components/CreateTestimonialModal';
 
+interface DBTestimonial {
+  testimonial_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  profile_images_id: string | null;
+  content: string;
+  rating: number;
+  approve: boolean;
+}
+
 const TestimonialsPage = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -35,12 +45,12 @@ const TestimonialsPage = () => {
   // Mapear testimonios de BD a formato del componente
   const testimonials = useMemo(() => {
     console.log('dbTestimonials:', dbTestimonials); // Debug
-    return dbTestimonials.map((t: any) => {
+    return (dbTestimonials as unknown as DBTestimonial[]).map((t) => {
       console.log('Testimonio individual:', t); // Debug
-      const userName = t.user 
-        ? `${t.user.first_name || ''} ${t.user.last_name || ''}`.trim() 
+      const userName = t.first_name || t.last_name
+        ? `${t.first_name || ''} ${t.last_name || ''}`.trim() 
         : 'Usuario';
-      const userImage = t.user?.profile_images_id || null;
+      const userImage = t.profile_images_id || null;
       
       return {
         id: parseInt(t.testimonial_id.substring(0, 8), 16),

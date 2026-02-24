@@ -37,7 +37,7 @@ const EvaluationsPage = () => {
   const categoryOptions = useMemo(
     () => [
       { value: "all", label: "Todas las categorias" },
-      ...(["physical", "technical", "tactical", "psychological"] as EvaluationType[]).map(
+      ...(["anthropometric", "technical_tactic", "psychological_emotional"] as EvaluationType[]).map(
         (type) => ({
           value: type,
           label: getEvaluationTypeLabel(type),
@@ -126,6 +126,7 @@ const EvaluationsPage = () => {
             onDelete={(evaluation) => handleDeleteEvaluation(evaluation.id)}
             formatDate={formatDate}
             getPerformanceColor={getPerformanceColor}
+            getTypeLabel={getEvaluationTypeLabel}
           />
         </CardContent>
       </Card>

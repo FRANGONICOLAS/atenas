@@ -1,17 +1,20 @@
 import { Heart, Target, Eye, Users, Award, Shield, Handshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useSiteContent } from '@/hooks/useSiteContent';
+import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
 const AboutPage = () => {
   const { t } = useLanguage();
 
-  const { imageUrl: aboutHeroUrl } = useSiteContent('about_hero');
-  const { imageUrl: team1Url } = useSiteContent('about_team_1');
-  const { imageUrl: team2Url } = useSiteContent('about_team_2');
-  const { imageUrl: team3Url } = useSiteContent('about_team_3');
-  const { imageUrl: team4Url } = useSiteContent('about_team_4');
+  const keys = ['about_hero','about_team_1','about_team_2','about_team_3','about_team_4'];
+  const { imageMap } = useSiteContentsByKeys(keys);
+
+  const aboutHeroUrl = imageMap['about_hero'];
+  const team1Url = imageMap['about_team_1'];
+  const team2Url = imageMap['about_team_2'];
+  const team3Url = imageMap['about_team_3'];
+  const team4Url = imageMap['about_team_4'];
 
   const values = [
     { icon: Heart, title: 'Pasión', description: 'Amamos lo que hacemos y lo transmitimos a cada joven' },
