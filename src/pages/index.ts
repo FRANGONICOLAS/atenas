@@ -22,6 +22,7 @@ export { default as TestimonialsPage } from './Public/pages/TestimonialsPage';
 export { default as AdminView } from './AdminView/AdminView';
 export { default as DirectorView } from './DirectorView/DirectorView';
 export { default as DirectorSedeView } from './DirectorSedeView/DirectorSedeView';
+export { default as EvaluationDetailPage } from './DirectorSedeView/pages/EvaluationDetailPage';
 export { default as DonatorView } from './DonatorView/DonatorView';
 
 // Common Pages

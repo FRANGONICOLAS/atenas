@@ -16,6 +16,15 @@ interface EvaluationJoinRow {
   } | null;
 }
 
+interface EvaluationDetailRow {
+  beneficiary_id: string | null;
+  evaluation: EvaluationRow | null;
+  beneficiary: {
+    first_name: string | null;
+    last_name: string | null;
+  } | null;
+}
+
 export const evaluationService = {
   async getById(evaluationId: string): Promise<EvaluationRow> {
     const { data, error } = await client
@@ -26,6 +35,19 @@ export const evaluationService = {
 
     if (error) throw error;
     return data;
+  },
+
+  async getDetail(evaluationId: string): Promise<EvaluationDetailRow> {
+    const { data, error } = await client
+      .from("beneficiary's_evaluation")
+      .select(
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail), beneficiary: beneficiary_id (first_name, last_name)",
+      )
+      .eq("evaluation_id", evaluationId)
+      .single();
+
+    if (error) throw error;
+    return data as EvaluationDetailRow;
   },
 
   async createForBeneficiary(

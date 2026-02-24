@@ -33,6 +33,7 @@ import {
   // Director Pages
   DirectorView,
   DirectorSedeView,
+    EvaluationDetailPage,
   DonatorView,
   // Common Pages
   DonationPage,
@@ -118,6 +119,16 @@ const App = () => (
                       allowedRoles={["director_sede", "director", "admin"]}
                     >
                       <DirectorSedeView />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/director-sede/evaluations/:evaluationId"
+                  element={
+                    <ProtectedRoute
+                      allowedRoles={["director_sede", "director", "admin"]}
+                    >
+                      <EvaluationDetailPage />
                     </ProtectedRoute>
                   }
                 />

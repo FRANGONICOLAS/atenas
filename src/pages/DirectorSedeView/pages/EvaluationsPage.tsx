@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ClipboardList, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getPerformanceColor } from "@/lib/beneficiaryUtils";
@@ -31,6 +32,7 @@ const EvaluationsPage = () => {
 
   const [showCreate, setShowCreate] = useState(false);
   const [editTarget, setEditTarget] = useState<Evaluation | null>(null);
+  const navigate = useNavigate();
 
   const categoryOptions = useMemo(
     () => [
@@ -70,9 +72,7 @@ const EvaluationsPage = () => {
   }, [evaluations]);
 
   const handleViewEvaluation = (evaluation: Evaluation) => {
-    toast.info("Detalle de evaluacion", {
-      description: `Evaluacion de ${evaluation.beneficiaryName}`,
-    });
+    navigate(`/director-sede/evaluations/${evaluation.id}`);
   };
 
   const handleCreateEvaluation = () => {
