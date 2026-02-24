@@ -1,9 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { evaluationService, headquarterService, userService } from "@/api/services";
-import { calculatePerformance } from "@/lib/beneficiaryCalculations";
+import {
+  evaluationService,
+  headquarterService,
+  userService,
+} from "@/api/services";
+import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import { useAuth } from "@/hooks/useAuth";
-import type { Evaluation, EvaluationType, TechnicalTacticalData } from "@/types";
+import type {
+  Evaluation,
+  EvaluationType,
+} from "@/types";
 import type { EvaluationRow } from "@/api/types";
 
 interface EvaluationJoinRow {
@@ -17,12 +24,12 @@ interface EvaluationJoinRow {
 
 const resolveEvaluationType = (evaluation: EvaluationRow): EvaluationType => {
   switch (evaluation.type) {
-    case 'anthropometric':
-      return 'anthropometric';
-    case 'technical_tactic':
-      return 'technical_tactic';
-    case 'psychological_emotional':
-      return 'psychological_emotional';
+    case "anthropometric":
+      return "anthropometric";
+    case "technical_tactic":
+      return "technical_tactic";
+    case "psychological_emotional":
+      return "psychological_emotional";
   }
 };
 
@@ -33,21 +40,22 @@ const extractObservations = (detail: unknown): string | undefined => {
 };
 
 const extractComments = (evaluation: EvaluationRow): string => {
-  if (!evaluation.questions_answers || typeof evaluation.questions_answers !== 'object') {
-    return '';
+  if (
+    !evaluation.questions_answers ||
+    typeof evaluation.questions_answers !== "object"
+  ) {
+    return "";
   }
-  const val = (evaluation.questions_answers as Record<string, unknown>).observaciones;
-  return typeof val === 'string' ? val : '';
+  const val = (evaluation.questions_answers as Record<string, unknown>)
+    .observaciones;
+  return typeof val === "string" ? val : "";
 };
 
 const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
   if (!row.evaluation || !row.beneficiary || !row.beneficiary_id) return null;
 
-  const beneficiaryName = `${row.beneficiary.first_name ?? ""} ${row.beneficiary.last_name ?? ""}`.trim();
-  const techData =
-    row.evaluation.type === 'technical_tactic'
-      ? (row.evaluation.questions_answers as TechnicalTacticalData | null)
-      : null;
+  const beneficiaryName =
+    `${row.beneficiary.first_name ?? ""} ${row.beneficiary.last_name ?? ""}`.trim();
 
   return {
     id: row.evaluation.id,
@@ -55,7 +63,7 @@ const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
     beneficiaryName: beneficiaryName || "Beneficiario",
     date: row.evaluation.created_at || new Date().toISOString(),
     type: resolveEvaluationType(row.evaluation),
-    score: calculatePerformance(techData),
+    score: getEvaluationScore(row.evaluation),
     comments: extractComments(row.evaluation),
     evaluator: "",
   };
@@ -68,8 +76,12 @@ export const useSedeEvaluations = () => {
   const [loading, setLoading] = useState(true);
   const [evaluationSearch, setEvaluationSearch] = useState("");
   const [evaluationTypeFilter, setEvaluationTypeFilter] = useState("all");
-  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<string | null>(null);
-  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<string | null>(null);
+  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<
+    string | null
+  >(null);
+  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<
+    string | null
+  >(null);
 
   const resolveHeadquarterFromUser = async () => {
     try {
@@ -84,7 +96,10 @@ export const useSedeEvaluations = () => {
         return hq ? [hq] : [];
       }
     } catch (error) {
-      console.warn("No se pudo resolver sede desde user.headquarter_id:", error);
+      console.warn(
+        "No se pudo resolver sede desde user.headquarter_id:",
+        error,
+      );
     }
 
     return [];
@@ -129,7 +144,9 @@ export const useSedeEvaluations = () => {
       let directorHeadquarters = await resolveHeadquarterFromUser();
 
       if (directorHeadquarters.length === 0) {
-        directorHeadquarters = await headquarterService.getByDirectorId(user.id);
+        directorHeadquarters = await headquarterService.getByDirectorId(
+          user.id,
+        );
       }
 
       if (directorHeadquarters.length === 0) {

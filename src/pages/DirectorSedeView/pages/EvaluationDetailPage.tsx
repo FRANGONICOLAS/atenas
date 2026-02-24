@@ -14,11 +14,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import EvaluationProgressChart from "@/pages/DirectorSedeView/components/headquartersEvaluation/EvaluationProgressChart";
+import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
 
-interface EvaluationDetailState {
-  beneficiaryName: string;
+interface EvaluationDetailState {  beneficiaryId: string;  beneficiaryName: string;
   createdAt: string;
-  type: 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
+  type: "anthropometric" | "technical_tactic" | "psychological_emotional";
   questions?: Record<string, unknown> | null;
 }
 
@@ -70,6 +71,8 @@ const EvaluationDetailPage = () => {
   const { evaluationId } = useParams<{ evaluationId: string }>();
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<EvaluationDetailState | null>(null);
+  const { getEvaluationTypeLabel } = useSedeEvaluations();
+
 
   useEffect(() => {
     const loadDetail = async () => {
@@ -83,10 +86,15 @@ const EvaluationDetailPage = () => {
         }`.trim();
 
         setDetail({
+          beneficiaryId: data.beneficiary_id || "",
           beneficiaryName: beneficiaryName || "Beneficiario",
           createdAt: data.evaluation?.created_at || new Date().toISOString(),
-          type: data.evaluation?.type as EvaluationDetailState['type'],
-          questions: (data.evaluation?.questions_answers as Record<string, unknown> | null) ?? null,
+          type: data.evaluation?.type as EvaluationDetailState["type"],
+          questions:
+            (data.evaluation?.questions_answers as Record<
+              string,
+              unknown
+            > | null) ?? null,
         });
       } catch (error) {
         console.error("Error loading evaluation detail:", error);
@@ -112,7 +120,10 @@ const EvaluationDetailPage = () => {
     return (
       <div className="space-y-4">
         <Button variant="ghost" asChild>
-          <Link to="/director-sede?tab=evaluations" className="inline-flex items-center">
+          <Link
+            to="/director-sede?tab=evaluations"
+            className="inline-flex items-center"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver a evaluaciones
           </Link>
@@ -145,7 +156,9 @@ const EvaluationDetailPage = () => {
           </Breadcrumb>
           <div className="flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Detalle de evaluacion</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Detalle de evaluacion
+            </h2>
           </div>
           <p className="text-sm text-muted-foreground">
             {`Evaluacion realizada el ${formatDate(detail.createdAt)}`}
@@ -165,19 +178,24 @@ const EvaluationDetailPage = () => {
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <span className="font-semibold">Tipo:</span>{' '}
-            <span>{detail.type.replace(/_/g, ' ')}</span>
-          </div>
+            <span className="font-semibold">Tipo:</span>{" "}
+            <span>{getEvaluationTypeLabel(detail.type)}</span></div>
           {renderDetailList(detail.questions as Record<string, unknown>)}
         </CardContent>
       </Card>
 
       <Card className="border-dashed">
         <CardHeader>
-          <CardTitle>Graficas</CardTitle>
+          <CardTitle>Progreso del beneficiario</CardTitle>
         </CardHeader>
-        <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Espacio reservado para graficas futuras.
+        <CardContent>
+          {detail?.beneficiaryId ? (
+            <EvaluationProgressChart beneficiaryId={detail.beneficiaryId} />
+          ) : (
+            <div className="py-10 text-center text-sm text-muted-foreground">
+              No es posible cargar las graficas sin un beneficiario asociado.
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

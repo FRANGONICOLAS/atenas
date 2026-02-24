@@ -89,6 +89,18 @@ export const evaluationService = {
     return (data as EvaluationJoinRow[]) || [];
   },
 
+  async getByBeneficiaryId(beneficiaryId: string): Promise<EvaluationJoinRow[]> {
+    const { data, error } = await client
+      .from("beneficiary's_evaluation")
+      .select(
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers)"
+      )
+      .eq("beneficiary_id", beneficiaryId);
+
+    if (error) throw error;
+    return (data as EvaluationJoinRow[]) || [];
+  },
+
   async deleteEvaluation(evaluationId: string): Promise<void> {
     const { error: linkError } = await client
       .from("beneficiary's_evaluation")

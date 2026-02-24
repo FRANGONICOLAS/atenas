@@ -1,11 +1,6 @@
 import type { TechnicalTacticalData, AntropometricData } from '@/types/beneficiary.types';
+import type { EvaluationRow } from '@/api/types';
 
-/**
- * Calcula el performance (rendimiento) basado en el promedio de las habilidades técnico-tácticas
- * Convierte la escala 1-5 a 0-100
- * @param technicalData - Datos técnico-tácticos del beneficiario
- * @returns Número entre 0 y 100 representando el performance
- */
 export const calculatePerformance = (technicalData?: TechnicalTacticalData | null): number => {
   if (!technicalData) return 0;
 
@@ -82,4 +77,30 @@ export const getTechnicalAverage = (technicalData?: TechnicalTacticalData | null
 
   const avg = skills.reduce((sum, val) => sum + val, 0) / skills.length;
   return parseFloat(avg.toFixed(1));
+};
+
+/**
+ * Calcula una métrica numérica para una evaluación completa dependiendo de su tipo.
+ *
+ * - técnico‑táctica: utiliza el performance convertido a 0‑100 (calculatePerformance).
+ * - antropométrica: retorna IMC si está disponible o lo calcula a partir de peso/talla.
+ * - psicológica/emocional: por ahora no hay valor numérico asociado, devuelve 0.
+ */
+export const getEvaluationScore = (evaluation: EvaluationRow): number => {
+  switch (evaluation.type) {
+    case 'technical_tactic':
+      return calculatePerformance(evaluation.questions_answers as TechnicalTacticalData | null);
+    case 'anthropometric': {
+      const data = evaluation.questions_answers as AntropometricData | null;
+      if (!data) return 0;
+      if (typeof data.imc === 'number') {
+        return data.imc;
+      }
+      return calculateIMC(data.peso, data.talla) ?? 0;
+    }
+    case 'psychological_emotional':
+      return 0;
+    default:
+      return 0;
+  }
 };
