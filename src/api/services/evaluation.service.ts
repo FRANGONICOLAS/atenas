@@ -17,6 +17,17 @@ interface EvaluationJoinRow {
 }
 
 export const evaluationService = {
+  async getById(evaluationId: string): Promise<EvaluationRow> {
+    const { data, error } = await client
+      .from("evaluation")
+      .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
+      .eq("id", evaluationId)
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
   async createForBeneficiary(
     beneficiaryId: string,
     payload: {
@@ -80,5 +91,28 @@ export const evaluationService = {
       .eq("id", evaluationId);
 
     if (error) throw error;
+  },
+
+  async updateEvaluation(
+    evaluationId: string,
+    payload: {
+      anthropometric_detail?: AntropometricData | null;
+      technical_tactic_detail?: TechnicalTacticalData | null;
+      emotional_detail?: EmotionalData | null;
+    },
+  ): Promise<EvaluationRow> {
+    const { data, error } = await client
+      .from("evaluation")
+      .update({
+        anthropometric_detail: payload.anthropometric_detail ?? null,
+        technical_tactic_detail: payload.technical_tactic_detail ?? null,
+        emotional_detail: payload.emotional_detail ?? null,
+      })
+      .eq("id", evaluationId)
+      .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
+      .single();
+
+    if (error) throw error;
+    return data;
   },
 };

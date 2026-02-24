@@ -186,12 +186,6 @@ export const useSedeEvaluations = () => {
     await loadEvaluations(assignedHeadquarterId);
   };
 
-  const handleEditEvaluation = (evaluation: Evaluation) => {
-    toast.info("Editar evaluacion", {
-      description: `Editando evaluacion de: ${evaluation.beneficiaryName}`,
-    });
-  };
-
   const handleDeleteEvaluation = async (evaluationId: string) => {
     try {
       await evaluationService.deleteEvaluation(evaluationId);
@@ -232,7 +226,6 @@ export const useSedeEvaluations = () => {
     assignedHeadquarterId,
     assignedHeadquarterName,
     refresh,
-    handleEditEvaluation,
     handleDeleteEvaluation,
     formatDate,
     getEvaluationTypeLabel,

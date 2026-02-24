@@ -11,6 +11,7 @@ import {
   EvaluationStats,
   EvaluationTable,
   CreateEvaluationModal,
+  EditEvaluationModal,
 } from "@/pages/DirectorSedeView/components/headquartersEvaluation";
 import type { Evaluation, EvaluationType } from "@/types";
 
@@ -24,12 +25,12 @@ const EvaluationsPage = () => {
     setEvaluationTypeFilter,
     formatDate,
     getEvaluationTypeLabel,
-    handleEditEvaluation,
     handleDeleteEvaluation,
     refresh,
   } = useSedeEvaluations();
 
   const [showCreate, setShowCreate] = useState(false);
+  const [editTarget, setEditTarget] = useState<Evaluation | null>(null);
 
   const categoryOptions = useMemo(
     () => [
@@ -121,7 +122,7 @@ const EvaluationsPage = () => {
           <EvaluationTable
             evaluations={filteredEvaluations}
             onView={handleViewEvaluation}
-            onEdit={handleEditEvaluation}
+            onEdit={setEditTarget}
             onDelete={(evaluation) => handleDeleteEvaluation(evaluation.id)}
             formatDate={formatDate}
             getPerformanceColor={getPerformanceColor}
@@ -132,6 +133,14 @@ const EvaluationsPage = () => {
       <CreateEvaluationModal
         open={showCreate}
         onClose={() => setShowCreate(false)}
+        onSaved={refresh}
+      />
+
+      <EditEvaluationModal
+        open={!!editTarget}
+        evaluationId={editTarget?.id ?? null}
+        beneficiaryName={editTarget?.beneficiaryName ?? ""}
+        onClose={() => setEditTarget(null)}
         onSaved={refresh}
       />
     </div>
