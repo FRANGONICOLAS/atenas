@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { client } from "@/api/supabase/client";
-import { authService } from "@/api/services/auth.service";
 import { userService } from "@/api/services/user.service";
-import { toast } from "sonner";
-import { handleAuthError } from "@/lib/errorHandler";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -12,51 +9,33 @@ const AuthCallback = () => {
   const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        const error = searchParams.get("error");
-        if (error) {
-          toast.error("Error en la autenticación: " + error);
-          navigate("/login");
-          return;
-        }
+  const handleCallback = async () => {
+    try {
+      const { data } = await client.auth.getSession();
 
-        const { error: exchangeError } =
-          await client.auth.exchangeCodeForSession(window.location.href);
-
-        if (exchangeError) {
-          throw exchangeError;
-        }
-
-        const user = await authService.getCurrentUser();
-
-        if (!user) {
-          toast.error("No se pudo autenticar el usuario");
-          navigate("/login");
-          return;
-        }
-
-        const existingUser = await userService.getById(user.id);
-
-        if (existingUser) {
-          toast.success("¡Bienvenido de nuevo!");
-          navigate("/");
-        } else {
-          toast.info("Por favor completa tu perfil");
-          navigate("/complete-profile");
-        }
-
-      } catch (error) {
-        console.error("Error en callback de autenticación:", error);
-        handleAuthError(error);
+      if (!data.session) {
         navigate("/login");
-      } finally {
-        setIsProcessing(false);
+        return;
       }
-    };
 
-    handleCallback();
-  }, [navigate, searchParams]);
+      const user = data.session.user;
+
+      const existingUser = await userService.getById(user.id);
+
+      if (existingUser) {
+        navigate("/");
+      } else {
+        navigate("/complete-profile");
+      }
+
+    } catch (error) {
+      console.error(error);
+      navigate("/login");
+    }
+  };
+
+  handleCallback();
+}, []);
 
   if (isProcessing) {
     return (
