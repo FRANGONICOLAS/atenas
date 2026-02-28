@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { client } from "@/api/supabase/client";
 import { authService } from "@/api/services/auth.service";
 import { userService } from "@/api/services/user.service";
 import { toast } from "sonner";
@@ -13,7 +14,6 @@ const AuthCallback = () => {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // Verificar si hay un error en los parámetros
         const error = searchParams.get("error");
         if (error) {
           toast.error("Error en la autenticación: " + error);
@@ -21,27 +21,31 @@ const AuthCallback = () => {
           return;
         }
 
-        // Obtener el usuario autenticado
+        const { error: exchangeError } =
+          await client.auth.exchangeCodeForSession(window.location.href);
+
+        if (exchangeError) {
+          throw exchangeError;
+        }
+
         const user = await authService.getCurrentUser();
-        
+
         if (!user) {
           toast.error("No se pudo autenticar el usuario");
           navigate("/login");
           return;
         }
 
-        // Verificar si el usuario ya existe en nuestra tabla user
         const existingUser = await userService.getById(user.id);
 
         if (existingUser) {
-          // Usuario existe, redirigir al dashboard
           toast.success("¡Bienvenido de nuevo!");
           navigate("/");
         } else {
-          // Usuario nuevo de Google, redirigir a completar perfil
           toast.info("Por favor completa tu perfil");
           navigate("/complete-profile");
         }
+
       } catch (error) {
         console.error("Error en callback de autenticación:", error);
         handleAuthError(error);
