@@ -57,11 +57,11 @@ const RegisterPage = () => {
         role: 'donator',
       });
 
-      toast.success('¡Cuenta creada exitosamente!');
+      toast.success(t.auth.accountCreated);
       
       // Verificar si requiere confirmación de email
       if (authUser.confirmation_sent_at) {
-        toast.info('Por favor verifica tu email para activar tu cuenta');
+        toast.info(t.auth.verifyEmail);
       }
       
       navigate('/login');
@@ -81,7 +81,7 @@ const RegisterPage = () => {
         form={form}
         onSubmit={onSubmit}
         isLoading={isLoading}
-        submitButtonText={isLoading ? 'Creando cuenta...' : t.auth.register}
+        submitButtonText={isLoading ? t.auth.signingUp : t.auth.register}
         footerText={t.auth.hasAccount}
         footerLinkText={t.auth.login}
         footerLinkHref="/login"

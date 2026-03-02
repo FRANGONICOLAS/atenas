@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LanguageSwitcher } from '@/components/common/LanguageSwitcher';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
@@ -25,11 +26,13 @@ const Navbar = () => {
 
   // Usar /inicio para usuarios logueados para evitar redirección automática
   const homeLink = isAuthenticated ? '/inicio' : '/';
+  const projectLink = '/proyectos';
+  const galleryLink = '/galeria';
   
   const navLinks = [
     { href: homeLink, label: t.nav.home },
-    { href: '/proyectos', label: t.nav.projects },
-    { href: '/galeria', label: t.nav.gallery },
+    { href: projectLink, label: t.nav.projects },
+    { href: galleryLink, label: t.nav.gallery },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -72,11 +75,11 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-3">
             <Link
               to={homeLink}
               className={cn(
-                'text-sm font-medium transition-colors hover:text-primary',
+                'text-sm font-medium transition-colors hover:text-primary px-1',
                 isActive(homeLink) ? 'text-primary' : 'text-muted-foreground'
               )}
             >
@@ -87,7 +90,7 @@ const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger
                 className={cn(
-                  'text-sm font-medium transition-all hover:text-primary flex items-center gap-1.5 px-3 py-2 rounded-md hover:bg-primary/5 group',
+                  'text-sm font-medium transition-all hover:text-primary flex items-center gap-1.5 px-1 py-2 rounded-md hover:bg-primary/5 group',
                   isAboutActive ? 'text-primary bg-primary/10' : 'text-muted-foreground'
                 )}
               >
@@ -109,7 +112,7 @@ const Navbar = () => {
                     )}
                   >
                     <Users className="w-4 h-4" />
-                    <span>Quiénes Somos</span>
+                    <span>{t.about.title}</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
@@ -147,7 +150,7 @@ const Navbar = () => {
             <DropdownMenu>
               <DropdownMenuTrigger
                 className={cn(
-                  'text-sm font-medium transition-all hover:text-primary flex items-center gap-1.5 px-3 py-2 rounded-md hover:bg-primary/5 group',
+                  'text-sm font-medium transition-all hover:text-primary flex items-center gap-1.5 px-1 py-2 rounded-md hover:bg-primary/5 group',
                   isBeneficiariesActive ? 'text-primary bg-primary/10' : 'text-muted-foreground'
                 )}
               >
@@ -208,7 +211,7 @@ const Navbar = () => {
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary',
+                  'text-sm font-medium transition-colors hover:text-primary px-1',
                   isActive(link.href) ? 'text-primary' : 'text-muted-foreground'
                 )}
               >
@@ -220,15 +223,12 @@ const Navbar = () => {
           {/* Actions */}
           <div className="flex items-center gap-2">
             {/* Language Selector */}
-            <Button
+            <LanguageSwitcher
               variant="ghost"
               size="sm"
-              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
               className="gap-1"
-            >
-              <Globe className="w-4 h-4" />
-              <span className="hidden sm:inline">{language.toUpperCase()}</span>
-            </Button>
+              labelType="short"
+            />
 
             {/* Auth Section - Desktop */}
             {isAuthenticated ? (
@@ -260,7 +260,7 @@ const Navbar = () => {
                   className="gap-1"
                 >
                   <User className="w-4 h-4" />
-                  Dashboard
+                  {t.auth.dashboard}
                 </Button>
                 
                 <DropdownMenu>
@@ -295,7 +295,7 @@ const Navbar = () => {
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-primary/5 text-foreground"
                       >
                         <User className="w-4 h-4" />
-                        <span>Mi Perfil</span>
+                        <span>{t.auth.profile}</span>
                       </button>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="my-1" />
@@ -308,7 +308,7 @@ const Navbar = () => {
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors hover:bg-destructive/5 text-destructive font-medium cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>Cerrar Sesión</span>
+                        <span>{t.auth.logout}</span>
                       </button>
                     </DropdownMenuItem>
                   </DropdownMenuContent>

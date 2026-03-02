@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { DollarSign, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { donationService } from '@/api/services/donation.service';
@@ -68,6 +69,7 @@ const getPaymentMethodLabel = (value?: string | null) => {
 };
 
 export const DonationsHistory = () => {
+  const { t } = useLanguage();
   const { user, isLoading: isAuthLoading } = useAuth();
   const [donations, setDonations] = useState<DonationWithProject[]>([]);
   const [loading, setLoading] = useState(true);
@@ -169,23 +171,23 @@ export const DonationsHistory = () => {
       <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-2">
           <DollarSign className="h-5 w-5 text-blue-600" />
-          <CardTitle className="text-xl">Historial de donaciones</CardTitle>
+          <CardTitle className="text-xl">{t.donatorDashboard.titles.donations}</CardTitle>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortOption)}>
             <SelectTrigger className="w-full sm:w-56">
-              <SelectValue placeholder="Ordenar por" />
+              <SelectValue placeholder={t.donatorDashboard.actions.sortBy} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="date_desc">Fecha: mas reciente</SelectItem>
-              <SelectItem value="date_asc">Fecha: mas antigua</SelectItem>
-              <SelectItem value="amount_desc">Monto: mayor a menor</SelectItem>
-              <SelectItem value="amount_asc">Monto: menor a mayor</SelectItem>
+              <SelectItem value="date_desc">{t.donatorDashboard.sort.dateNewest}</SelectItem>
+              <SelectItem value="date_asc">{t.donatorDashboard.sort.dateOldest}</SelectItem>
+              <SelectItem value="amount_desc">{t.donatorDashboard.sort.amountHigh}</SelectItem>
+              <SelectItem value="amount_asc">{t.donatorDashboard.sort.amountLow}</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" size="sm" onClick={handleRetry} disabled={loading || !user?.id}>
             <RefreshCw className="h-4 w-4" />
-            Actualizar
+            {t.donatorDashboard.actions.refresh}
           </Button>
         </div>
       </CardHeader>
@@ -193,10 +195,10 @@ export const DonationsHistory = () => {
         {loading && (
           <div className="flex flex-col items-center justify-center gap-3 py-10 text-muted-foreground">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-blue-600" />
-            <p>Cargando donaciones...</p>
+            <p>{t.donatorDashboard.status.loadingDonations}</p>
             {retryCount > 0 && (
               <p className="text-sm text-muted-foreground/80">
-                Reintentando... intento {retryCount + 1}
+                {t.donatorDashboard.actions.retry} {retryCount + 1}
               </p>
             )}
           </div>
@@ -206,7 +208,7 @@ export const DonationsHistory = () => {
           <div className="flex flex-col items-center justify-center gap-3 py-10 text-center">
             <p className="text-sm font-medium text-destructive">{error}</p>
             <Button variant="outline" size="sm" onClick={handleRetry}>
-              Reintentar
+              {t.donatorDashboard.actions.retry}
             </Button>
           </div>
         )}
@@ -214,7 +216,7 @@ export const DonationsHistory = () => {
         {!loading && !error && sortedDonations.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground">
             <DollarSign className="h-10 w-10 opacity-50" />
-            <p>No hay donaciones registradas.</p>
+            <p>{t.donatorDashboard.status.noDonations}</p>
           </div>
         )}
 
@@ -224,11 +226,11 @@ export const DonationsHistory = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Proyecto</TableHead>
-                    <TableHead>Moneda</TableHead>
-                    <TableHead>Monto</TableHead>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Metodo de pago</TableHead>
+                    <TableHead>{t.donatorDashboard.table.project}</TableHead>
+                    <TableHead>{t.donatorDashboard.table.currency}</TableHead>
+                    <TableHead>{t.donatorDashboard.table.amount}</TableHead>
+                    <TableHead>{t.donatorDashboard.table.date}</TableHead>
+                    <TableHead>{t.donatorDashboard.table.method}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -264,11 +266,11 @@ export const DonationsHistory = () => {
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm text-muted-foreground">Proyecto</p>
+                        <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.project}</p>
                         <p className="font-semibold text-foreground">{getProjectName(donation)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm text-muted-foreground">Monto</p>
+                        <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.amount}</p>
                         <p className="font-semibold text-foreground">
                           {formatCurrency(amount, donation.currency)}
                         </p>
@@ -276,15 +278,15 @@ export const DonationsHistory = () => {
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
                       <div>
-                        <p className="text-muted-foreground">Moneda</p>
+                        <p className="text-muted-foreground">{t.donatorDashboard.table.currency}</p>
                         <p className="font-medium">{donation.currency || 'USD'}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Fecha</p>
+                        <p className="text-muted-foreground">{t.donatorDashboard.table.date}</p>
                         <p className="font-medium">{formatDate(displayDate)}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Metodo de pago</p>
+                        <p className="text-muted-foreground">{t.donatorDashboard.table.method}</p>
                         <p className="font-medium">{getPaymentMethodLabel(donation.pay_method)}</p>
                       </div>
                     </div>

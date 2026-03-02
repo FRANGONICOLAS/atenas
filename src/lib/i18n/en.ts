@@ -1,0 +1,464 @@
+export const en = {
+  nav: {
+    home: 'Home',
+    about: 'About Atenas',
+    whatWeDo: 'What We Do',
+    beneficiaries: 'Our Beneficiaries',
+    categories: 'Categories',
+    players: 'Players',
+    projects: 'Projects',
+    gallery: 'Gallery',
+    testimonials: 'Testimonials',
+    locations: 'Locations',
+    donate: 'Donate',
+    login: 'Login',
+    register: 'Register',
+  },
+  home: {
+    heroTitle: 'Transforming Lives Through Sports',
+    heroSubtitle: 'Non-profit sports foundation dedicated to the comprehensive development of youth through football',
+    heroCta: 'Join Our Cause',
+    donateNow: 'Donate Now',
+    learnMore: 'Learn More',
+    impactTitle: 'Our Impact',
+    beneficiaries: 'Beneficiaries',
+    projects: 'Active Projects',
+    donations: 'Donations Received',
+    years: 'Years of Experience',
+    problem: {
+      title: 'The Reality We Face',
+      description1: 'Many young people live in vulnerable contexts: lack of opportunities, risk of school dropout, violence, addictions, or social exclusion. The absence of recreation and social support spaces deepens the problem, leaving young people without healthy alternatives for their free time.',
+      description2: 'In Comuna 17, although marked as economic stratum 4 to 5, most people do not have the purchasing power to pay for sports schools. Despite living in a high stratum, there are no resources to access formal sports plans, and many young people end up in risk situations.',
+      problemTitle: 'The Problem',
+      problemList: {
+        p1: 'Lack of safe recreation and training spaces',
+        p2: 'Risk of school dropout and social exclusion',
+        p3: 'Exposure to violence, addictions, and gangs',
+        p4: 'Families without resources for sports schools',
+      },
+      impactTitle: 'Our Impact',
+      impactList: {
+        i1: '35+ young people rescued from gangs and violent situations',
+        i2: '10 years working in Comuna 17',
+        i3: 'Young people who have reached professional football',
+        i4: 'Transformation of violent attitudes through sports',
+      },
+      stats: {
+        rescued: { val: '35+', label: 'Rescued Youth' },
+        years: { val: '10', label: 'Years Working' },
+        zone: { val: 'Comuna 17', label: 'Impact Zone' },
+      }
+    },
+    transformation: {
+      title: 'How Sports Transform Lives',
+      subtitle: 'Sports generate a sense of belonging, discipline, mental health, and reduce vulnerability.',
+      items: {
+        belonging: { title: 'Sense of Belonging', desc: 'Building community' },
+        emotions: { title: 'Emotional Management', desc: 'Transforming attitudes' },
+        health: { title: 'Physical and Mental Health', desc: 'Prevention and well-being' },
+        discipline: { title: 'Discipline and Goals', desc: 'Constant work' },
+        teamwork: { title: 'Teamwork', desc: 'Collective success' },
+        future: { title: 'Opportunities and Future', desc: 'Opening doors' },
+      }
+    },
+    donationsUsage: {
+      title: 'What Do We Do With Your Donation?',
+      subtitle: 'Donations are used to continue transforming lives through sports.',
+      items: {
+        equipment: { title: 'Sports Equipment', desc: 'For training and sports practice' },
+        tournaments: { title: 'Tournaments', desc: 'Participation in sports competitions' },
+        projects: { title: 'Defined Projects', desc: 'Donations dedicated to specific projects' },
+      },
+      bottomStart: 'Every donation is a step',
+      bottomEnd: ' towards a more united, healthy, and future-oriented community.',
+      transparency: 'We work with total transparency. You can choose if your donation goes to a specific project or free investment.',
+      communityAlt: 'United Community',
+    },
+  },
+  about: {
+    title: 'About Us',
+    mission: 'Our Mission',
+    missionText: 'Transform the lives of children and youth through sports, providing opportunities for comprehensive development, values formation, and social support.',
+    vision: 'Our Vision',
+    visionText: 'To be the leading sports foundation in youth talent development, recognized for its positive social impact and comprehensive training model.',
+    values: 'Our Values',
+    structure: 'Organizational Structure',      subtitle: 'We are a non-profit sports foundation committed to the comprehensive development of children and youth through football.',
+      valuesList: {
+        passion: { title: 'Passion', desc: 'We love what we do and transmit it to every young person' },
+        integrity: { title: 'Integrity', desc: 'We act with honesty and transparency at all times' },
+        teamwork: { title: 'Teamwork', desc: 'We believe in the power of the team to achieve great goals' },
+        excellence: { title: 'Excellence', desc: 'We seek continuous improvement in every aspect' },
+        commitment: { title: 'Commitment', desc: 'We are committed to the development of our youth' },
+      },
+      roles: {
+        director: 'General Director',
+      },
+      history: {
+        title: 'Our History',
+        items: {
+          y2016: { title: 'Foundation', desc: 'We started with 20 children in a small neighborhood' },
+          y2018: { title: 'First Branch', desc: 'We opened our first official branch' },
+          y2020: { title: 'Expansion', desc: 'We reached 200 beneficiaries in 3 branches' },
+          y2023: { title: 'Recognition', desc: 'National award for sports social impact' },
+        }
+      },  },
+  whatWeDo: {
+    title: 'What We Do',
+    subtitle: 'Discover the activities and programs we develop at the Sociodeportiva Atenas Foundation',
+    training: {
+      title: 'Sports Training',
+      description: 'We develop structured training programs for all categories, from initiation to high performance.',
+    },
+    education: {
+      title: 'Academic Support',
+      description: 'We provide educational support to ensure our youth maintain good school performance.',
+    },
+    values: {
+      title: 'Values Formation',
+      description: 'We instill values such as respect, discipline, teamwork, and perseverance through sports.',
+    },
+    nutrition: {
+      title: 'Nutrition Program',
+      description: 'We provide balanced nutrition and nutritional education for the comprehensive development of our beneficiaries.',
+    },
+    tournaments: {
+      title: 'Tournament Participation',
+      description: 'We organize and participate in local, regional, and national tournaments to develop competitive skills.',
+    },
+    community: {
+      title: 'Community Work',
+      description: 'We carry out social integration activities and community work to strengthen ties with families and the environment.',
+    },
+    placeholders: {
+      training: 'Sports training image',
+      values: 'Values formation image',
+      tournaments: 'Tournament participation image',
+      community: 'Community work image',
+      mainActivity: 'Main foundation activities image',
+      communityImpact: 'Community impact image',
+      achievements: 'Achievements and recognition image',
+    },
+    alts: {
+      mainActivity: 'Foundation activities',
+      communityImpact: 'Community impact',
+      achievements: 'Achievements and recognition',
+    },
+  },
+  categories: {
+    title: 'Our Categories',
+    subtitle: 'We train players from 6 to 17 years old',
+    age: 'years',
+    players: 'Players',
+    trainers: 'Trainers',
+    schedule: 'Schedule',
+    achievements: 'Notable Achievements',
+    placeholder: 'Category Image',
+    items: {
+      sub6: {
+        name: 'Under 6 Category',
+        schedule: 'Monday, Wednesday, Friday - 3:00 PM',
+        description: 'Initiation to football through play. Development of basic motor skills and teamwork.',
+        achievements: ['Participation in 5 local tournaments', 'Training of 15 players for higher category'],
+      },
+      sub8: {
+        name: 'Under 8 Category',
+        schedule: 'Monday, Wednesday, Friday - 3:00 PM',
+        description: 'Initiation to football through play. Development of basic motor skills and teamwork.',
+        achievements: ['Participation in 5 local tournaments', 'Training of 15 players for higher category'],
+      },
+      sub10: {
+        name: 'Under 10 Category',
+        schedule: 'Tuesday, Thursday, Saturday - 3:30 PM',
+        description: 'Development of technical football fundamentals. Introduction to basic game tactics.',
+        achievements: ['Municipal tournament champions 2023', '8 players selected for departmental selection'],
+      },
+      sub12: {
+        name: 'Under 12 Category',
+        schedule: 'Monday to Friday - 4:00 PM',
+        description: 'Technical and tactical improvement. Development of game vision and positioning.',
+        achievements: ['Regional league runners-up', '12 called up for professional club trials'],
+      },
+      sub14: {
+        name: 'Under 14 Category',
+        schedule: 'Monday to Saturday - 4:30 PM',
+        description: 'Specialization by position. Specific physical preparation and mental development.',
+        achievements: ['Participation in national tournaments', '5 players signed by professional academies'],
+      },
+      sub16: {
+        name: 'Under 16 Category',
+        schedule: 'Monday to Saturday - 5:00 PM',
+        description: 'High performance and preparation for professional football. Comprehensive athlete training.',
+        achievements: ['3 players in professional club youth divisions', 'U-17 National Champions'],
+      },
+      sub18: {
+        name: 'Under 18 Category',
+        schedule: 'Monday to Saturday - 5:00 PM',
+        description: 'High performance and preparation for professional football. Comprehensive athlete training.',
+        achievements: ['3 players in professional club youth divisions', 'U-17 National Champions'],
+      },
+    }
+  },
+  players: {
+    title: 'Our Players',
+    subtitle: 'Meet the young talents of our foundation',
+    tournaments: 'Tournaments',
+    goals: 'Goals',
+    assists: 'Assists',
+    progress: 'Progress',
+    searchPlaceholder: 'Search player...',
+    categoryPlaceholder: 'Category',
+    allCategories: 'All Categories',
+    notFound: 'No players found',
+    memberSince: 'Member since',
+    performance: 'Performance',
+    age: 'years',
+  },
+  projects: {
+    title: 'Projects',
+    subtitle: 'Discover our initiatives and their impact',
+    goal: 'Goal',
+    raised: 'Raised',
+    support: 'Support Project',
+    active: 'Active',
+    completed: 'Completed',
+    pending: 'Pending',
+    loading: 'Loading projects...',
+    totalProjects: 'Total Projects',
+    activeProjects: 'Active Projects',
+    totalRaised: 'Total Raised',
+    totalGoal: 'Total Goal',
+    noProjects: 'No projects available',
+    investment: 'Investment',
+    freeInvestment: 'Free Investment',
+  },
+  gallery: {
+    title: 'Gallery',
+    subtitle: 'Moments that capture our essence',
+    loading: 'Loading gallery...',
+    error: 'Error loading gallery',
+    unknownError: 'Unknown error',
+    empty: 'No items to show',
+    filters: {
+      all: 'All',
+      photo: 'Photos',
+      video: 'Videos',
+    },
+    videoLabel: 'Video',
+    play: 'Play video',
+  },
+  testimonials: {
+    title: 'Testimonials',
+    subtitle: 'Stories of transformation',
+    create: 'Create Testimonial',
+    registerToCreate: 'Register to Create Testimonial',
+    noTestimonials: 'No featured testimonials yet',
+    defaultUser: "User",
+    successStories: {
+      title: "Success Stories",
+      badge: "Flagship Case",
+      items: {
+        andres: {
+          name: "Andrés Rodríguez",
+          title: "From a vulnerable neighborhood to a professional club's youth division",
+          description: "Andrés arrived at the foundation at age 10. Without economic resources, he found an outlet in football. Today, at 17, he is signed with a professional club and is an ambassador for our foundation."
+        },
+        laura: {
+          name: "Laura Jiménez",
+          title: "Top scorer and U-15 national team selection",
+          description: "Laura demonstrated that with talent and dedication there are no limits. She was called up to the national team and today inspires dozens of girls in the foundation."
+        }
+      }
+    },
+    moreTestimonials: "More Testimonials",
+    memberRole: 'Foundation Member',
+    modal: {
+      title: 'Create Testimonial',
+      description: 'Share your experience with the foundation. Your testimonial will be reviewed before publishing.',
+      formTitle: 'Title',
+      formTitlePlaceholder: 'A title for your testimonial',
+      formContent: 'Content',
+      formContentPlaceholder: 'Write your testimonial here...',
+      submit: 'Submit Testimonial',
+      submitting: 'Submitting...',
+      cancel: 'Cancel',
+      rating: 'Rating',
+      star: 'star',
+      stars: 'stars',
+    }
+  },
+  donation: {
+    title: 'Make Your Donation',
+    subtitle: 'Your contribution transforms lives',
+    selectAmount: 'Select an amount',
+    customAmount: 'Custom amount',
+    enterCustomAmount: 'Enter other amount',
+    continue: 'Continue',
+    selectDestination: 'Donation destination',
+    destinationDescription: 'Choose whether to donate to free investment or a specific project',
+    generalFund: {
+      title: 'Free Investment',
+      description: 'Your donation will be used where it is needed most to support projects and beneficiaries of the foundation'
+    },
+    specificProject: {
+      title: 'Specific Project',
+      description: 'Choose a project to allocate your donation'
+    },
+    selectProject: 'Select a project',
+    freeInvestment: 'Free Investment',
+    personalInfo: 'Personal Information',
+    name: 'Full Name',
+    email: 'Email',
+    phone: 'Phone',
+    processPayment: 'Process Payment',
+    thankYou: 'Thank you for your donation!',
+    back: 'Back',
+    confirmDonation: 'Confirm your Donation',
+    confirmSubtitle: 'We will process your payment securely with Bold Payment Gateway',
+    messageLabel: 'Message or dedication (optional)',
+    messagePlaceholder: 'Write a message to accompany your donation...',
+    summaryAmount: 'Donation amount',
+    summaryDestination: 'Destination',
+    payWithBold: 'Pay with Bold',
+    donorLabel: 'Donor',
+    securePaymentTitle: 'Secure payment with Bold',
+    securePaymentDesc: 'Your payment information is processed securely. We do not store card data.',
+    paymentMethods: 'Available payment methods:',
+    paymentMethodsList: 'Credit/Debit Card • PSE • Nequi • Daviplata',
+    loginRequired: 'You must log in to make a donation.',
+    proceedToPayment: 'Proceed to payment',
+    processing: 'Processing...',
+    terms: 'By continuing, you agree that we will process your donation through Bold Payment Gateway',
+    boldForm: {
+      title: "Make a Donation",
+      supportProject: "Support the project:",
+      defaultDescription: "Make your donation securely with Bold",
+      transactionInitiated: "Transaction initiated successfully!",
+      orderId: "Order ID:",
+      confirmationMessage: "You will receive confirmation once the payment is completed.",
+      orCustomAmount: "Or enter a custom amount",
+      totalToDonate: "Total to donate:",
+      projectLabel: "Project:",
+      donationFor: "Donation for {{name}}",
+    },
+    results: {
+      orderId: "Order ID:",
+      success: {
+        title: "Payment Successful!",
+        message: "Your donation has been processed successfully. Thank you for your generosity!",
+        button: "View my donations"
+      },
+      declined: {
+        title: "Payment Declined",
+        message: "Your payment could not be processed. Please try again or use another payment method.",
+        button: "Try again"
+      },
+      pending: {
+        title: "Payment Pending",
+        message: "Your payment is being processed. You will receive a confirmation email when completed.",
+        button: "View my donations"
+      },
+      process: {
+        title: "Processing...",
+        message: "We are verifying your payment status.",
+        button: "Back to Home"
+      }
+    }
+  },
+  positions: {
+    forward: "Forward",
+    midfielder: "Midfielder",
+    defender: "Defender",
+    goalkeeper: "Goalkeeper",
+  },
+  auth: {
+    login: 'Login',
+    logout: 'Logout',
+    register: 'Register',
+    welcome: 'Welcome back!',
+    loggingIn: 'Logging in...',
+    signingUp: 'Creating account...',
+    accountCreated: 'Account created successfully!',
+    verifyEmail: 'Please verify your email to activate your account',
+    profile: 'My Profile',
+    dashboard: 'Dashboard',
+    email: 'Email',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    forgotPassword: 'Forgot your password?',
+    noAccount: "Don't have an account?",
+    hasAccount: 'Already have an account?',
+    role: 'Role',
+    donor: 'Donor',
+    coach: 'Coach',
+  },
+  locations: {
+    loading: "Loading locations...",
+    defaultSchedule: "Mon - Sat: 2:00 PM - 8:00 PM",
+    title: 'Our Locations',
+    subtitle: 'Find us near you',
+  },
+  footer: {
+    followUs: 'Follow Us',
+    contact: 'Contact',
+    quickLinks: 'Quick Links',
+    rights: 'All rights reserved',
+    description: 'Non-profit sports foundation dedicated to the comprehensive development of children and youth through football.',
+    address: 'Calle 14 # 85-30, Cali, Colombia',
+    phone: '+57 315 267 9250',
+    email: 'info@fundacionatenas.org',
+    terms: 'Terms and Conditions',
+    privacy: 'Privacy Policy',
+  },
+  cta: {
+    title: 'Want to be part of the change?',
+    description: 'Your support allows us to continue transforming lives through sports. Join our cause today!',
+    button: 'Donate Now',
+  },
+  donatorDashboard: {
+    welcome: "Welcome, {{name}}",
+    titles: {
+      donations: "Donation History",
+      projects: "Supported Projects",
+      impact: "Your Impact",
+      recentDonations: "Recent Donations",
+      overview: "Donation Dashboard"
+    },
+    stats: {
+      totalDonated: "Total Donated",
+      projectsSupported: "Projects Supported",
+      beneficiariesImpacted: "Children Benefited",
+      donationsMade: "Donations Made"
+    },
+    actions: {
+      refresh: "Refresh",
+      retry: "Retry",
+      sortBy: "Sort by"
+    },
+    sort: {
+      dateNewest: "Date: newest",
+      dateOldest: "Date: oldest",
+      amountHigh: "Amount: high to low",
+      amountLow: "Amount: low to high"
+    },
+    table: {
+      project: "Project",
+      currency: "Currency",
+      amount: "Amount",
+      date: "Date",
+      method: "Payment Method"
+    },
+    status: {
+      loading: "Loading donation statistics...",
+      loadingDonations: "Loading donations...",
+      error: "Error",
+      noDonations: "No donations registered.",
+      noProjects: "You haven't supported any projects yet",
+      noRecent: "No recent donations"
+    },
+    descriptions: {
+      contributionsStatus: "Status of your contributions",
+      recentContributions: "Latest contributions",
+      directBenefits: "Direct benefits of your donations"
+    }
+  }
+};

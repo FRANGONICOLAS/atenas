@@ -92,7 +92,7 @@ const PlayersPage = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input
-                placeholder="Buscar jugador..."
+                placeholder={t.players.searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
@@ -101,12 +101,12 @@ const PlayersPage = () => {
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-full md:w-48">
                 <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Categoría" />
+                <SelectValue placeholder={t.players.categoryPlaceholder} />
               </SelectTrigger>
               <SelectContent>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat === 'all' ? 'Todas las categorías' : cat}
+                    {cat === 'all' ? t.players.allCategories : cat}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -151,19 +151,19 @@ const PlayersPage = () => {
                         <h3 className="font-bold text-xl text-primary-foreground">
                           {player.firstName} {player.lastName}
                         </h3>
-                        <p className="text-primary-foreground/80">{player.age} años</p>
+                        <p className="text-primary-foreground/80">{player.age} {t.players.age}</p>
                       </div>
                     </div>
                     <CardContent className="p-4">
                       <div className="mb-4">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm text-muted-foreground">Rendimiento</span>
+                          <span className="text-sm text-muted-foreground">{t.players.performance}</span>
                           <span className="font-bold text-foreground">{player.performance}%</span>
                         </div>
                         <Progress value={player.performance} className="h-2" />
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Miembro desde: {new Date(player.registryDate).toLocaleDateString('es-ES', { 
+                        {t.players.memberSince}: {new Date(player.registryDate).toLocaleDateString('es-ES', { 
                           year: 'numeric', 
                           month: 'short' 
                         })}
@@ -175,7 +175,7 @@ const PlayersPage = () => {
 
               {filteredPlayers.length === 0 && !loading && (
                 <div className="text-center py-12">
-                  <p className="text-muted-foreground text-lg">No se encontraron jugadores</p>
+                  <p className="text-muted-foreground text-lg">{t.players.notFound}</p>
                 </div>
               )}
             </>

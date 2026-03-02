@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { CreateTestimonialData } from "@/types/testimonial.types";
 
 interface CreateTestimonialModalProps {
@@ -28,6 +29,7 @@ export const CreateTestimonialModal = ({
   userId,
   beneficiaryId,
 }: CreateTestimonialModalProps) => {
+  const { t } = useLanguage();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(5);
@@ -75,19 +77,19 @@ export const CreateTestimonialModal = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Crear Testimonio</DialogTitle>
+          <DialogTitle>{t.testimonials.modal.title}</DialogTitle>
           <DialogDescription>
-            Comparte tu experiencia con la fundación. Tu testimonio será revisado antes de publicarse.
+            {t.testimonials.modal.description}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Título */}
           <div className="space-y-2">
-            <Label htmlFor="title">Título</Label>
+            <Label htmlFor="title">{t.testimonials.modal.formTitle}</Label>
             <Input
               id="title"
-              placeholder="Un título para tu testimonio"
+              placeholder={t.testimonials.modal.formTitlePlaceholder}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -97,10 +99,10 @@ export const CreateTestimonialModal = ({
 
           {/* Contenido */}
           <div className="space-y-2">
-            <Label htmlFor="content">Contenido</Label>
+            <Label htmlFor="content">{t.testimonials.modal.formContent}</Label>
             <Textarea
               id="content"
-              placeholder="Cuéntanos tu experiencia..."
+              placeholder={t.testimonials.modal.formContentPlaceholder}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               required
@@ -115,7 +117,7 @@ export const CreateTestimonialModal = ({
 
           {/* Calificación */}
           <div className="space-y-2">
-            <Label>Calificación</Label>
+            <Label>{t.testimonials.modal.rating}</Label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -137,7 +139,7 @@ export const CreateTestimonialModal = ({
               ))}
             </div>
             <p className="text-sm text-muted-foreground">
-              {rating} {rating === 1 ? "estrella" : "estrellas"}
+              {rating} {rating === 1 ? t.testimonials.modal.star : t.testimonials.modal.stars}
             </p>
           </div>
 

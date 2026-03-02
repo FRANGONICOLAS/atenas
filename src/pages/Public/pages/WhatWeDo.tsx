@@ -1,4 +1,5 @@
 import { Target, Heart, Trophy, Users } from "lucide-react";
+import { getWhatWeDoActivities } from "@/lib/data/whatWeDo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContentsByKeys } from "@/hooks/useSiteContent";
@@ -27,36 +28,12 @@ const QueHacemosPage = () => {
   const community1Url = imageMap["what_we_do_community_1"];
   const community2Url = imageMap["what_we_do_community_2"];
 
-  const activities = [
-    {
-      icon: Target,
-      title: t.whatWeDo.training.title,
-      description: t.whatWeDo.training.description,
-      imagePlaceholder: "Imagen de entrenamiento deportivo",
-      imageUrl: activity1Url,
-    },
-    {
-      icon: Heart,
-      title: t.whatWeDo.values.title,
-      description: t.whatWeDo.values.description,
-      imagePlaceholder: "Imagen de formación en valores",
-      imageUrl: activity2Url,
-    },
-    {
-      icon: Trophy,
-      title: t.whatWeDo.tournaments.title,
-      description: t.whatWeDo.tournaments.description,
-      imagePlaceholder: "Imagen de participación en torneos",
-      imageUrl: activity3Url,
-    },
-    {
-      icon: Users,
-      title: t.whatWeDo.community.title,
-      description: t.whatWeDo.community.description,
-      imagePlaceholder: "Imagen de trabajo comunitario",
-      imageUrl: activity4Url,
-    },
-  ];
+  const activities = getWhatWeDoActivities(t, {
+    activity1: activity1Url,
+    activity2: activity2Url,
+    activity3: activity3Url,
+    activity4: activity4Url,
+  });
 
   return (
     <div className="min-h-screen pt-20">
@@ -124,7 +101,7 @@ const QueHacemosPage = () => {
               {mainImageUrl ? (
                 <img
                   src={mainImageUrl}
-                  alt="Actividades de la fundación"
+                  alt={t.whatWeDo.alts.mainActivity}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -133,7 +110,7 @@ const QueHacemosPage = () => {
                     <Users className="w-12 h-12 text-primary" />
                   </div>
                   <p className="text-lg text-muted-foreground italic">
-                    Imagen principal de actividades de la fundación
+                    {t.whatWeDo.placeholders.mainActivity}
                   </p>
                 </div>
               )}
@@ -150,7 +127,7 @@ const QueHacemosPage = () => {
               {community1Url ? (
                 <img
                   src={community1Url}
-                  alt="Impacto comunitario"
+                  alt={t.whatWeDo.alts.communityImpact}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -159,7 +136,7 @@ const QueHacemosPage = () => {
                     <Heart className="w-10 h-10 text-secondary" />
                   </div>
                   <p className="text-sm text-muted-foreground italic">
-                    Imagen de impacto comunitario
+                    {t.whatWeDo.placeholders.communityImpact}
                   </p>
                 </div>
               )}
@@ -168,7 +145,7 @@ const QueHacemosPage = () => {
               {community2Url ? (
                 <img
                   src={community2Url}
-                  alt="Logros y reconocimientos"
+                  alt={t.whatWeDo.alts.achievements}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -177,7 +154,7 @@ const QueHacemosPage = () => {
                     <Trophy className="w-10 h-10 text-primary" />
                   </div>
                   <p className="text-sm text-muted-foreground italic">
-                    Imagen de logros y reconocimientos
+                    {t.whatWeDo.placeholders.achievements}
                   </p>
                 </div>
               )}

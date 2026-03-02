@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from "@/components/CTA";
 import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { headquarterService } from "@/api/services";
@@ -16,6 +17,7 @@ interface LocationWithStats extends Headquarter {
 }
 
 const LocationsPage = () => {
+  const { t } = useLanguage();
   const [locations, setLocations] = useState<LocationWithStats[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,7 +75,7 @@ const LocationsPage = () => {
             image: hq.image_url,
             phone: "+57 300 123 4567", // Estos campos pueden agregarse a la BD después
             email: `${hq.name.toLowerCase().replace(/\s+/g, "")}@fundaciondeportiva.org`,
-            schedule: "Lun - Sáb: 2:00 PM - 8:00 PM",
+            schedule: t.locations.defaultSchedule,
             lat: coords?.lat || null,
             lng: coords?.lng || null,
           };
@@ -93,7 +95,7 @@ const LocationsPage = () => {
   }, [loadHeadquarters]);
 
   if (loading) {
-    return <FullScreenLoader message="Cargando sedes..." />;
+    return <FullScreenLoader message={t.locations.loading} />;
   }
 
   return (

@@ -79,7 +79,7 @@ const ProjectsPage = () => {
       case 'completed':
         return t.projects.completed;
       default:
-        return 'Pendiente';
+        return t.projects.pending;
     }
   };
 
@@ -88,7 +88,7 @@ const ProjectsPage = () => {
   const activeProjects = projects.filter(p => p.status === 'active').length;
 
   if (loading) {
-    return <FullScreenLoader message="Cargando proyectos..." />;
+    return <FullScreenLoader message={t.projects.loading} />;
   }
 
   return (
@@ -111,23 +111,23 @@ const ProjectsPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-foreground">{projects.length}</div>
-              <div className="text-muted-foreground">Proyectos Totales</div>
+              <div className="text-muted-foreground">{t.projects.totalProjects}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-secondary">{activeProjects}</div>
-              <div className="text-muted-foreground">Proyectos Activos</div>
+              <div className="text-muted-foreground">{t.projects.activeProjects}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-foreground">
                 {formatCurrency(totalRaised)}
               </div>
-              <div className="text-muted-foreground">Total Recaudado</div>
+              <div className="text-muted-foreground">{t.projects.totalRaised}</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-foreground">
                 {formatCurrency(totalGoal)}
               </div>
-              <div className="text-muted-foreground">Meta Total</div>
+              <div className="text-muted-foreground">{t.projects.totalGoal}</div>
             </div>
           </div>
         </div>
@@ -138,7 +138,7 @@ const ProjectsPage = () => {
         <div className="container mx-auto px-4">
           {projects.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-xl text-muted-foreground">No hay proyectos disponibles</p>
+              <p className="text-xl text-muted-foreground">{t.projects.noProjects}</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-8">
@@ -161,7 +161,7 @@ const ProjectsPage = () => {
                       )}
                       {project.type && (
                         <Badge variant="outline" className="bg-card/80">
-                          {project.type === 'investment' ? 'Inversión' : 'Inversión Libre'}
+                          {project.type === 'investment' ? t.projects.investment : t.projects.freeInvestment}
                         </Badge>
                       )}
                     </div>

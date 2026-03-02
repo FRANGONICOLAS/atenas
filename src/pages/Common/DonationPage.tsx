@@ -181,7 +181,7 @@ const DonationPage = () => {
                     <Input
                       id="custom"
                       type="number"
-                      placeholder="Ingresa otro monto"
+                      placeholder={t.donation.enterCustomAmount}
                       value={customAmount}
                       onChange={(e) => {
                         setCustomAmount(e.target.value);
@@ -197,7 +197,7 @@ const DonationPage = () => {
                     disabled={!finalAmount}
                     onClick={() => setStep(2)}
                   >
-                    Continuar
+                    {t.donation.continue}
                   </Button>
                 </CardContent>
               </Card>
@@ -209,12 +209,12 @@ const DonationPage = () => {
                 <CardHeader>
                   <CardTitle className="text-xl">{t.donation.selectDestination}</CardTitle>
                   <CardDescription>
-                    Elige si deseas donar al fondo general o a un proyecto específico
+                    {t.donation.destinationDescription}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <RadioGroup value={destination} onValueChange={(value) => setDestination(value as 'free' | 'project')}>
-                    {/* Opción: Fondo General */}
+                    {/* Opción: Libre Inversión */}
                     <div className="flex items-start space-x-3 p-4 rounded-lg border border-primary/20 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors">
                       <RadioGroupItem value="free" id="free" className="mt-1" />
                       <Label htmlFor="free" className="flex-1 cursor-pointer">
@@ -222,10 +222,10 @@ const DonationPage = () => {
                           <Heart className="w-5 h-5 text-primary mt-0.5" />
                           <div>
                             <div className="font-medium text-primary mb-1">
-                              Fondo General UAO
+                              {t.donation.generalFund.title}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              Tu donación se utilizará donde más se necesite para apoyar a los estudiantes y proyectos de la universidad
+                              {t.donation.generalFund.description}
                             </div>
                           </div>
                         </div>
@@ -236,9 +236,9 @@ const DonationPage = () => {
                     <div className="flex items-start space-x-3 p-4 rounded-lg border cursor-pointer hover:bg-muted/50 transition-colors">
                       <RadioGroupItem value="project" id="project" className="mt-1" />
                       <Label htmlFor="project" className="flex-1 cursor-pointer">
-                        <div className="font-medium mb-2">Proyecto Específico</div>
+                        <div className="font-medium mb-2">{t.donation.specificProject.title}</div>
                         <div className="text-sm text-muted-foreground mb-3">
-                          Elige un proyecto al que deseas destinar tu donación
+                          {t.donation.specificProject.description}
                         </div>
                       </Label>
                     </div>
@@ -247,9 +247,9 @@ const DonationPage = () => {
                   {/* Selector de proyectos si elige "project" */}
                   {destination === 'project' && (
                     <div className="space-y-3">
-                      <Label>Selecciona un proyecto</Label>
+                      <Label>{t.donation.selectProject}</Label>
                       {projectsLoading ? (
-                        <div className="text-sm text-muted-foreground">Cargando proyectos...</div>
+                        <div className="text-sm text-muted-foreground">{t.projects.loading}</div>
                       ) : (
                         <RadioGroup value={selectedProject} onValueChange={setSelectedProject}>
                           {projects.filter(p => p.status === 'active').map((project) => (
@@ -274,7 +274,7 @@ const DonationPage = () => {
 
                   <div className="flex gap-4">
                     <Button variant="outline" onClick={() => setStep(1)}>
-                      Atrás
+                      {t.donation.back}
                     </Button>
                     <Button 
                       className="flex-1" 
@@ -286,7 +286,7 @@ const DonationPage = () => {
                       }}
                       disabled={destination === 'project' && !selectedProject}
                     >
-                      Continuar
+                      {t.donation.continue}
                     </Button>
                   </div>
                 </CardContent>
@@ -297,18 +297,18 @@ const DonationPage = () => {
             {step === 3 && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-xl">Confirma tu Donación</CardTitle>
+                  <CardTitle className="text-xl">{t.donation.confirmDonation}</CardTitle>
                   <CardDescription>
-                    Procesaremos tu pago de forma segura con Bold Payment Gateway
+                    {t.donation.confirmSubtitle}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Descripción opcional */}
                   <div>
-                    <Label htmlFor="description">Mensaje o dedicatoria (opcional)</Label>
+                    <Label htmlFor="description">{t.donation.messageLabel}</Label>
                     <Textarea
                       id="description"
-                      placeholder="Escribe un mensaje para acompañar tu donación..."
+                      placeholder={t.donation.messagePlaceholder}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       rows={3}
@@ -319,16 +319,16 @@ const DonationPage = () => {
                   {/* Resumen de donación */}
                   <div className="bg-muted/50 p-6 rounded-lg space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-muted-foreground">Total a donar:</span>
+                      <span className="text-muted-foreground">{t.donation.summaryAmount}:</span>
                       <span className="text-3xl font-bold text-primary">{formatCurrency(finalAmount)}</span>
                     </div>
                     <div className="text-sm text-muted-foreground space-y-1">
-                      <p><strong>Destino:</strong> {
+                      <p><strong>{t.donation.summaryDestination}:</strong> {
                         destination === 'free' 
-                          ? 'Fondo General UAO' 
-                          : projects.find(p => p.project_id === selectedProject)?.name || 'Proyecto seleccionado'
+                          ? t.donation.generalFund.title
+                          : projects.find(p => p.project_id === selectedProject)?.name || t.donation.specificProject.title
                       }</p>
-                      {user && <p><strong>Donante:</strong> {user.email}</p>}
+                      {user && <p><strong>{t.donation.donorLabel}:</strong> {user.email}</p>}
                     </div>
                   </div>
 
@@ -338,10 +338,10 @@ const DonationPage = () => {
                       <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
                       <div className="flex-1">
                         <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                          Pago seguro con Bold
+                          {t.donation.securePaymentTitle}
                         </p>
                         <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                          Tu información de pago es procesada de forma segura. No almacenamos datos de tarjetas.
+                          {t.donation.securePaymentDesc}
                         </p>
                       </div>
                     </div>
@@ -349,10 +349,10 @@ const DonationPage = () => {
 
                   {/* Métodos de pago disponibles */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">Métodos de pago disponibles:</p>
+                    <p className="text-sm font-medium">{t.donation.paymentMethods}</p>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Zap className="w-4 h-4" />
-                      <span>Tarjeta de crédito/débito • PSE • Nequi • Daviplata</span>
+                      <span>{t.donation.paymentMethodsList}</span>
                     </div>
                   </div>
 
@@ -367,7 +367,7 @@ const DonationPage = () => {
                   {!user && (
                     <Alert>
                       <AlertDescription>
-                        Debes iniciar sesión para realizar una donación.
+                        {t.donation.loginRequired}
                       </AlertDescription>
                     </Alert>
                   )}
@@ -375,7 +375,7 @@ const DonationPage = () => {
                   {/* Botones de acción */}
                   <div className="flex gap-4">
                     <Button variant="outline" onClick={() => setStep(2)} disabled={isLoading}>
-                      Atrás
+                      {t.donation.back}
                     </Button>
                     <Button 
                       className="flex-1 gap-2" 
@@ -384,18 +384,18 @@ const DonationPage = () => {
                       disabled={isLoading || !user}
                     >
                       {isLoading ? (
-                        <>Procesando...</>
+                        <>{t.donation.processing}</>
                       ) : (
                         <>
                           <Heart className="w-5 h-5" />
-                          Proceder al pago
+                          {t.donation.proceedToPayment}
                         </>
                       )}
                     </Button>
                   </div>
 
                   <p className="text-xs text-center text-muted-foreground">
-                    Al continuar, aceptas que procesaremos tu donación a través de Bold Payment Gateway
+                    {t.donation.terms}
                   </p>
                 </CardContent>
               </Card>

@@ -31,8 +31,8 @@ const GalleryPage = () => {
       const items = await galleryService.getActiveItems();
       setGalleryItems(items);
     } catch (error) {
-      toast.error('Error al cargar la galería', {
-        description: error instanceof Error ? error.message : 'Error desconocido',
+      toast.error(t.gallery.error, {
+        description: error instanceof Error ? error.message : t.gallery.unknownError,
       });
     } finally {
       setLoading(false);
@@ -44,7 +44,7 @@ const GalleryPage = () => {
     : galleryItems.filter(item => item.type === filter);
 
   if (loading) {
-    return <FullScreenLoader message="Cargando galería..." />;
+    return <FullScreenLoader message={t.gallery.loading} />;
   }
 
   return (
@@ -69,7 +69,7 @@ const GalleryPage = () => {
               variant={filter === 'all' ? 'default' : 'outline'}
               onClick={() => setFilter('all')}
             >
-              Todos
+              {t.gallery.filters.all}
             </Button>
             <Button
               variant={filter === 'photo' ? 'default' : 'outline'}
@@ -77,7 +77,7 @@ const GalleryPage = () => {
               className="gap-2"
             >
               <ImageIcon className="w-4 h-4" />
-              Fotos
+              {t.gallery.filters.photo}
             </Button>
             <Button
               variant={filter === 'video' ? 'default' : 'outline'}
@@ -85,7 +85,7 @@ const GalleryPage = () => {
               className="gap-2"
             >
               <Video className="w-4 h-4" />
-              Videos
+              {t.gallery.filters.video}
             </Button>
           </div>
         </div>
@@ -96,7 +96,7 @@ const GalleryPage = () => {
         <div className="container mx-auto px-4">
           {filteredItems.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
-              <p>No hay elementos para mostrar</p>
+              <p>{t.gallery.empty}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -125,7 +125,7 @@ const GalleryPage = () => {
                     {item.type === 'video' && (
                       <Badge className="absolute top-2 right-2 bg-destructive">
                         <Video className="w-3 h-3 mr-1" />
-                        Video
+                        {t.gallery.videoLabel}
                       </Badge>
                     )}
                   </div>
@@ -165,7 +165,7 @@ const GalleryPage = () => {
                   >
                     <Button size="lg" className="gap-2">
                       <Play className="w-6 h-6" />
-                      Reproducir video
+                      {t.gallery.play}
                     </Button>
                   </a>
                 </div>

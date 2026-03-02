@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Heart, ArrowRight, Users, Target, DollarSign, Calendar, Trophy, Star, ChevronRight, AlertTriangle, Shield, Sparkles, Activity, Brain, Smile, Handshake, Import } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { getHomeImpactStats, getHomeCategories, getHomeFeaturedPlayers } from '@/lib/data/home';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
@@ -46,26 +47,9 @@ const HomePage = () => {
     </div>
   );
 
-  const impactStats = [
-    { icon: Users, value: '200+', label: t.home.beneficiaries },
-    { icon: Target, value: '12', label: t.home.projects },
-    { icon: DollarSign, value: '$50K+', label: t.home.donations },
-    { icon: Calendar, value: '10', label: t.home.years },
-  ];
-
-  const categories = [
-    { age: '6-8', name: 'Categoria 1', players: 45 },
-    { age: '8-10', name: 'Categoria 2', players: 52 },
-    { age: '10-12', name: 'Categoria 3', players: 48 },
-    { age: '12-15', name: 'Categoria 4', players: 60 },
-    { age: '15-17', name: 'Categoria 5', players: 38 },
-  ];
-
-  const featuredPlayers = [
-    { name: 'Santiago López', age: 14, position: 'Delantero', goals: 23, image: '/image1.jpg' },
-    { name: 'Mario García', age: 12, position: 'Mediocampista', goals: 15, image: '/image2.jpg' },
-    { name: 'Andrés Rodríguez', age: 16, position: 'Portero', goals: 0, image: '/image3.jpg' },
-  ];
+  const impactStats = getHomeImpactStats(t);
+  const categories = getHomeCategories(t);
+  const featuredPlayers = getHomeFeaturedPlayers(t);
 
   return (
     <div className="min-h-screen">
@@ -120,13 +104,13 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-6">
-              La Realidad que Enfrentamos
+              {t.home.problem.title}
             </h2>
             <p className="text-primary-foreground/80 max-w-3xl mx-auto text-lg leading-relaxed mb-4">
-              Muchos jóvenes viven en contextos de vulnerabilidad: falta de oportunidades, riesgo de deserción escolar, violencia, adicciones o exclusión social. La ausencia de espacios de recreación y contención social profundiza el problema, dejando a los jóvenes sin alternativas sanas para su tiempo libre.
+              {t.home.problem.description1}
             </p>
             <p className="text-primary-foreground/70 max-w-3xl mx-auto leading-relaxed">
-              En la Comuna 17, aunque está marcada con estrato económico 4 a 5, la mayoría de personas no tienen capacidad adquisitiva para pagar escuelas deportivas. A pesar de vivir en un estrato alto, no hay recursos para acceder a planes deportivos formales, y muchos jóvenes terminan en situaciones de riesgo.
+              {t.home.problem.description2}
             </p>
           </div>
           
@@ -161,46 +145,46 @@ const HomePage = () => {
             <div className="grid md:grid-cols-2 gap-6">
               <Card className="bg-card/50 border-primary/20">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-bold text-primary-foreground mb-3">El Problema</h3>
+                  <h3 className="text-lg font-bold text-primary-foreground mb-3">{t.home.problem.problemTitle}</h3>
                   <ul className="space-y-2 text-primary-foreground/80 text-sm">
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
-                      <span>Falta de espacios seguros de recreación y formación</span>
+                      <span>{t.home.problem.problemList.p1}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
-                      <span>Riesgo de deserción escolar y exclusión social</span>
+                      <span>{t.home.problem.problemList.p2}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
-                      <span>Exposición a violencia, adicciones y bandas</span>
+                      <span>{t.home.problem.problemList.p3}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-destructive mt-2 flex-shrink-0" />
-                      <span>Familias sin recursos para escuelas deportivas</span>
+                      <span>{t.home.problem.problemList.p4}</span>
                     </li>
                   </ul>
                 </CardContent>
               </Card>
               <Card className="bg-card/50 border-primary/20">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-bold text-primary-foreground mb-3">Nuestro Impacto</h3>
+                  <h3 className="text-lg font-bold text-primary-foreground mb-3">{t.home.problem.impactTitle}</h3>
                   <ul className="space-y-2 text-primary-foreground/80 text-sm">
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                      <span>35+ jóvenes rescatados de bandas y situaciones de violencia</span>
+                      <span>{t.home.problem.impactList.i1}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                      <span>10 años trabajando en la Comuna 17</span>
+                      <span>{t.home.problem.impactList.i2}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                      <span>Jóvenes que han llegado al fútbol profesional</span>
+                      <span>{t.home.problem.impactList.i3}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                      <span>Transformación de actitudes violentas a través del deporte</span>
+                      <span>{t.home.problem.impactList.i4}</span>
                     </li>
                   </ul>
                 </CardContent>
@@ -211,16 +195,16 @@ const HomePage = () => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto text-center">
             <div>
-              <div className="text-3xl font-bold text-primary-foreground mb-1">35+</div>
-              <div className="text-sm text-primary-foreground/70">Jóvenes rescatados</div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">{t.home.problem.stats.rescued.val}</div>
+              <div className="text-sm text-primary-foreground/70">{t.home.problem.stats.rescued.label}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary-foreground mb-1">10</div>
-              <div className="text-sm text-primary-foreground/70">Años trabajando</div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">{t.home.problem.stats.years.val}</div>
+              <div className="text-sm text-primary-foreground/70">{t.home.problem.stats.years.label}</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary-foreground mb-1">Comuna 17</div>
-              <div className="text-sm text-primary-foreground/70">Zona de impacto</div>
+              <div className="text-3xl font-bold text-primary-foreground mb-1">{t.home.problem.stats.zone.val}</div>
+              <div className="text-sm text-primary-foreground/70">{t.home.problem.stats.zone.label}</div>
             </div>
           </div>
         </div>
@@ -231,10 +215,10 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Cómo el Deporte Transforma Vidas
+              {t.home.transformation.title}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              El deporte genera sentido de pertenencia, disciplina, salud mental y reduce la vulnerabilidad.
+              {t.home.transformation.subtitle}
             </p>
           </div>
 
@@ -247,16 +231,16 @@ const HomePage = () => {
                 {transformacion1Url ? (
                   <img
                     src={transformacion1Url}
-                    alt="Sentido de pertenencia"
+                    alt={t.home.transformation.items.belonging.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Sentido de pertenencia')
+                  renderPlaceholder(t.home.transformation.items.belonging.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Sentido de Pertenencia</h3>
-                <p className="text-xs text-muted-foreground">Construyendo comunidad</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.belonging.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.belonging.desc}</p>
               </CardContent>
             </Card>
 
@@ -265,16 +249,16 @@ const HomePage = () => {
                 {transformacion2Url ? (
                   <img
                     src={transformacion2Url}
-                    alt="Manejo de emociones"
+                    alt={t.home.transformation.items.emotions.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Manejo de emociones')
+                  renderPlaceholder(t.home.transformation.items.emotions.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Manejo de Emociones</h3>
-                <p className="text-xs text-muted-foreground">Transformando actitudes</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.emotions.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.emotions.desc}</p>
               </CardContent>
             </Card>
 
@@ -283,16 +267,16 @@ const HomePage = () => {
                 {transformacion3Url ? (
                   <img
                     src={transformacion3Url}
-                    alt="Salud física y mental"
+                    alt={t.home.transformation.items.health.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Salud física y mental')
+                  renderPlaceholder(t.home.transformation.items.health.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Salud Física y Mental</h3>
-                <p className="text-xs text-muted-foreground">Prevención y bienestar</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.health.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.health.desc}</p>
               </CardContent>
             </Card>
 
@@ -301,16 +285,16 @@ const HomePage = () => {
                 {transformacion4Url ? (
                   <img
                     src={transformacion4Url}
-                    alt="Disciplina y metas"
+                    alt={t.home.transformation.items.discipline.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Disciplina y metas')
+                  renderPlaceholder(t.home.transformation.items.discipline.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Disciplina y Metas</h3>
-                <p className="text-xs text-muted-foreground">Trabajo constante</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.discipline.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.discipline.desc}</p>
               </CardContent>
             </Card>
 
@@ -319,16 +303,16 @@ const HomePage = () => {
                 {transformacion5Url ? (
                   <img
                     src={transformacion5Url}
-                    alt="Trabajo en equipo"
+                    alt={t.home.transformation.items.teamwork.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Trabajo en equipo')
+                  renderPlaceholder(t.home.transformation.items.teamwork.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Trabajo en Equipo</h3>
-                <p className="text-xs text-muted-foreground">Éxito colectivo</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.teamwork.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.teamwork.desc}</p>
               </CardContent>
             </Card>
 
@@ -337,16 +321,16 @@ const HomePage = () => {
                 {transformacion6Url ? (
                   <img
                     src={transformacion6Url}
-                    alt="Oportunidades y futuro"
+                    alt={t.home.transformation.items.future.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Oportunidades y futuro')
+                  renderPlaceholder(t.home.transformation.items.future.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Oportunidades y Futuro</h3>
-                <p className="text-xs text-muted-foreground">Abriendo puertas</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.transformation.items.future.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.transformation.items.future.desc}</p>
               </CardContent>
             </Card>
           </div>
@@ -358,10 +342,10 @@ const HomePage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              ¿Qué Hacemos con tu Donación?
+              {t.home.donationsUsage.title}
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Las donaciones son usadas para seguir transformando vidas a través del deporte.
+              {t.home.donationsUsage.subtitle}
             </p>
           </div>
 
@@ -372,16 +356,16 @@ const HomePage = () => {
                 {pruebaUrl ? (
                   <img
                     src={pruebaUrl}
-                    alt="Equipo deportivo"
+                    alt={t.home.donationsUsage.items.equipment.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Imagen de equipo deportivo')
+                  renderPlaceholder(t.home.donationsUsage.items.equipment.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Equipo Deportivo</h3>
-                <p className="text-xs text-muted-foreground">Para entrenamiento y práctica deportiva</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.donationsUsage.items.equipment.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.donationsUsage.items.equipment.desc}</p>
               </CardContent>
             </Card>
 
@@ -390,16 +374,16 @@ const HomePage = () => {
                 {pruebaUrl ? (
                   <img
                     src={pruebaUrl}
-                    alt="Torneos"
+                    alt={t.home.donationsUsage.items.tournaments.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Imagen de torneos')
+                  renderPlaceholder(t.home.donationsUsage.items.tournaments.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Torneos</h3>
-                <p className="text-xs text-muted-foreground">Participación en competencias deportivas</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.donationsUsage.items.tournaments.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.donationsUsage.items.tournaments.desc}</p>
               </CardContent>
             </Card>
 
@@ -408,16 +392,16 @@ const HomePage = () => {
                 {pruebaUrl ? (
                   <img
                     src={pruebaUrl}
-                    alt="Proyectos definidos"
+                    alt={t.home.donationsUsage.items.projects.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 ) : (
-                  renderPlaceholder('Imagen de proyectos')
+                  renderPlaceholder(t.home.donationsUsage.items.projects.title)
                 )}
               </div>
               <CardContent className="p-4 text-center">
-                <h3 className="font-bold text-foreground mb-1">Proyectos Definidos</h3>
-                <p className="text-xs text-muted-foreground">Donaciones dedicadas a proyectos específicos</p>
+                <h3 className="font-bold text-foreground mb-1">{t.home.donationsUsage.items.projects.title}</h3>
+                <p className="text-xs text-muted-foreground">{t.home.donationsUsage.items.projects.desc}</p>
               </CardContent>
             </Card>
           </div>
@@ -429,19 +413,19 @@ const HomePage = () => {
                 {impactUrl ? (
                   <img
                     src={impactUrl}
-                    alt="Comunidad unida"
+                    alt={t.home.donationsUsage.communityAlt}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  renderPlaceholder('Imagen de comunidad')
+                  renderPlaceholder(t.home.donationsUsage.communityAlt)
                 )}
               </div>
               <div>
                 <p className="text-lg text-foreground leading-relaxed mb-3">
-                  <span className="font-bold text-primary">Cada donación es un paso</span> hacia una comunidad más unida, sana y con futuro.
+                  <span className="font-bold text-primary">{t.home.donationsUsage.bottomStart}</span>{t.home.donationsUsage.bottomEnd}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Trabajamos con transparencia total. Puedes elegir si tu donación va a un proyecto específico o a inversión libre.
+                  {t.home.donationsUsage.transparency}
                 </p>
               </div>
             </div>

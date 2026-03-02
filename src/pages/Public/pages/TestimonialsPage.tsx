@@ -44,25 +44,23 @@ const TestimonialsPage = () => {
 
   // Mapear testimonios de BD a formato del componente
   const testimonials = useMemo(() => {
-    console.log('dbTestimonials:', dbTestimonials); // Debug
-    return (dbTestimonials as unknown as DBTestimonial[]).map((t) => {
-      console.log('Testimonio individual:', t); // Debug
-      const userName = t.first_name || t.last_name
-        ? `${t.first_name || ''} ${t.last_name || ''}`.trim() 
-        : 'Usuario';
-      const userImage = t.profile_images_id || null;
+    return (dbTestimonials as unknown as DBTestimonial[]).map((dbT) => {
+      const userName = dbT.first_name || dbT.last_name
+        ? `${dbT.first_name || ''} ${dbT.last_name || ''}`.trim() 
+        : t.testimonials.defaultUser;
+      const userImage = dbT.profile_images_id || null;
       
       return {
-        id: parseInt(t.testimonial_id.substring(0, 8), 16),
+        id: parseInt(dbT.testimonial_id.substring(0, 8), 16),
         name: userName,
-        role: "Miembro de la fundación",
+        role: t.testimonials.memberRole,
         image: userImage,
-        quote: t.content,
-        rating: t.rating,
-        featured: t.approve === true,
+        quote: dbT.content,
+        rating: dbT.rating,
+        featured: dbT.approve === true,
       };
     });
-  }, [dbTestimonials]);
+  }, [dbTestimonials, t]);
 
   const featuredTestimonials = useMemo(() => {
     return testimonials.filter(t => t.featured);
@@ -94,7 +92,7 @@ const TestimonialsPage = () => {
             className="gap-2"
           >
             <Plus className="w-5 h-5" />
-            {user ? 'Crear Testimonio' : 'Registrarse para Crear Testimonio'}
+            {user ? t.testimonials.create : t.testimonials.registerToCreate}
           </Button>
         </div>
       </section>
@@ -106,7 +104,7 @@ const TestimonialsPage = () => {
       ) : featuredTestimonials.length === 0 ? (
         <section className="py-16 bg-foreground">
           <div className="container mx-auto px-4 text-center">
-            <p className="text-primary-foreground/70">No hay testimonios destacados todavía</p>
+            <p className="text-primary-foreground/70">{t.testimonials.noTestimonials}</p>
           </div>
         </section>
       ) : (
@@ -199,7 +197,7 @@ const TestimonialsPage = () => {
       <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-foreground mb-12">
-            Casos de Éxito
+            {t.testimonials.successStories.title}
           </h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             <Card className="overflow-hidden">
@@ -210,14 +208,13 @@ const TestimonialsPage = () => {
                   className="w-full h-48 md:h-full object-cover"
                 />
                 <CardContent className="p-6">
-                  <Badge className="mb-3 bg-secondary">Caso Emblemático</Badge>
+                  <Badge className="mb-3 bg-secondary">{t.testimonials.successStories.badge}</Badge>
                   <h3 className="font-bold text-xl text-foreground mb-2">Andrés Rodríguez</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    De un barrio vulnerable a las divisiones inferiores de un club profesional
+                    {t.testimonials.successStories.items.andres.title}
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    Andrés llegó a la fundación con 10 años. Sin recursos económicos, encontró en el fútbol una salida. 
-                    Hoy, a sus 17 años, está firmado con un club profesional y es embajador de nuestra fundación.
+                    {t.testimonials.successStories.items.andres.description}
                   </p>
                 </CardContent>
               </div>
@@ -231,14 +228,13 @@ const TestimonialsPage = () => {
                   className="w-full h-48 md:h-full object-cover"
                 />
                 <CardContent className="p-6">
-                  <Badge className="mb-3 bg-secondary">Caso Emblemático</Badge>
+                  <Badge className="mb-3 bg-secondary">{t.testimonials.successStories.badge}</Badge>
                   <h3 className="font-bold text-xl text-foreground mb-2">Laura Jiménez</h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Máxima goleadora y seleccionada nacional sub-15
+                    {t.testimonials.successStories.items.laura.title}
                   </p>
                   <p className="text-muted-foreground text-sm">
-                    Laura demostró que con talento y dedicación no hay límites. 
-                    Fue convocada a la selección nacional y hoy inspira a decenas de niñas en la fundación.
+                    {t.testimonials.successStories.items.laura.description}
                   </p>
                 </CardContent>
               </div>
@@ -251,7 +247,7 @@ const TestimonialsPage = () => {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-foreground mb-12">
-            Más Testimonios
+            {t.testimonials.moreTestimonials}
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {testimonials.map((testimonial) => (

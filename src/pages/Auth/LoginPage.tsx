@@ -25,7 +25,7 @@ const LoginPage = () => {
     setIsLoading(true);
     try {
       await authService.signIn(data.email, data.password);
-      toast.success('¡Bienvenido de nuevo!');
+      toast.success(t.auth.welcome);
       navigate('/');
     } catch (error) {
       console.error('Error al iniciar sesión:', error);
@@ -60,7 +60,7 @@ const LoginPage = () => {
         showForgotPassword
         showGoogleLogin
         showRememberMe
-        submitButtonText={isLoading ? 'Ingresando...' : t.auth.login}
+        submitButtonText={isLoading ? t.auth.loggingIn : t.auth.login}
         footerText={t.auth.noAccount}
         footerLinkText={t.auth.register}
         footerLinkHref="/registro"

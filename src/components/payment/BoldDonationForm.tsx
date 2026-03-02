@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,7 @@ export function BoldDonationForm({
   suggestedAmounts = [10000, 25000, 50000, 100000],
   onSuccess
 }: BoldDonationFormProps) {
+  const { t } = useLanguage();
   const [amount, setAmount] = useState<number>(suggestedAmounts[0]);
   const [customAmount, setCustomAmount] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -56,11 +58,11 @@ export function BoldDonationForm({
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Realizar Donación</CardTitle>
+        <CardTitle>{t.donation.boldForm.title}</CardTitle>
         <CardDescription>
           {projectName 
-            ? `Apoya el proyecto: ${projectName}` 
-            : 'Realiza tu donación de forma segura con Bold'}
+            ? `${t.donation.boldForm.supportProject} ${projectName}` 
+            : t.donation.boldForm.defaultDescription}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -68,11 +70,11 @@ export function BoldDonationForm({
           <Alert className="bg-green-50 border-green-200">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              ¡Transacción iniciada exitosamente! <br />
-              ID de orden: <span className="font-mono">{successOrderId}</span>
+              {t.donation.boldForm.transactionInitiated} <br />
+              {t.donation.boldForm.orderId} <span className="font-mono">{successOrderId}</span>
               <br />
               <span className="text-sm">
-                Recibirás la confirmación una vez se complete el pago.
+                {t.donation.boldForm.confirmationMessage}
               </span>
             </AlertDescription>
           </Alert>
@@ -80,7 +82,7 @@ export function BoldDonationForm({
           <>
             {/* Montos sugeridos */}
             <div className="space-y-2">
-              <Label>Selecciona un monto</Label>
+              <Label>{t.donation.selectAmount}</Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {suggestedAmounts.map((suggestedAmount) => (
                   <button
@@ -103,7 +105,7 @@ export function BoldDonationForm({
 
             {/* Monto personalizado */}
             <div className="space-y-2">
-              <Label htmlFor="customAmount">O ingresa un monto personalizado</Label>
+              <Label htmlFor="customAmount">{t.donation.boldForm.orCustomAmount}</Label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                   $
@@ -122,11 +124,11 @@ export function BoldDonationForm({
             {/* Descripción opcional */}
             <div className="space-y-2">
               <Label htmlFor="description">
-                Mensaje o dedicatoria (opcional)
+                {t.donation.messageLabel}
               </Label>
               <Textarea
                 id="description"
-                placeholder="Escribe un mensaje para acompañar tu donación..."
+                placeholder={t.donation.messagePlaceholder}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
@@ -136,14 +138,14 @@ export function BoldDonationForm({
             {/* Resumen */}
             <div className="bg-gray-50 rounded-lg p-4 space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Total a donar:</span>
+                <span className="text-sm text-gray-600">{t.donation.boldForm.totalToDonate}</span>
                 <span className="text-2xl font-bold text-primary">
                   {formatCurrency(amount)}
                 </span>
               </div>
               {projectName && (
                 <div className="text-sm text-gray-600">
-                  Proyecto: <span className="font-medium">{projectName}</span>
+                  {t.donation.boldForm.projectLabel} <span className="font-medium">{projectName}</span>
                 </div>
               )}
             </div>
@@ -152,7 +154,7 @@ export function BoldDonationForm({
             <BoldPaymentButton
               amount={amount}
               currency="COP"
-              description={description || `Donación ${projectName ? `para ${projectName}` : ''}`}
+              description={description || (projectName ? t.donation.boldForm.donationFor.replace('{{name}}', projectName) : t.donation.title)}
               projectId={projectId}
               onSuccess={handleSuccess}
               className="w-full"
@@ -161,7 +163,7 @@ export function BoldDonationForm({
 
             {/* Información de seguridad */}
             <p className="text-xs text-center text-gray-500">
-              🔒 Pago seguro procesado por Bold. Tus datos están protegidos.
+              🔒 {t.donation.securePaymentDesc}
             </p>
           </>
         )}

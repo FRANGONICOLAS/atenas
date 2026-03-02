@@ -4,6 +4,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useSiteContentsByKeys } from '@/hooks/useSiteContent';
 import CTA from '@/components/CTA';
 
+import { getAboutValues, getAboutTeam } from '@/lib/data/about';
+
 const AboutPage = () => {
   const { t } = useLanguage();
 
@@ -16,18 +18,12 @@ const AboutPage = () => {
   const team3Url = imageMap['about_team_3'];
   const team4Url = imageMap['about_team_4'];
 
-  const values = [
-    { icon: Heart, title: 'Pasión', description: 'Amamos lo que hacemos y lo transmitimos a cada joven' },
-    { icon: Shield, title: 'Integridad', description: 'Actuamos con honestidad y transparencia en todo momento' },
-    { icon: Users, title: 'Trabajo en Equipo', description: 'Creemos en el poder del equipo para lograr grandes metas' },
-    { icon: Award, title: 'Excelencia', description: 'Buscamos la mejora continua en cada aspecto' },
-    { icon: Handshake, title: 'Compromiso', description: 'Estamos comprometidos con el desarrollo de nuestros jóvenes' },
-  ];
+  const values = getAboutValues(t);
 
-  const team = [
-    { name: 'Hector Sanchez', role: 'Director General', image: team1Url },
-    { name: 'Omar', role: 'Director General', image: team2Url },
-  ];
+  const team = getAboutTeam(t, {
+    team1: team1Url,
+    team2: team2Url,
+  });
 
   return (
     <div className="min-h-screen pt-20">
@@ -46,7 +42,7 @@ const AboutPage = () => {
             {t.about.title}
           </h1>
           <p className="text-xl text-primary-foreground/80 max-w-3xl mx-auto">
-            Somos una fundación deportiva sin ánimo de lucro comprometida con el desarrollo integral de niños y jóvenes a través del fútbol.
+            {t.about.subtitle}
           </p>
         </div>
       </section>
@@ -152,14 +148,14 @@ const AboutPage = () => {
       <section className="py-20 bg-foreground">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-primary-foreground mb-12">
-            Nuestra Historia
+            {t.about.history.title}
           </h2>
           <div className="max-w-3xl mx-auto">
             {[
-              { year: '2016', title: 'Fundación', description: 'Iniciamos con 20 niños en un pequeño barrio' },
-              { year: '2018', title: 'Primera Sede', description: 'Abrimos nuestra primera sede oficial' },
-              { year: '2020', title: 'Expansión', description: 'Llegamos a 200 beneficiarios en 3 sedes' },
-              { year: '2023', title: 'Reconocimiento', description: 'Premio nacional al impacto social deportivo' },
+              { year: '2016', title: t.about.history.items.y2016.title, description: t.about.history.items.y2016.desc },
+              { year: '2018', title: t.about.history.items.y2018.title, description: t.about.history.items.y2018.desc },
+              { year: '2020', title: t.about.history.items.y2020.title, description: t.about.history.items.y2020.desc },
+              { year: '2023', title: t.about.history.items.y2023.title, description: t.about.history.items.y2023.desc },
             ].map((item, index) => (
               <div key={index} className="flex gap-6 mb-8 last:mb-0">
                 <div className="flex-shrink-0 w-20 text-right">

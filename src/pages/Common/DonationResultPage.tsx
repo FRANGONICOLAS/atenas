@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, X, Clock, ArrowLeft, Home } from 'lucide-react';
 
 const DonationResultPage = () => {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'approved' | 'declined' | 'pending' | null>(null);
   const [orderId, setOrderId] = useState<string>('');
@@ -28,36 +30,36 @@ const DonationResultPage = () => {
         return {
           icon: <Check className="w-16 h-16 text-green-600" />,
           bgColor: 'bg-green-100',
-          title: '¡Pago Exitoso!',
-          message: 'Tu donación ha sido procesada correctamente. ¡Gracias por tu generosidad!',
-          buttonText: 'Ver mis donaciones',
+          title: t.donation.results.success.title,
+          message: t.donation.results.success.message,
+          buttonText: t.donation.results.success.button,
           buttonLink: '/donator?tab=donations',
         };
       case 'declined':
         return {
           icon: <X className="w-16 h-16 text-red-600" />,
           bgColor: 'bg-red-100',
-          title: 'Pago Rechazado',
-          message: 'Tu pago no pudo ser procesado. Por favor, intenta nuevamente o usa otro método de pago.',
-          buttonText: 'Intentar de nuevo',
+          title: t.donation.results.declined.title,
+          message: t.donation.results.declined.message,
+          buttonText: t.donation.results.declined.button,
           buttonLink: '/donation',
         };
       case 'pending':
         return {
           icon: <Clock className="w-16 h-16 text-yellow-600" />,
           bgColor: 'bg-yellow-100',
-          title: 'Pago Pendiente',
-          message: 'Tu pago está siendo procesado. Recibirás una confirmación por correo cuando se complete.',
-          buttonText: 'Ver mis donaciones',
+          title: t.donation.results.pending.title,
+          message: t.donation.results.pending.message,
+          buttonText: t.donation.results.pending.button,
           buttonLink: '/donator?tab=donations',
         };
       default:
         return {
           icon: <Clock className="w-16 h-16 text-gray-600" />,
           bgColor: 'bg-gray-100',
-          title: 'Procesando...',
-          message: 'Estamos verificando el estado de tu pago.',
-          buttonText: 'Volver al inicio',
+          title: t.donation.results.process.title,
+          message: t.donation.results.process.message,
+          buttonText: t.donation.results.process.button,
           buttonLink: '/',
         };
     }
@@ -83,7 +85,7 @@ const DonationResultPage = () => {
 
           {orderId && (
             <div className="bg-muted/50 p-4 rounded-lg mb-6">
-              <p className="text-sm text-muted-foreground mb-1">ID de Orden:</p>
+              <p className="text-sm text-muted-foreground mb-1">{t.donation.results.orderId}</p>
               <p className="font-mono text-sm font-medium">{orderId}</p>
             </div>
           )}
@@ -97,7 +99,7 @@ const DonationResultPage = () => {
             <Link to="/">
               <Button variant="outline" className="w-full gap-2">
                 <Home className="w-4 h-4" />
-                Volver al inicio
+                {t.donation.results.process.button}
               </Button>
             </Link>
           </div>

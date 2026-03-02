@@ -9,6 +9,7 @@ interface DashboardHeaderProps {
   icon: LucideIcon;
   roleIcon: LucideIcon;
   subtitle?: string;
+  welcomeMessage?: string;
 }
 
 export const DashboardHeader = ({
@@ -19,6 +20,7 @@ export const DashboardHeader = ({
   icon: Icon,
   roleIcon: RoleIcon,
   subtitle,
+  welcomeMessage,
 }: DashboardHeaderProps) => {
   return (
     <div className="flex items-center justify-between">
@@ -28,7 +30,7 @@ export const DashboardHeader = ({
           <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
         </div>
         <p className="text-foreground-secondary">
-          Bienvenido, {firstName} {lastName}
+          {welcomeMessage || `Bienvenido, ${firstName} ${lastName}`}
         </p>
         {subtitle && (
           <p className="text-gray-500 text-sm">{subtitle}</p>
