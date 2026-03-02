@@ -42,11 +42,11 @@ const Navbar = () => {
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast.success('Sesión cerrada exitosamente');
+      toast.success(t.auth.logoutSuccess);
       navigate('/');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
-      toast.error('Error al cerrar sesión');
+      toast.error(t.auth.logoutError);
     }
   };
 

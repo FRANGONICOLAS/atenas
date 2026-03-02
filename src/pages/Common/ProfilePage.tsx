@@ -22,9 +22,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/hooks/useAuth';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 const ProfilePage = () => {
+  const { t } = useLanguage();
   const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -54,7 +56,8 @@ const ProfilePage = () => {
 
   const handleSave = () => {
     // TODO: Implement save logic with userService
-    toast.success('Perfil actualizado correctamente');
+    // toast.success('Perfil actualizado correctamente');
+    toast.success(t.auth.updateProfileSuccess);
     setIsEditing(false);
   };
 

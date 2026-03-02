@@ -4,6 +4,7 @@ import { FullScreenLoader } from '@/components/common/FullScreenLoader';
 import { MapDialog } from '../components';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 import type { Headquarter } from '@/types';
 import { useHeadquarters } from '@/hooks/useHeadquarters';
 import { ImageUpload } from '@/components/common/ImageUpload';
@@ -32,6 +33,7 @@ import { headquarterService } from '@/api/services';
 import type { Project } from '@/types/project.types';
 
 const LocationsPage = () => {
+  const { t } = useLanguage();
   const [showMapDialog, setShowMapDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<Headquarter | null>(null);
@@ -59,8 +61,8 @@ const LocationsPage = () => {
   const handleLocationClick = (locationId: string) => {
     const location = headquarters.find((loc) => loc.headquarters_id === locationId);
     if (location) {
-      toast.info(`Información de ${location.name}`, {
-        description: `${location.address || 'Sin dirección'} - ${location.city || ''}`,
+      toast.info(t.locations.infoTitle.replace('{{name}}', location.name), {
+        description: `${location.address || t.locations.noAddress} - ${location.city || ''}`,
       });
     }
   };
@@ -80,18 +82,18 @@ const LocationsPage = () => {
       setBeneficiaryCount(count);
 
       // Cargar proyectos asociados
-      const projectsData = await headquarterService.getProjects(location.headquarters_id);
+      const projectsData = await headquarterService.getProjects(location?.headquarters_id);
       setLocationProjects(projectsData.map(p => p.project));
     } catch (error) {
       console.error('Error loading location details:', error);
-      toast.error('Error al cargar los detalles de la sede');
+      toast.error(t.common.detailsLoadingError);
     } finally {
       setLoadingDetails(false);
     }
   };
 
   if (loading) {
-    return <FullScreenLoader message="Cargando sedes..." />;
+    return <FullScreenLoader message={t.locations.loading} />;
   }
 
   return (

@@ -10,6 +10,7 @@ import { ProjectsTable } from "@/pages/DirectorView/components/Projects/Projects
 import { ProjectDetailDialog } from "@/pages/DirectorView/components/Projects/ProjectDetailDialog";
 import { HeadquarterProjectDialog } from "@/pages/DirectorSedeView/components/headquartersProject/HeadquarterProjectDialog";
 import { toast } from "sonner";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Target, Plus, Download } from "lucide-react";
 import {
 	generateProjectsExcel,
@@ -18,6 +19,7 @@ import {
 import type { Project, ProjectReport } from "@/types";
 
 const HeadquarterProjectPage = () => {
+    const { t } = useLanguage();
 	const {
 		filtered,
 		loading,
@@ -64,8 +66,8 @@ const HeadquarterProjectPage = () => {
 		description: string;
 	}) => {
 		if (!data.name || !data.category || !data.deadline) {
-			toast.error("Campos requeridos", {
-				description: "Por favor completa nombre, categoria y fecha limite",
+			toast.error(t.common.requiredFields, {
+				description: t.projects.fieldsRequired,
 			});
 			return;
 		}
@@ -126,21 +128,21 @@ const HeadquarterProjectPage = () => {
 	const handleExportExcel = () => {
 		const data = mapProjectsToReport(filtered);
 		generateProjectsExcel(data, "proyectos-sede");
-		toast.success("Reporte Excel generado", {
-			description: `Se exportaron ${data.length} proyectos`,
+		toast.success(t.reports.excelGenerated, {
+			description: t.projects.exported.replace('{{count}}', String(data.length)),
 		});
 	};
 
 	const handleExportPDF = () => {
 		const data = mapProjectsToReport(filtered);
 		generateProjectsPDF(data, "proyectos-sede");
-		toast.success("Reporte PDF generado", {
-			description: `Se exportaron ${data.length} proyectos`,
+		toast.success(t.reports.pdfGenerated, {
+			description: t.projects.exported.replace('{{count}}', String(data.length)),
 		});
 	};
 
 	if (loading) {
-		return <FullScreenLoader message="Cargando proyectos de la sede..." />;
+		return <FullScreenLoader message={t.projects.loading} />;
 	}
 
 	return (

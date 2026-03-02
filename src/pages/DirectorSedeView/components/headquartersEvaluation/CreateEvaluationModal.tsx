@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { evaluationService } from "@/api/services";
 import type {
   AntropometricData,
@@ -42,6 +43,7 @@ export const CreateEvaluationModal = ({
   onClose,
   onSaved,
 }: CreateEvaluationModalProps) => {
+  const { t } = useLanguage();
   const { beneficiaries, loading } = useSedeBeneficiaries();
   const [beneficiaryId, setBeneficiaryId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<
@@ -77,12 +79,12 @@ export const CreateEvaluationModal = ({
 
   const handleSave = async () => {
     if (!beneficiaryId) {
-      toast.error("Selecciona un beneficiario");
+      toast.error(t.evaluations.selectBeneficiary);
       return;
     }
 
     if (!detailPayload) {
-      toast.error("Completa la evaluacion");
+      toast.error(t.evaluations.complete);
       return;
     }
 
@@ -108,17 +110,17 @@ export const CreateEvaluationModal = ({
         type: typeKey,
         questions_answers: detailPayload as Json,
       });
-      toast.success("Evaluacion registrada", {
+      toast.success(t.evaluations.createSuccess, {
         description: selectedBeneficiary
-          ? `Evaluacion guardada para ${selectedBeneficiary.first_name} ${selectedBeneficiary.last_name}`
-          : "Evaluacion guardada",
+          ? t.evaluations.savedFor.replace('{{name}}', `${selectedBeneficiary.first_name} ${selectedBeneficiary.last_name}`)
+          : t.evaluations.saved,
       });
       onSaved();
       handleClose();
     } catch (error) {
       console.error("Error saving evaluation:", error);
-      toast.error("Error al guardar evaluacion", {
-        description: "No se pudo registrar la evaluacion",
+      toast.error(t.evaluations.createError, {
+        description: t.evaluations.createErrorDesc,
       });
     } finally {
       setSaving(false);
@@ -129,15 +131,15 @@ export const CreateEvaluationModal = ({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Agregar evaluacion</DialogTitle>
+          <DialogTitle>{t.evaluations.addTitle}</DialogTitle>
           <DialogDescription>
-            Selecciona el beneficiario y completa las evaluaciones necesarias.
+            {t.evaluations.addDesc}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label>Beneficiario</Label>
+            <Label>{t.evaluations.beneficiaryLabel}</Label>
             <Select
               value={beneficiaryId}
               onValueChange={(value) => setBeneficiaryId(value)}
@@ -145,13 +147,13 @@ export const CreateEvaluationModal = ({
             >
               <SelectTrigger>
                 <SelectValue
-                  placeholder={loading ? "Cargando beneficiarios..." : "Selecciona beneficiario"}
+                  placeholder={loading ? t.evaluations.loadingBeneficiaries : t.evaluations.selectPlaceholder}
                 />
               </SelectTrigger>
               <SelectContent>
                 {beneficiaryOptions.length === 0 ? (
                   <SelectItem value="empty" disabled>
-                    Sin beneficiarios disponibles
+                    {t.evaluations.noBeneficiaries}
                   </SelectItem>
                 ) : (
                   beneficiaryOptions.map((option) => (
@@ -166,22 +168,22 @@ export const CreateEvaluationModal = ({
 
           {!beneficiaryId ? (
             <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-              Selecciona un beneficiario para habilitar los formularios de evaluacion.
+              {t.evaluations.selectPrompt}
             </div>
           ) : (
             <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "anthropometric" | "technical_tactic" | "psychological_emotional")} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="anthropometric" className="flex items-center gap-2">
                   <Ruler className="w-4 h-4" />
-                  Antropometrico
+                  {t.evaluations.tabs.anthropometric}
                 </TabsTrigger>
                 <TabsTrigger value="technical_tactic" className="flex items-center gap-2">
                   <Activity className="w-4 h-4" />
-                  Tecnico-Tactico
+                  {t.evaluations.tabs.technical}
                 </TabsTrigger>
                 <TabsTrigger value="psychological_emotional" className="flex items-center gap-2">
                   <Brain className="w-4 h-4" />
-                  Emocional
+                  {t.evaluations.tabs.emotional}
                 </TabsTrigger>
               </TabsList>
 
@@ -217,10 +219,10 @@ export const CreateEvaluationModal = ({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={saving}>
-            Cancelar
+            {t.evaluations.actions.cancel}
           </Button>
           <Button onClick={handleSave} disabled={saving || !beneficiaryId}>
-            {saving ? "Guardando..." : "Guardar"}
+            {saving ? t.evaluations.actions.saving : t.evaluations.actions.save}
           </Button>
         </DialogFooter>
       </DialogContent>

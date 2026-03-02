@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   generateProjectsExcel,
   generateProjectsPDF,
@@ -11,33 +12,35 @@ import {
 } from '@/lib/reportGenerator';
 
 const ReportsPage = () => {
+  const { t } = useLanguage();
+  
   const handleExportProjectsExcel = () => {
-    toast.success('Generando reporte...', {
-      description: 'El archivo Excel se descargará en breve',
+    toast.success(t.reports.generating, {
+      description: t.reports.excelDescription,
     });
   };
 
   const handleExportProjectsPDF = () => {
-    toast.success('Generando reporte...', {
-      description: 'El archivo PDF se descargará en breve',
+    toast.success(t.reports.generating, {
+      description: t.reports.pdfDescription,
     });
   };
 
   const handleExportBeneficiariesExcel = () => {
-    toast.success('Generando reporte...', {
-      description: 'El archivo Excel se descargará en breve',
+    toast.success(t.reports.generating, {
+      description: t.reports.excelDescription,
     });
   };
 
   const handleExportBeneficiariesPDF = () => {
-    toast.success('Generando reporte...', {
-      description: 'El archivo PDF se descargará en breve',
+    toast.success(t.reports.generating, {
+      description: t.reports.pdfDescription,
     });
   };
 
   const handleExportConsolidated = () => {
-    toast.success('Generando reporte consolidado...', {
-      description: 'El archivo se descargará en breve',
+    toast.success(t.reports.generatingConsolidated, {
+      description: t.reports.fileDescription,
     });
   };
 

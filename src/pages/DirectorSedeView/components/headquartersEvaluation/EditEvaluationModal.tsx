@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useLanguage } from '@/contexts/LanguageContext';
 import { evaluationService } from "@/api/services";
 import type {
 	AntropometricData,
@@ -39,6 +40,7 @@ export const EditEvaluationModal = ({
 	onClose,
 	onSaved,
 }: EditEvaluationModalProps) => {
+	const { t } = useLanguage();
 	const [activeTab, setActiveTab] = useState<
 	"anthropometric" | "technical_tactic" | "psychological_emotional"
 >("anthropometric");
@@ -73,14 +75,14 @@ export const EditEvaluationModal = ({
 			}
 				catch (error) {
 				console.error("Error loading evaluation:", error);
-				toast.error("Error al cargar evaluacion", {
+				toast.error(t.evaluations.loadError, {
 					description: "No se pudo cargar la evaluacion",
 				});
 			}
 		};
 
 		void loadEvaluation();
-	}, [open, evaluationId]);
+	}, [open, evaluationId, t]);
 
 	const handleClose = () => {
 		if (!saving) {
@@ -92,7 +94,7 @@ export const EditEvaluationModal = ({
 		if (!evaluationId) return;
 
 		if (!detailPayload) {
-			toast.error("Completa la evaluacion");
+			toast.error(t.evaluations.complete);
 			return;
 		}
 
@@ -117,17 +119,17 @@ export const EditEvaluationModal = ({
 				type: typeKey,
 				questions_answers: detailPayload as Json,
 			});
-			toast.success("Evaluacion actualizada", {
+			toast.success(t.evaluations.updateSuccess, {
 				description: beneficiaryName
-					? `Evaluacion actualizada para ${beneficiaryName}`
-					: "Evaluacion actualizada",
+					? t.evaluations.updatedFor.replace('{{name}}', beneficiaryName)
+					: t.evaluations.updated,
 			});
 			onSaved();
 			onClose();
 		} catch (error) {
 			console.error("Error updating evaluation:", error);
-			toast.error("Error al actualizar evaluacion", {
-				description: "No se pudo actualizar la evaluacion",
+			toast.error(t.evaluations.updateError, {
+				description: t.evaluations.updateErrorDesc,
 			});
 		} finally {
 			setSaving(false);
@@ -138,15 +140,15 @@ export const EditEvaluationModal = ({
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>Editar evaluacion</DialogTitle>
+					<DialogTitle>{t.evaluations.editTitle}</DialogTitle>
 					<DialogDescription>
-						Actualiza los formularios de evaluacion del beneficiario.
+						{t.evaluations.editDesc}
 					</DialogDescription>
 				</DialogHeader>
 
 				<div className="space-y-6">
 					<div className="space-y-2">
-						<Label>Beneficiario</Label>
+						<Label>{t.evaluations.beneficiaryLabel}</Label>
 						<Input value={beneficiaryName || "Beneficiario"} disabled />
 					</div>
 
@@ -159,15 +161,15 @@ export const EditEvaluationModal = ({
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger value="anthropometric" className="flex items-center gap-2">
 									<Ruler className="w-4 h-4" />
-									Antropometrico
+									{t.evaluations.tabs.anthropometric}
 								</TabsTrigger>
 								<TabsTrigger value="technical_tactic" className="flex items-center gap-2">
 									<Activity className="w-4 h-4" />
-									Tecnico-Tactico
+									{t.evaluations.tabs.technical}
 								</TabsTrigger>
 								<TabsTrigger value="psychological_emotional" className="flex items-center gap-2">
 									<Brain className="w-4 h-4" />
-									Emocional
+									{t.evaluations.tabs.emotional}
 								</TabsTrigger>
 							</TabsList>
 
@@ -175,7 +177,7 @@ export const EditEvaluationModal = ({
 								<BeneficiaryAntropometricForm
 									data={detailPayload as Json | undefined}
 									onChange={(data) =>
-										setDetailPayload(data as AntropometricData)
+										setDetailPayload(data as Record<string, unknown>)
 									}
 								/>
 							</TabsContent>
@@ -201,10 +203,10 @@ export const EditEvaluationModal = ({
 
 				<DialogFooter>
 					<Button variant="outline" onClick={handleClose} disabled={saving}>
-						Cancelar
+						{t.evaluations.actions.cancel}
 					</Button>
-					<Button onClick={handleSave} disabled={saving || loading || !evaluationId}>
-						{saving ? "Guardando..." : "Actualizar"}
+					<Button onClick={handleSave} disabled={saving || !detailPayload}>
+						{saving ? t.evaluations.actions.saving : t.evaluations.actions.save}
 					</Button>
 				</DialogFooter>
 			</DialogContent>
