@@ -52,16 +52,6 @@ export const SiteContentPageTabs = ({
           setShowDialog={setShowDialog}
           setEditingContent={setEditingContent}
         />
-        <ContentRequiredSummary
-          contents={contents}
-          handleOpenEdit={handleOpenEdit}
-          setIsCreating={setIsCreating}
-          setFile={setFile}
-          setPreviewUrl={setPreviewUrl}
-          setFormData={setFormData}
-          setShowDialog={setShowDialog}
-          setEditingContent={setEditingContent}
-        />
       </TabsContent>
 
       <TabsContent value="about">
