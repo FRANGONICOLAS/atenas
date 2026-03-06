@@ -55,7 +55,7 @@ const BeneficiariesPage = () => {
     category: "",
     headquarters_id: "",
     status: "activo" as "activo" | "pendiente" | "inactivo" | "suspendido",
-    sex: "",
+    gender: "",
     registry_date: "",
     guardian: "",
     phone: "",
@@ -75,7 +75,7 @@ const BeneficiariesPage = () => {
       category: "",
       headquarters_id: "",
       status: "activo",
-      sex: "",
+      gender: "",
       registry_date: new Date().toISOString().split("T")[0],
       guardian: "",
       phone: "",
@@ -102,7 +102,7 @@ const BeneficiariesPage = () => {
           | "pendiente"
           | "inactivo"
           | "suspendido") || "activo",
-      sex: beneficiary.sex || "",
+      gender: beneficiary.gender || "",
       registry_date: beneficiary.registry_date,
       guardian: beneficiary.guardian || "",
       phone: beneficiary.phone,

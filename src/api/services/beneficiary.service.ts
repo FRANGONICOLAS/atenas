@@ -244,7 +244,7 @@ export const beneficiaryService = {
             beneficiaryPayload.registry_date ||
             new Date().toISOString().split("T")[0],
           status: beneficiaryPayload.status || "activo",
-          sex: beneficiaryPayload.sex,
+          gender: beneficiaryPayload.gender,
           performance: beneficiaryPayload.performance,
           guardian: beneficiaryPayload.guardian,
           address: beneficiaryPayload.address,
@@ -317,6 +317,17 @@ export const beneficiaryService = {
       .eq("beneficiary_id", beneficiaryId);
 
     if (error) throw error;
+  },
+
+  // Cuenta evaluaciones de un beneficiario
+  async countEvaluations(beneficiaryId: string): Promise<number> {
+    const { count, error } = await client
+      .from("beneficiary's_evaluation")
+      .select("*", { count: "exact", head: true })
+      .eq("beneficiary_id", beneficiaryId);
+
+    if (error) throw error;
+    return count || 0;
   },
 
   // Cuenta el total de beneficiarios

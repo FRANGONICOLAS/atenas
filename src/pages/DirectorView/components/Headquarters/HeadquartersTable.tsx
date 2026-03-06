@@ -1,4 +1,4 @@
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -14,6 +14,7 @@ import type { Headquarter } from "@/types";
 interface HeadquartersTableProps {
   headquarters: Headquarter[];
   loading: boolean;
+  onView?: (hq: Headquarter) => void;
   onEdit: (hq: Headquarter) => void;
   onToggleStatus: (id: string, nextStatus: string) => void;
   onDelete: (hq: Headquarter) => void;
@@ -22,6 +23,7 @@ interface HeadquartersTableProps {
 export const HeadquartersTable = ({
   headquarters,
   loading,
+  onView,
   onEdit,
   onToggleStatus,
   onDelete,
@@ -81,6 +83,17 @@ export const HeadquartersTable = ({
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right space-x-2">
+                  {onView && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8"
+                      onClick={() => onView(hq)}
+                      title="Ver detalles"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                  )}
                   <Button
                     size="icon"
                     variant="ghost"

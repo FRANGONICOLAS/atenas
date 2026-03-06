@@ -228,6 +228,16 @@ export const useBeneficiaries = () => {
     beneficiaryName: string
   ) => {
     try {
+      // Verificar si el beneficiario tiene evaluaciones
+      const evaluationCount = await beneficiaryService.countEvaluations(beneficiaryId);
+      
+      if (evaluationCount > 0) {
+        toast.error("No se puede eliminar", {
+          description: "No puedes eliminar un beneficiario que tiene evaluaciones registradas",
+        });
+        return;
+      }
+
       await beneficiaryService.delete(beneficiaryId);
       await loadBeneficiaries();
       toast.success("Beneficiario eliminado", {

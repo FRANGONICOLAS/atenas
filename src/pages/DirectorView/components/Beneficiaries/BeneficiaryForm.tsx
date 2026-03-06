@@ -30,7 +30,7 @@ type BeneficiaryFormData = {
   headquarters_id: string;
   phone: string;
   status: BeneficiaryStatus;
-  sex?: string;
+  gender?: string;
   registry_date: string;
   guardian: string;
   address: string;

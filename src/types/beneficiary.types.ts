@@ -102,7 +102,7 @@ export interface Beneficiary {
   phone: string;
   registry_date: string;
   status?: BeneficiaryStatus | string;
-  sex?: string; // Género (hombre/mujer)
+  gender?: string; // Género (hombre/mujer)
   performance?: number; // Rendimiento (%) - Calculado automáticamente del promedio técnico
   guardian?: string; // Acudiente
   address?: string; // Dirección
@@ -128,7 +128,7 @@ export interface CreateBeneficiaryData {
   phone: string;
   registry_date?: string;
   status?: BeneficiaryStatus | string;
-  sex?: string;
+  gender?: string;
   performance?: number;
   guardian?: string;
   photo_url?: string | null;
@@ -151,7 +151,7 @@ export interface UpdateBeneficiaryData {
   phone?: string;
   registry_date?: string;
   status?: BeneficiaryStatus | string;
-  sex?: string;
+  gender?: string;
   performance?: number;
   guardian?: string;
   photo_url?: string | null;
