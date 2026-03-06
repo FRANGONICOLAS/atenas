@@ -1,10 +1,20 @@
 import { client } from "@/api/supabase/client";
 import { storageService } from "./storage.service";
+import type { BeneficiaryRow } from "@/api/types";
 import type {
+  AntropometricData,
+  TechnicalTacticalData,
+  EmotionalData,
+  BeneficiaryEvaluationDetail,
   Beneficiary,
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
+
+interface LatestEvaluationLookupRow {
+  beneficiary_id: string;
+  evaluation: BeneficiaryEvaluationDetail | null;
+}
 
 type EvaluationPayload = Pick<
   CreateBeneficiaryData,
@@ -64,7 +74,7 @@ const linkBeneficiaryEvaluation = async (
 
 const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
   if (beneficiaryIds.length === 0) {
-    return new Map<string, any>();
+    return new Map<string, BeneficiaryEvaluationDetail>();
   }
 
   const { data, error } = await client
@@ -76,9 +86,9 @@ const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
 
   if (error) throw error;
 
-  const latestByBeneficiary = new Map<string, any>();
+  const latestByBeneficiary = new Map<string, BeneficiaryEvaluationDetail>();
 
-  (data || []).forEach((row: any) => {
+  (data as LatestEvaluationLookupRow[] || []).forEach((row) => {
     if (!row?.evaluation) return;
     const evaluation = row.evaluation;
     const existing = latestByBeneficiary.get(row.beneficiary_id);
@@ -97,8 +107,31 @@ const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
   return latestByBeneficiary;
 };
 
-const attachLatestEvaluation = async (beneficiaries: Beneficiary[]) => {
-  if (beneficiaries.length === 0) return beneficiaries;
+const mapBeneficiaryRow = (row: BeneficiaryRow): Beneficiary => ({
+  beneficiary_id: row.beneficiary_id,
+  headquarters_id: row.headquarters_id,
+  first_name: row.first_name,
+  last_name: row.last_name,
+  birth_date: row.birth_date ?? "",
+  category: row.category ?? "",
+  phone: row.phone ?? "",
+  registry_date: row.registry_date ?? "",
+  status: row.status ?? undefined,
+  gender: row.gender ?? undefined,
+  performance: row.performance ?? undefined,
+  guardian: row.guardian ?? undefined,
+  address: row.address ?? undefined,
+  emergency_contact: row.emergency_contact ?? undefined,
+  medical_info: row.medical_info ?? undefined,
+  photo_url: row.photo_url ?? null,
+  observation: row.observation ?? undefined,
+  created_at: row.created_at ?? undefined,
+});
+
+const attachLatestEvaluation = async (rows: BeneficiaryRow[]): Promise<Beneficiary[]> => {
+  if (rows.length === 0) return [];
+
+  const beneficiaries: Beneficiary[] = rows.map(mapBeneficiaryRow);
 
   const latestByBeneficiary = await loadLatestEvaluations(
     beneficiaries.map((b) => b.beneficiary_id)
@@ -141,7 +174,7 @@ export const beneficiaryService = {
     if (error) throw error;
     if (!data) return null;
     const [beneficiary] = await attachLatestEvaluation([data]);
-    return beneficiary;
+    return beneficiary ?? null;
   },
 
   // Obtiene todos los beneficiarios de una sede específica
@@ -260,17 +293,17 @@ export const beneficiaryService = {
     if (error) throw error;
 
     if (!shouldCreateEvaluation) {
-      return data;
+      return mapBeneficiaryRow(data);
     }
 
     const evaluation = await createEvaluation(evaluationPayload);
     await linkBeneficiaryEvaluation(data.beneficiary_id, evaluation.id);
 
     return {
-      ...data,
-      anthropometric_detail: evaluation.anthropometric_detail ?? undefined,
-      technical_tactic_detail: evaluation.technical_tactic_detail ?? undefined,
-      emotional_detail: evaluation.emotional_detail ?? undefined,
+      ...mapBeneficiaryRow(data),
+      anthropometric_detail: (evaluation.anthropometric_detail as AntropometricData) ?? undefined,
+      technical_tactic_detail: (evaluation.technical_tactic_detail as TechnicalTacticalData) ?? undefined,
+      emotional_detail: (evaluation.emotional_detail as EmotionalData) ?? undefined,
       latest_evaluation: evaluation,
     };
   },
@@ -294,17 +327,17 @@ export const beneficiaryService = {
     if (error) throw error;
 
     if (!shouldCreateEvaluation) {
-      return data;
+      return mapBeneficiaryRow(data);
     }
 
     const evaluation = await createEvaluation(evaluationPayload);
     await linkBeneficiaryEvaluation(beneficiaryId, evaluation.id);
 
     return {
-      ...data,
-      anthropometric_detail: evaluation.anthropometric_detail ?? undefined,
-      technical_tactic_detail: evaluation.technical_tactic_detail ?? undefined,
-      emotional_detail: evaluation.emotional_detail ?? undefined,
+      ...mapBeneficiaryRow(data),
+      anthropometric_detail: (evaluation.anthropometric_detail as AntropometricData) ?? undefined,
+      technical_tactic_detail: (evaluation.technical_tactic_detail as TechnicalTacticalData) ?? undefined,
+      emotional_detail: (evaluation.emotional_detail as EmotionalData) ?? undefined,
       latest_evaluation: evaluation,
     };
   },

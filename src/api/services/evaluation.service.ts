@@ -50,8 +50,8 @@ export const evaluationService = {
     beneficiaryId: string,
     payload: EvaluationPayload,
   ): Promise<EvaluationRow> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (client.from("evaluation") as any)
+    const { data, error } = await client
+      .from("evaluation")
       .insert([
         {
           type: payload.type,
@@ -80,7 +80,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id (first_name, last_name, headquarters_id)",
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id!inner (first_name, last_name, headquarters_id)",
       )
       .eq("beneficiary.headquarters_id", headquarterId)
       .order("evaluation_id", { ascending: false });

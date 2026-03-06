@@ -5,6 +5,14 @@ import type {
   UpdateTestimonialData,
 } from "@/types/testimonial.types";
 
+interface TestimonialWithUser extends Testimonial {
+  user: {
+    first_name: string | null;
+    last_name: string | null;
+    profile_images_id: string | null;
+  } | null;
+}
+
 export const testimonialService = {
   // Obtiene todos los testimonios
   async getAll(): Promise<Testimonial[]> {
@@ -18,7 +26,7 @@ export const testimonialService = {
   },
 
   // Obtiene testimonios aprobados para vista pública con información del usuario
-  async getApproved(): Promise<any[]> {
+  async getApproved(): Promise<TestimonialWithUser[]> {
     const { data, error } = await client
       .from("testimonial")
       .select(`

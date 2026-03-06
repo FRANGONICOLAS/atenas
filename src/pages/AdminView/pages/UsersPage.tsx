@@ -19,6 +19,9 @@ const UsersPage = () => {
     availableRoles,
     selectedRoles,
     setSelectedRoles,
+    selectedHeadquarterId,
+    setSelectedHeadquarterId,
+    availableHeadquarters,
     userForm,
     setUserForm,
     handleCreateUser,
@@ -77,6 +80,9 @@ const UsersPage = () => {
         availableRoles={availableRoles}
         selectedRoles={selectedRoles}
         onSelectedRolesChange={setSelectedRoles}
+        availableHeadquarters={availableHeadquarters}
+        selectedHeadquarterId={selectedHeadquarterId}
+        onHeadquarterChange={setSelectedHeadquarterId}
         onSave={handleSaveUser}
       />
     </div>

@@ -76,9 +76,9 @@ export const useHeadquarters = () => {
     }
   };
 
-  // Initialize map once
+  // Initialize map once loading is done and the container is in the DOM
   useEffect(() => {
-    if (!mapRef.current || mapInstanceRef.current) return;
+    if (loading || !mapRef.current || mapInstanceRef.current) return;
 
     // Default center (Cali, Colombia)
     const defaultCenter: [number, number] = [3.4516, -76.5320];
@@ -98,7 +98,7 @@ export const useHeadquarters = () => {
       mapInstanceRef.current = null;
       markerGroupRef.current = null;
     };
-  }, []);
+  }, [loading]);
 
   // Update markers when headquarters change
   useEffect(() => {

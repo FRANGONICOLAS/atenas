@@ -11,7 +11,6 @@ import {
   Settings,
   Heart,
   Image as ImageIcon,
-  FileText,
   DollarSign,
   Trophy,
   ClipboardList,
@@ -128,12 +127,6 @@ const navSections: NavSection[] = [
         href: '/director-sede?tab=evaluations',
         icon: ClipboardList,
         description: 'Evaluaciones y seguimiento'
-      },
-      {
-        title: 'Reportes',
-        href: '/director-sede?tab=reports',
-        icon: FileText,
-        description: 'Reportes de la sede'
       }
     ]
   },

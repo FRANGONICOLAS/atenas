@@ -76,7 +76,7 @@ export const useSiteContentManagement = () => {
       content_key: '',
       title: '',
       description: '',
-      page_section: 'home',
+      page_section: (activePageTab as 'home' | 'about' | 'categories') || 'home',
       content_type: 'image',
       category: '',
       video_url: '',
@@ -96,18 +96,28 @@ export const useSiteContentManagement = () => {
           toast.error('Debes seleccionar una imagen');
           return;
         }
-        if (!formData.content_key || !formData.title || !formData.page_section) {
+        if (!formData.title || !formData.page_section) {
           toast.error('Completa todos los campos requeridos');
           return;
         }
 
+        // Use preset content_key if one was set (e.g. from a preview slot), else auto-generate
+        const titleSlug = formData.title
+          .toLowerCase()
+          .replace(/\s+/g, '_')
+          .replace(/[^a-z0-9_]/g, '');
+        const autoKey = formData.content_key
+          ? formData.content_key
+          : `${formData.page_section}_${titleSlug}_${Date.now()}`;
+        const autoCategory = formData.category || titleSlug;
+
         await contentService.createContent({
-          content_key: formData.content_key,
+          content_key: autoKey,
           title: formData.title,
           description: formData.description || undefined,
           page_section: formData.page_section,
           content_type: formData.content_type,
-          category: formData.category || undefined,
+          category: autoCategory,
           video_url: formData.video_url || undefined,
           file: file,
         });

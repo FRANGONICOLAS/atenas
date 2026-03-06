@@ -55,9 +55,26 @@ export const HomePagePreview = ({
               return (
                 <div
                   className="relative h-48 flex items-center justify-center overflow-hidden cursor-pointer group"
-                  onClick={() =>
-                    hero ? handleOpenEdit(hero) : handleOpenCreate()
-                  }
+                  onClick={() => {
+                    if (hero) {
+                      handleOpenEdit(hero);
+                    } else {
+                      setEditingContent(null);
+                      setIsCreating(true);
+                      setFile(null);
+                      setPreviewUrl(null);
+                      setFormData({
+                        content_key: 'home_hero',
+                        title: 'Hero principal',
+                        description: '',
+                        page_section: 'home',
+                        content_type: 'image',
+                        category: '',
+                        video_url: '',
+                      });
+                      setShowDialog(true);
+                    }
+                  }}
                 >
                   {hero ? (
                     <>
@@ -195,11 +212,26 @@ export const HomePagePreview = ({
                     <div
                       key={key}
                       className="border rounded overflow-hidden cursor-pointer group"
-                      onClick={() =>
-                        transformation
-                          ? handleOpenEdit(transformation)
-                          : handleOpenCreate()
-                      }
+                      onClick={() => {
+                        if (transformation) {
+                          handleOpenEdit(transformation);
+                        } else {
+                          setEditingContent(null);
+                          setIsCreating(true);
+                          setFile(null);
+                          setPreviewUrl(null);
+                          setFormData({
+                            content_key: key,
+                            title: title,
+                            description: '',
+                            page_section: 'home',
+                            content_type: 'image',
+                            category: '',
+                            video_url: '',
+                          });
+                          setShowDialog(true);
+                        }
+                      }}
                     >
                       <div className="relative h-20">
                         {transformation ? (
@@ -255,9 +287,26 @@ export const HomePagePreview = ({
                     <div
                       key={idx}
                       className="border rounded overflow-hidden cursor-pointer group"
-                      onClick={() =>
-                        projects ? handleOpenEdit(projects) : handleOpenCreate()
-                      }
+                      onClick={() => {
+                        if (projects) {
+                          handleOpenEdit(projects);
+                        } else {
+                          setEditingContent(null);
+                          setIsCreating(true);
+                          setFile(null);
+                          setPreviewUrl(null);
+                          setFormData({
+                            content_key: 'home_projects',
+                            title: 'Proyectos',
+                            description: '',
+                            page_section: 'home',
+                            content_type: 'image',
+                            category: '',
+                            video_url: '',
+                          });
+                          setShowDialog(true);
+                        }
+                      }}
                     >
                       <div className="relative h-24">
                         {projects ? (
@@ -299,9 +348,26 @@ export const HomePagePreview = ({
                 return (
                   <div
                     className="relative h-32 flex items-center justify-center cursor-pointer group rounded"
-                    onClick={() =>
-                      cta ? handleOpenEdit(cta) : handleOpenCreate()
-                    }
+                    onClick={() => {
+                      if (cta) {
+                        handleOpenEdit(cta);
+                      } else {
+                        setEditingContent(null);
+                        setIsCreating(true);
+                        setFile(null);
+                        setPreviewUrl(null);
+                        setFormData({
+                          content_key: 'home_cta',
+                          title: 'CTA',
+                          description: '',
+                          page_section: 'home',
+                          content_type: 'image',
+                          category: '',
+                          video_url: '',
+                        });
+                        setShowDialog(true);
+                      }
+                    }}
                   >
                     {cta ? (
                       <>

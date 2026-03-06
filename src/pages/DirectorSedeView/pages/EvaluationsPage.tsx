@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { getPerformanceColor } from "@/lib/beneficiaryUtils";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
-import { useBeneficiaries } from "@/hooks/useBeneficiaries";
+import { useSedeBeneficiaries } from "@/hooks/useSedeBeneficiaries";
 import EvaluationProgressChart from "@/pages/DirectorSedeView/components/headquartersEvaluation/EvaluationProgressChart";
 import {
   EvaluationFilters,
@@ -41,7 +41,7 @@ const EvaluationsPage = () => {
   const {
     filtered: filteredBeneficiaries,
     loading: beneficiariesLoading,
-  } = useBeneficiaries();
+  } = useSedeBeneficiaries();
   const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<string | null>(null);
 
   // default to first beneficiary when available

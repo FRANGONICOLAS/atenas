@@ -44,6 +44,9 @@ interface UserDialogProps {
   availableRoles: Role[];
   selectedRoles: string[];
   onSelectedRolesChange: (roles: string[]) => void;
+  availableHeadquarters: { headquarters_id: string; name: string }[];
+  selectedHeadquarterId: string;
+  onHeadquarterChange: (id: string) => void;
   onSave: () => void;
 }
 
@@ -56,6 +59,9 @@ export const UserDialog = ({
   availableRoles,
   selectedRoles,
   onSelectedRolesChange,
+  availableHeadquarters,
+  selectedHeadquarterId,
+  onHeadquarterChange,
   onSave,
 }: UserDialogProps) => {
   return (
@@ -254,6 +260,27 @@ export const UserDialog = ({
               <div className="flex items-center gap-2 text-sm text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded-md">
                 <AlertCircle className="w-4 h-4" />
                 El usuario debe tener al menos un rol asignado
+              </div>
+            )}
+
+            {selectedRoles.includes("director_sede") && (
+              <div className="space-y-2 pt-4 border-t">
+                <Label htmlFor="sede-select">Sede Asignada</Label>
+                <Select
+                  value={selectedHeadquarterId}
+                  onValueChange={onHeadquarterChange}
+                >
+                  <SelectTrigger id="sede-select">
+                    <SelectValue placeholder="Selecciona una sede..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableHeadquarters.map((hq) => (
+                      <SelectItem key={hq.headquarters_id} value={hq.headquarters_id}>
+                        {hq.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             )}
           </div>

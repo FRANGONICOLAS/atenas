@@ -28,19 +28,18 @@ const CompleteProfile = () => {
   });
 
   // Evitar que el usuario salga sin completar el perfil
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = '';
+    return '';
+  };
+
   useEffect(() => {
     // Si el usuario ya tiene el perfil completo, redirigir al home
     if (user?.hasCompletedProfile) {
       navigate("/");
       return;
     }
-
-    // Bloquear la navegación del navegador
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = '';
-      return '';
-    };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
 
@@ -51,6 +50,7 @@ const CompleteProfile = () => {
 
   const handleSignOut = async () => {
     try {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       await signOut();
       toast.success("Sesión cerrada");
       navigate("/login");
@@ -61,7 +61,9 @@ const CompleteProfile = () => {
   };
 
   const onSubmit = async (data: CompleteGoogleUserInput) => {
-    if (!user || !user.id) {
+    // Use getCurrentUser() for the authoritative auth user — never rely on stale React state
+    const authUser = await authService.getCurrentUser().catch(() => null);
+    if (!authUser?.id) {
       toast.error("No se encontró el usuario autenticado");
       navigate("/login");
       return;
@@ -70,11 +72,11 @@ const CompleteProfile = () => {
     setIsLoading(true);
     try {
       // Verificar si el usuario ya existe en la tabla user
-      const existingUser = await userService.getById(user.id);
-      
+      const existingUser = await userService.getById(authUser.id);
+
       if (existingUser) {
         // Actualizar usuario existente
-        await userService.update(user.id, {
+        await userService.update(authUser.id, {
           first_name: data.first_name,
           last_name: data.last_name,
           birthdate: data.birthdate || null,
@@ -84,8 +86,8 @@ const CompleteProfile = () => {
       } else {
         // Crear nuevo usuario en la tabla user
         await userService.create({
-          id: user.id,
-          email: user.email!,
+          id: authUser.id,
+          email: authUser.email!,
           first_name: data.first_name,
           last_name: data.last_name,
           birthdate: data.birthdate,
@@ -98,10 +100,12 @@ const CompleteProfile = () => {
 
       // Refrescar la sesión para actualizar el estado del usuario
       await authService.getSession();
+      await authService.getCurrentUser();
 
       toast.success("¡Perfil completado exitosamente!");
-      
-      // Forzar recarga de la página para actualizar el estado global
+
+      // Remover el listener antes de redirigir para no disparar el aviso del navegador
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       window.location.href = "/";
     } catch (error) {
       console.error("Error al completar perfil:", error);

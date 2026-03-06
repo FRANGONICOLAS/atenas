@@ -40,7 +40,6 @@ export const SiteContentTable = ({
             <TableRow>
               <TableHead>Vista Previa</TableHead>
               <TableHead>Título</TableHead>
-              <TableHead>Clave</TableHead>
               <TableHead>Sección</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Estado</TableHead>
@@ -55,7 +54,7 @@ export const SiteContentTable = ({
               if (filteredContents.length === 0) {
                 return (
                   <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                       No hay contenidos para {getPageSectionLabel(activePageTab)}
                     </TableCell>
                   </TableRow>
@@ -72,11 +71,6 @@ export const SiteContentTable = ({
                     />
                   </TableCell>
                   <TableCell className="font-medium">{content.title}</TableCell>
-                  <TableCell>
-                    <code className="text-xs bg-muted px-2 py-1 rounded">
-                      {content.content_key}
-                    </code>
-                  </TableCell>
                   <TableCell>{getPageSectionLabel(content.page_section)}</TableCell>
                   <TableCell>
                     <Badge variant="outline">

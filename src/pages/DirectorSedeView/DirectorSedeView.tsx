@@ -1,12 +1,15 @@
-import { Trophy, TrendingUp, Calendar, Star, Box, UserCheck } from 'lucide-react';
+import { Trophy, TrendingUp, Calendar, Star, Box, UserCheck, Users, Activity } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useSearchParams } from 'react-router-dom';
 import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { BeneficiariesPage, EvaluationsPage, HeadquarterProjectPage, SedeReportsPage } from './pages';
+import { BeneficiariesPage, EvaluationsPage, HeadquarterProjectPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
 import { User } from '@/types';
+import { useSedeMainDashboard } from '@/hooks/useSedeMainDashboard';
 
 const DirectorSedeView = () => {
   const { user } = useAuth();
@@ -26,53 +29,23 @@ const DirectorSedeView = () => {
     return <HeadquarterProjectPage />;
   }
 
-  if (tab === 'reports') {
-    return <SedeReportsPage />;
-  }
-
   // Dashboard principal (sin tab)
   return <MainDashboard user={user as unknown as User} />;
 };
 
 const MainDashboard = ({ user }: { user: User }) => {
+  const {
+    loading,
+    assignedHeadquarterName,
+    categorySummary,
+    topJugadores,
+    topCategoryFilter,
+    setTopCategoryFilter,
+    indicadores,
+    availableCategories,
+  } = useSedeMainDashboard();
 
-  // Categorías resumen
-  const categoriasResumen = [
-    { categoria: 'Categoría 1', jugadores: 8, capacidad: 10 },
-    { categoria: 'Categoría 2', jugadores: 10, capacidad: 12 },
-    { categoria: 'Categoría 3', jugadores: 12, capacidad: 12 },
-    { categoria: 'Categoría 4', jugadores: 9, capacidad: 10 },
-    { categoria: 'Categoría 5', jugadores: 6, capacidad: 8 },
-  ];
-
-  // Próximas actividades
-  const proximasActividades = [
-    {
-      id: 1,
-      titulo: 'Entrenamiento Técnico',
-      fecha: '2025-01-08',
-      categoria: 'Categoría 3',
-    },
-    {
-      id: 2,
-      titulo: 'Evaluación Física',
-      fecha: '2025-01-10',
-      categoria: 'Categoría 4',
-    },
-    {
-      id: 3,
-      titulo: 'Partido Amistoso',
-      fecha: '2025-01-12',
-      categoria: 'Categoría 5',
-    },
-  ];
-
-  // Top jugadores
-  const topJugadores = [
-    { nombre: 'Miguel Ángel Castro', rendimiento: 92, categoria: 'Categoría 4' },
-    { nombre: 'Sofía Morales', rendimiento: 90, categoria: 'Categoría 3' },
-    { nombre: 'Carlos Mendoza', rendimiento: 88, categoria: 'Categoría 2' },
-  ];
+  const maxJugadores = Math.max(...categorySummary.map((c) => c.jugadores), 1);
 
   return (
     <div className="w-full">
@@ -84,125 +57,181 @@ const MainDashboard = ({ user }: { user: User }) => {
         role={user?.role}
         icon={Box}
         roleIcon={UserCheck}
-        subtitle="Sede Norte"
+        subtitle={assignedHeadquarterName ?? 'Cargando sede...'}
       />
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Categorías */}
+        {/* Estado por Categoría */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Trophy className="h-5 w-5" />
               Estado por Categoría
             </CardTitle>
-            <CardDescription>Distribución de jugadores</CardDescription>
+            <CardDescription>Distribución de jugadores en la sede</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {categoriasResumen.map((cat, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm">{cat.categoria}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {cat.jugadores}/{cat.capacidad}
-                  </span>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-2 w-full" />
                 </div>
-                <Progress value={(cat.jugadores / cat.capacidad) * 100} className="h-2" />
-              </div>
-            ))}
+              ))
+            ) : categorySummary.every((c) => c.jugadores === 0) ? (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No hay beneficiarios registrados en esta sede.
+              </p>
+            ) : (
+              categorySummary.map((cat) => (
+                <div key={cat.categoria} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-sm">{cat.categoria}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {cat.jugadores} jugador{cat.jugadores !== 1 ? 'es' : ''}
+                    </span>
+                  </div>
+                  <Progress
+                    value={cat.jugadores === 0 ? 0 : (cat.jugadores / maxJugadores) * 100}
+                    className="h-2"
+                  />
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
-        {/* Próximas Actividades */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Próximas Actividades
-            </CardTitle>
-            <CardDescription>Agenda de la semana</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {proximasActividades.map((actividad) => (
-              <div key={actividad.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                <div className="flex-1 space-y-1">
-                  <p className="font-medium text-sm">{actividad.titulo}</p>
-                  <p className="text-xs text-muted-foreground">{actividad.categoria}</p>
-                </div>
-                <Badge variant="outline" className="shrink-0">
-                  {new Date(actividad.fecha).toLocaleDateString('es-CO', {
-                    day: 'numeric',
-                    month: 'short',
-                  })}
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Indicadores y Top Jugadores */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Indicadores de Rendimiento */}
+        {/* Indicadores de la Sede */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
               Indicadores de la Sede
             </CardTitle>
-            <CardDescription>Métricas clave</CardDescription>
+            <CardDescription>Métricas basadas en evaluaciones</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Asistencia Promedio</span>
-                  <span className="text-sm font-bold">94%</span>
-                </div>
-                <Progress value={94} className="h-2" />
+            {loading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-2 w-full" />
+                  </div>
+                ))}
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Rendimiento Deportivo</span>
-                  <span className="text-sm font-bold">88%</span>
+            ) : (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Activity className="h-4 w-4" />
+                      Rendimiento Deportivo
+                    </span>
+                    <span className="text-sm font-bold">{indicadores.avgDeportivo}%</span>
+                  </div>
+                  <Progress value={indicadores.avgDeportivo} className="h-2" />
                 </div>
-                <Progress value={88} className="h-2" />
-              </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Rendimiento Académico</span>
-                  <span className="text-sm font-bold">4.3</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      Beneficiarios Activos
+                    </span>
+                    <span className="text-sm font-bold">
+                      {indicadores.activeBenef}/{indicadores.totalBenef} ({indicadores.pctActivos}%)
+                    </span>
+                  </div>
+                  <Progress value={indicadores.pctActivos} className="h-2" />
                 </div>
-                <Progress value={86} className="h-2" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      Cobertura de Evaluaciones
+                    </span>
+                    <span className="text-sm font-bold">
+                      {indicadores.uniqueEvaluated}/{indicadores.totalBenef} ({indicadores.pctEvaluados}%)
+                    </span>
+                  </div>
+                  <Progress value={indicadores.pctEvaluados} className="h-2" />
+                </div>
+                <div className="pt-2 border-t">
+                  <p className="text-xs text-muted-foreground text-right">
+                    {indicadores.totalEvaluaciones} evaluación{indicadores.totalEvaluaciones !== 1 ? 'es' : ''} registrada{indicadores.totalEvaluaciones !== 1 ? 's' : ''}
+                  </p>
+                </div>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
+      </div>
 
-        {/* Top Jugadores */}
+      {/* Top Jugadores */}
+      <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Star className="h-5 w-5" />
-              Top Jugadores
-            </CardTitle>
-            <CardDescription>Mejor rendimiento del mes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {topJugadores.map((jugador, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
-                  #{index + 1}
-                </div>
-                <div className="flex-1 space-y-1">
-                  <p className="font-medium text-sm">{jugador.nombre}</p>
-                  <p className="text-xs text-muted-foreground">{jugador.categoria}</p>
-                </div>
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                  {jugador.rendimiento}%
-                </Badge>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5" />
+                  Top Jugadores
+                </CardTitle>
+                <CardDescription>Mejor rendimiento técnico por evaluación</CardDescription>
               </div>
-            ))}
+              <Select value={topCategoryFilter} onValueChange={setTopCategoryFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Todas las categorías" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas las categorías</SelectItem>
+                  {availableCategories.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <Skeleton key={i} className="h-14 w-full rounded-lg" />
+                ))}
+              </div>
+            ) : topJugadores.length === 0 ? (
+              <p className="text-sm text-muted-foreground text-center py-6">
+                {topCategoryFilter === 'all'
+                  ? 'No hay evaluaciones técnicas registradas para esta sede.'
+                  : `No hay evaluaciones técnicas para ${topCategoryFilter}.`}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {topJugadores.map((jugador, index) => (
+                  <div
+                    key={`${jugador.name}-${index}`}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/50"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm shrink-0">
+                      #{index + 1}
+                    </div>
+                    <div className="flex-1 space-y-1 min-w-0">
+                      <p className="font-medium text-sm truncate">{jugador.name}</p>
+                      <p className="text-xs text-muted-foreground">{jugador.category}</p>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className="bg-green-50 text-green-700 border-green-200 shrink-0"
+                    >
+                      {jugador.score}%
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>

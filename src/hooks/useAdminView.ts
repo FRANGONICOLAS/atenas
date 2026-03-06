@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
 import { userService } from "@/api/services/user.service";
+import { headquarterService } from "@/api/services";
 import type { User as DBUser } from "@/api/types";
 import { client } from "@/api/supabase/client";
 import {
@@ -48,6 +49,10 @@ export const useAdminDashboard = () => {
     Array<{ role_id: string; role_name: string }>
   >([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedHeadquarterId, setSelectedHeadquarterId] = useState<string>("");
+  const [availableHeadquarters, setAvailableHeadquarters] = useState<
+    Array<{ headquarters_id: string; name: string }>
+  >([]);
   const [userForm, setUserForm] = useState<UserForm>({
     first_name: "",
     last_name: "",
@@ -107,15 +112,19 @@ export const useAdminDashboard = () => {
     const loadData = async () => {
       try {
         setIsLoadingUsers(true);
-        const [usersData, rolesData] = await Promise.all([
+        const [usersData, rolesData, hqData] = await Promise.all([
           userService.getAll(),
           client.from("role").select("role_id, role_name"),
+          headquarterService.getAll(),
         ]);
 
         setUsers(usersData);
         if (rolesData.data) {
           setAvailableRoles(rolesData.data);
         }
+        setAvailableHeadquarters(
+          hqData.map((hq) => ({ headquarters_id: hq.headquarters_id, name: hq.name }))
+        );
       } catch (error) {
         console.error("Error loading data:", error);
         toast.error("Error al cargar datos", {
@@ -165,6 +174,7 @@ export const useAdminDashboard = () => {
   const handleCreateUser = () => {
     setEditingUser(null);
     setSelectedRoles(["donator"]);
+    setSelectedHeadquarterId("");
     setUserForm({
       first_name: "",
       last_name: "",
@@ -186,6 +196,8 @@ export const useAdminDashboard = () => {
       birthdate: user.birthdate || "",
       phone: user.phone || "",
     });
+
+    setSelectedHeadquarterId(user.headquarter_id || "");
 
     try {
       const roles = await userService.getUserRoles(user.id);
@@ -257,6 +269,9 @@ export const useAdminDashboard = () => {
           username: userForm.username,
           birthdate: userForm.birthdate || null,
           phone: userForm.phone || null,
+          headquarter_id: selectedRoles.includes("director_sede")
+            ? selectedHeadquarterId || null
+            : null,
         });
 
         // Actualizar roles
@@ -311,6 +326,9 @@ export const useAdminDashboard = () => {
               birthdate: userForm.birthdate || null,
               phone: userForm.phone || null,
               roles: selectedRoles,
+              headquarter_id: selectedRoles.includes("director_sede")
+                ? selectedHeadquarterId || null
+                : null,
             }),
           },
         );
@@ -509,6 +527,9 @@ export const useAdminDashboard = () => {
     availableRoles,
     selectedRoles,
     setSelectedRoles,
+    selectedHeadquarterId,
+    setSelectedHeadquarterId,
+    availableHeadquarters,
     userForm,
     setUserForm,
     contentForm,

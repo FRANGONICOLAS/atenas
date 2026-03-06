@@ -19,7 +19,7 @@ export interface BeneficiaryRow {
   phone: string | null
   photo_url: string | null
   registry_date: string | null
-  sex: string | null
+  gender: string | null
   status: string | null
 }
 
@@ -40,7 +40,7 @@ export interface BeneficiaryInsert {
   phone?: string | null
   photo_url?: string | null
   registry_date?: string | null
-  sex?: string | null
+  gender?: string | null
   status?: string | null
 }
 

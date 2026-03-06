@@ -57,19 +57,6 @@ export const SiteContentDialog = ({
           {isCreating ? (
             <>
               <div className="space-y-2">
-                <Label htmlFor="content_key">Clave de Contenido *</Label>
-                <Input
-                  id="content_key"
-                  value={formData.content_key}
-                  onChange={(e) => setFormData({ ...formData, content_key: e.target.value })}
-                  placeholder="home_hero, home_impact, etc."
-                />
-                <p className="text-xs text-muted-foreground">
-                  Identificador único (ej: home_hero, home_transformation_1)
-                </p>
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="title">Título *</Label>
                 <Input
                   id="title"
@@ -87,45 +74,6 @@ export const SiteContentDialog = ({
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Descripción del contenido"
                   rows={3}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="page_section">Sección *</Label>
-                  <select
-                    id="page_section"
-                    value={formData.page_section}
-                    onChange={(e) => setFormData({ ...formData, page_section: e.target.value as 'home' | 'about' | 'categories' })}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  >
-                    <option value="home">Inicio</option>
-                    <option value="about">Quiénes Somos</option>
-                    <option value="categories">Categorías</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="content_type">Tipo</Label>
-                  <select
-                    id="content_type"
-                    value={formData.content_type}
-                    onChange={(e) => setFormData({ ...formData, content_type: e.target.value as 'image' | 'video' })}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  >
-                    <option value="image">Foto</option>
-                    <option value="video">Video</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="category">Categoría</Label>
-                <Input
-                  id="category"
-                  value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="hero, banner, card, etc."
                 />
               </div>
 

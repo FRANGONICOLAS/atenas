@@ -119,14 +119,21 @@ export const userService = {
         });
 
       if (error) throw error;
-      
-      // Enrich user with roles from user_role table
-      const roles = await this.getUserRoles(data.id);
-      return { ...data, roles };
+
+      // register_new_user RETURNS SETOF so PostgREST gives back an array;
+      // handle both array (SETOF) and single-object responses.
+      const createdUser = (Array.isArray(data) ? data[0] : data) as UserRow | null;
+      if (!createdUser?.id) {
+        throw new Error("register_new_user returned empty result");
+      }
+
+      const roles = await this.getUserRoles(createdUser.id);
+      return { ...createdUser, roles } as User;
     } catch (rpcError: unknown) {
-      // Si es duplicado de email, devolver el existente
-      const code = (rpcError as { code?: string; details?: string; message?: string })?.code || (rpcError as { details?: string })?.details || (rpcError as { message?: string })?.message;
-      if (typeof code === "string" && code.includes("23505")) {
+      const rpcCode = (rpcError as { code?: string })?.code;
+
+      // Si es duplicado de email/username en el RPC, devolver el existente
+      if (rpcCode === "23505") {
         try {
           const existing = await this.findByEmail(userData.email);
           if (existing) {
@@ -153,9 +160,21 @@ export const userService = {
         }])
         .select()
         .single();
-      
-      if (insertError) throw insertError;
-      
+
+      if (insertError) {
+        const insertCode = (insertError as { code?: string })?.code;
+        // 23505 = duplicate key: the RPC already created the user — just return them
+        if (insertCode === "23505") {
+          const existing = await this.getById(userData.id).catch(() => null)
+            ?? await this.findByEmail(userData.email).catch(() => null);
+          if (existing) {
+            const roles = await this.getUserRoles(existing.id).catch(() => []);
+            return { ...existing, roles } as User;
+          }
+        }
+        throw insertError;
+      }
+
       // Insert role manually
       const { error: roleError } = await client
         .from("user_role")
@@ -163,9 +182,9 @@ export const userService = {
           user_id: userData.id,
           role_id: (userData.role || "donator").toLowerCase(),
         });
-      
+
       if (roleError) throw roleError;
-      
+
       const roles = await this.getUserRoles(userData.id);
       return { ...userData_insert, roles };
     }
