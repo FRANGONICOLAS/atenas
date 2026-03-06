@@ -27,9 +27,6 @@ const UsersPage = () => {
     handleSaveUser,
     handleExportUsersExcel,
     handleExportUsersPDF,
-    handleExportDonationsExcel,
-    handleExportDonationsPDF,
-    handleExportConsolidated,
   } = useAdminDashboard();
 
   if (isLoadingUsers) {
@@ -57,9 +54,6 @@ const UsersPage = () => {
           <ExportButton
             onExportUsersExcel={handleExportUsersExcel}
             onExportUsersPDF={handleExportUsersPDF}
-            onExportDonationsExcel={handleExportDonationsExcel}
-            onExportDonationsPDF={handleExportDonationsPDF}
-            onExportConsolidated={handleExportConsolidated}
           />
         </div>
       </div>
