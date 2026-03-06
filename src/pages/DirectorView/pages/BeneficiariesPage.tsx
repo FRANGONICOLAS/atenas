@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useBeneficiaries } from "@/hooks/useBeneficiaries";
-import { FullScreenLoader } from '@/components/common/FullScreenLoader';
+import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -116,11 +116,7 @@ const BeneficiariesPage = () => {
   };
 
   const handleSaveForm = async () => {
-    const success = await handleSave(
-      form,
-      !!editing,
-      editing?.beneficiary_id,
-    );
+    const success = await handleSave(form, !!editing, editing?.beneficiary_id);
     if (success) {
       setShowForm(false);
     }
@@ -162,10 +158,6 @@ const BeneficiariesPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">Beneficiarios</h2>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar
-          </Button>
           <Button variant="outline" size="sm" onClick={handleExportExcelClick}>
             <Download className="w-4 h-4 mr-2" />
             Excel
@@ -173,6 +165,10 @@ const BeneficiariesPage = () => {
           <Button variant="outline" size="sm" onClick={handleExportPDFClick}>
             <Download className="w-4 h-4 mr-2" />
             PDF
+          </Button>
+          <Button size="sm" onClick={openCreate}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Beneficiario
           </Button>
         </div>
       </div>
@@ -217,29 +213,29 @@ const BeneficiariesPage = () => {
           />
 
           <Tabs value={statusTab} onValueChange={setStatusTab} className="mt-4">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="all">Todos</TabsTrigger>
-                <TabsTrigger value="activo">Activos</TabsTrigger>
-                <TabsTrigger value="pendiente">Pendientes</TabsTrigger>
-                <TabsTrigger value="inactivo">Inactivos</TabsTrigger>
-                <TabsTrigger value="suspendido">Suspendidos</TabsTrigger>
-              </TabsList>
-              <TabsContent value={statusTab} className="mt-4">
-                <BeneficiaryTable
-                  beneficiaries={filtered}
-                  headquarters={headquarters}
-                  onView={setDetail}
-                  onEdit={openEdit}
-                  onDelete={(b) => {
-                    setDeleteTarget(b);
-                    setShowDelete(true);
-                  }}
-                  calculateAge={calculateAge}
-                  getStatusBadge={getStatusBadge}
-                  getPerformanceColor={getPerformanceColor}
-                />
-              </TabsContent>
-            </Tabs>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="all">Todos</TabsTrigger>
+              <TabsTrigger value="activo">Activos</TabsTrigger>
+              <TabsTrigger value="pendiente">Pendientes</TabsTrigger>
+              <TabsTrigger value="inactivo">Inactivos</TabsTrigger>
+              <TabsTrigger value="suspendido">Suspendidos</TabsTrigger>
+            </TabsList>
+            <TabsContent value={statusTab} className="mt-4">
+              <BeneficiaryTable
+                beneficiaries={filtered}
+                headquarters={headquarters}
+                onView={setDetail}
+                onEdit={openEdit}
+                onDelete={(b) => {
+                  setDeleteTarget(b);
+                  setShowDelete(true);
+                }}
+                calculateAge={calculateAge}
+                getStatusBadge={getStatusBadge}
+                getPerformanceColor={getPerformanceColor}
+              />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

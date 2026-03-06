@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProjects } from "@/hooks/useProjects";
 import { useDirectorView } from "@/hooks/useDirectorView";
-import { FullScreenLoader } from '@/components/common/FullScreenLoader';
+import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
@@ -12,7 +12,7 @@ import { ProjectsTable } from "../components/Projects/ProjectsTable";
 import { ProjectDialog } from "../components/Projects/ProjectDialog";
 import { ProjectDetailDialog } from "../components/Projects/ProjectDetailDialog";
 import { toast } from "sonner";
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Target, Plus, Download } from "lucide-react";
 import {
   generateProjectsExcel,
@@ -48,7 +48,7 @@ const ProjectsPage = () => {
     const hq = headquarters.find(
       (h) =>
         h.headquarters_id === String(id) ||
-        String(h.headquarters_id) === String(id)
+        String(h.headquarters_id) === String(id),
     );
     return hq?.name || "Sin sede";
   };
@@ -71,12 +71,7 @@ const ProjectsPage = () => {
         priorityFilter === "all" || project.priority === priorityFilter;
       const matchesType = typeFilter === "all" || project.type === typeFilter;
 
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesPriority &&
-        matchesType
-      );
+      return matchesSearch && matchesCategory && matchesPriority && matchesType;
     });
   }, [projects, search, categoryFilter, priorityFilter, typeFilter]);
 
@@ -128,7 +123,7 @@ const ProjectsPage = () => {
       projectData,
       !!editing,
       editing?.project_id,
-      headquarterId
+      headquarterId,
     );
 
     if (success) {
@@ -171,7 +166,10 @@ const ProjectsPage = () => {
     const data = mapProjectsToReport(filteredProjects);
     generateProjectsExcel(data, "proyectos");
     toast.success(t.reports.excelGenerated, {
-      description: t.projects.exported.replace('{{count}}', String(data.length)),
+      description: t.projects.exported.replace(
+        "{{count}}",
+        String(data.length),
+      ),
     });
   };
 
@@ -179,7 +177,10 @@ const ProjectsPage = () => {
     const data = mapProjectsToReport(filteredProjects);
     generateProjectsPDF(data, "proyectos");
     toast.success(t.reports.pdfGenerated, {
-      description: t.projects.exported.replace('{{count}}', String(data.length)),
+      description: t.projects.exported.replace(
+        "{{count}}",
+        String(data.length),
+      ),
     });
   };
 
@@ -204,7 +205,7 @@ const ProjectsPage = () => {
             <Download className="h-4 w-4 mr-2" />
             PDF
           </Button>
-          <Button onClick={openCreate}>
+          <Button size="sm" onClick={openCreate}>
             <Plus className="h-4 w-4 mr-2" />
             Nuevo Proyecto
           </Button>
@@ -290,4 +291,3 @@ const ProjectsPage = () => {
 };
 
 export default ProjectsPage;
-

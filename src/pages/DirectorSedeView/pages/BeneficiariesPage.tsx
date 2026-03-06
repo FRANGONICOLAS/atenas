@@ -156,10 +156,6 @@ const BeneficiariesPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">Beneficiarios</h2>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={openCreate}>
-            <Plus className="w-4 h-4 mr-2" />
-            Agregar
-          </Button>
           <Button variant="outline" size="sm" onClick={handleExportExcelClick}>
             <Download className="w-4 h-4 mr-2" />
             Excel
@@ -167,6 +163,10 @@ const BeneficiariesPage = () => {
           <Button variant="outline" size="sm" onClick={handleExportPDFClick}>
             <Download className="w-4 h-4 mr-2" />
             PDF
+          </Button>
+          <Button size="sm" onClick={openCreate}>
+            <Plus className="w-4 h-4 mr-2" />
+            Nuevo Beneficiario
           </Button>
         </div>
       </div>

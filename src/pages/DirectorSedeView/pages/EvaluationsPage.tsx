@@ -17,7 +17,13 @@ import {
   EditEvaluationModal,
 } from "@/pages/DirectorSedeView/components/headquartersEvaluation";
 import type { Evaluation, EvaluationType } from "@/types";
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 const EvaluationsPage = () => {
   const {
@@ -38,11 +44,11 @@ const EvaluationsPage = () => {
   const navigate = useNavigate();
 
   // beneficiaries for chart selector
-  const {
-    filtered: filteredBeneficiaries,
-    loading: beneficiariesLoading,
-  } = useSedeBeneficiaries();
-  const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<string | null>(null);
+  const { filtered: filteredBeneficiaries, loading: beneficiariesLoading } =
+    useSedeBeneficiaries();
+  const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
+    string | null
+  >(null);
 
   // default to first beneficiary when available
   useEffect(() => {
@@ -116,7 +122,7 @@ const EvaluationsPage = () => {
           </h2>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleCreateEvaluation}>
+          <Button size="sm" onClick={handleCreateEvaluation}>
             <Plus className="w-4 h-4 mr-2" />
             Agregar
           </Button>
@@ -139,17 +145,16 @@ const EvaluationsPage = () => {
               <Select
                 value={selectedBeneficiaryId ?? ""}
                 onValueChange={(v) => setSelectedBeneficiaryId(v || null)}
-                disabled={beneficiariesLoading || filteredBeneficiaries.length === 0}
+                disabled={
+                  beneficiariesLoading || filteredBeneficiaries.length === 0
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Beneficiario" />
                 </SelectTrigger>
                 <SelectContent>
                   {filteredBeneficiaries.map((b) => (
-                    <SelectItem
-                      key={b.beneficiary_id}
-                      value={b.beneficiary_id}
-                    >
+                    <SelectItem key={b.beneficiary_id} value={b.beneficiary_id}>
                       {`${b.first_name} ${b.last_name}`}
                     </SelectItem>
                   ))}
@@ -158,9 +163,7 @@ const EvaluationsPage = () => {
             </div>
           </div>
           {selectedBeneficiaryId ? (
-            <EvaluationProgressChart
-              beneficiaryId={selectedBeneficiaryId}
-            />
+            <EvaluationProgressChart beneficiaryId={selectedBeneficiaryId} />
           ) : (
             <div className="text-center text-sm text-muted-foreground py-10">
               Seleccione un beneficiario para ver su progreso.
