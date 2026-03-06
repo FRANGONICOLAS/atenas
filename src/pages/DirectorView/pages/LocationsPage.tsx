@@ -420,8 +420,8 @@ const LocationsPage = () => {
                                 </p>
                               )}
                             </div>
-                            <Badge variant="outline">
-                              {project.status}
+                            <Badge variant={project.status === 'active' ? 'default' : 'secondary'}>
+                              {project.status === 'active' ? 'Activo' : project.status === 'completed' ? 'Completado' : project.status === 'pending' ? 'Pendiente' : project.status}
                             </Badge>
                           </div>
                         </div>

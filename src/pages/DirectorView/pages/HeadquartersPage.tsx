@@ -10,7 +10,7 @@ import { HeadquarterFilters } from "../components/Headquarters/HeadquarterFilter
 import { HeadquartersTable } from "../components/Headquarters/HeadquartersTable";
 import { HeadquartersMap } from "../components/Headquarters/HeadquartersMap";
 import { HeadquartersDialog } from "../components/Headquarters/HeadquartersDialog";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -281,8 +281,8 @@ const HeadquartersPage = () => {
                                 </p>
                               )}
                             </div>
-                            <Badge variant="outline">
-                              {project.status}
+                            <Badge variant={project.status === 'active' ? 'default' : 'secondary'}>
+                              {project.status === 'active' ? 'Activo' : project.status === 'completed' ? 'Completado' : project.status === 'pending' ? 'Pendiente' : project.status}
                             </Badge>
                           </div>
                         </div>
