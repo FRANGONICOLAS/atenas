@@ -5,7 +5,7 @@ import { DashboardHeader } from '@/components/common/DashboardHeader';
 import {
   StatCard,
 } from './components';
-import { LocationsPage, ReportsPage, ProjectsPage, BeneficiariesPage, HeadquartersPage } from './pages';
+import { LocationsPage, ProjectsPage, BeneficiariesPage, HeadquartersPage } from './pages';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -23,10 +23,6 @@ const DirectorView = () => {
   // Si hay un tab específico, renderizar la página correspondiente
   if (tab === 'locations') {
     return <LocationsPage />;
-  }
-
-  if (tab === 'reports') {
-    return <ReportsPage />;
   }
 
   if (tab === 'projects') {

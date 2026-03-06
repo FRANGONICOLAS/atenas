@@ -277,6 +277,16 @@ export const useSedeProjects = () => {
 
   const handleDeleteProject = async (projectId: string, projectName: string) => {
     try {
+      // Verificar si el proyecto tiene donaciones
+      const totalRaised = await projectService.getTotalRaised(projectId);
+      
+      if (totalRaised > 0) {
+        toast.error("No se puede eliminar", {
+          description: "No puedes eliminar un proyecto que tiene donaciones asociadas",
+        });
+        return;
+      }
+
       await projectService.delete(projectId);
       await loadProjects(assignedHeadquarterId);
       toast.success("Proyecto eliminado", {

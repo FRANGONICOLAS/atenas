@@ -98,12 +98,6 @@ const navSections: NavSection[] = [
         href: '/director?tab=headquarters',
         icon: Building,
         description: 'Gestión de sedes con mapa'
-      },
-      {
-        title: 'Reportes',
-        href: '/director?tab=reports',
-        icon: FileText,
-        description: 'Reportes y estadísticas'
       }
     ]
   },
