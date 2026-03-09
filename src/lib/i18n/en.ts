@@ -501,7 +501,15 @@ export const en = {
       currency: "Currency",
       amount: "Amount",
       date: "Date",
-      method: "Payment Method"
+      method: "Payment Method",
+      status: "Status",
+      orderId: "Order"
+    },
+    transactionStatus: {
+      APPROVED: "Approved",
+      PENDING: "Pending",
+      DECLINED: "Declined",
+      ERROR: "Error"
     },
     status: {
       loading: "Loading donation statistics...",

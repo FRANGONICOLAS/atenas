@@ -565,7 +565,15 @@ export const es = {
       currency: "Moneda",
       amount: "Monto",
       date: "Fecha",
-      method: "Método de pago"
+      method: "Método de pago",
+      status: "Estado",
+      orderId: "Orden"
+    },
+    transactionStatus: {
+      APPROVED: "Aprobado",
+      PENDING: "Pendiente",
+      DECLINED: "Rechazado",
+      ERROR: "Error"
     },
     status: {
       loading: "Cargando estadísticas de donaciones...",

@@ -48,22 +48,12 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
     try {
       setIsLoading(true);
       setError(null);
-      
-      console.log('🚀 Starting Bold checkout process...');
-      console.log('User:', user.id);
-      console.log('Amount:', options.amount);
 
-      // 1. Cargar script de Bold
-      console.log('📦 Loading Bold script...');
-      await initBoldCheckout();
-      console.log('✅ Bold script loaded');
-
-      // 2. Generar order ID único
+      // Generar order ID único
       const newOrderId = generateOrderId('ATENAS');
       setOrderId(newOrderId);
-      console.log('🆔 Order ID generated:', newOrderId);
 
-      // 3. Preparar request para firma de integridad
+      // Preparar request para firma de integridad
       const signatureRequest = {
         orderId: newOrderId,
         currency: options.currency || 'COP',
@@ -71,33 +61,32 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
         description: options.description
       };
 
-      console.log('📝 Requesting signature from Edge Function...', signatureRequest);
-
-      // 4. Obtener firma de integridad del backend
+      // Obtener firma de integridad del backend
       const { integritySignature } = await boldService.requestIntegritySignature(
         signatureRequest
       );
 
-      console.log('✅ Signature received:', integritySignature);
-
-      // 5. Obtener configuración de Bold
+      // Obtener configuración de Bold
       const config = boldService.getBoldConfig();
 
-      // 6. Crear registro en Supabase
-      console.log('📝 Creating Bold transaction in Supabase...');
+      // Crear registro en Supabase
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const validProjectId = options.projectId && uuidRegex.test(options.projectId)
+        ? options.projectId
+        : null;
+
       await boldService.createBoldTransaction({
         order_id: newOrderId,
         user_id: user.id,
-        project_id: options.projectId,
+        project_id: validProjectId,
         amount: options.amount, // Ya es number, no necesita formateo
         currency: options.currency || 'COP',
         status: 'PENDING',
         description: options.description,
         integrity_signature: integritySignature
       });
-      console.log('✅ Transaction created in Supabase');
 
-      // 7. Configurar checkout de Bold con Embedded Checkout
+      // Configurar checkout de Bold con Embedded Checkout
       const checkoutConfig: BoldCheckoutConfig = {
         orderId: newOrderId,
         currency: options.currency || 'COP',
@@ -109,37 +98,16 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
         renderMode: 'embedded' // Modal sin salir de la página
       };
 
-      console.log('🔧 Bold checkout config:', {
-        orderId: checkoutConfig.orderId,
-        currency: checkoutConfig.currency,
-        amount: checkoutConfig.amount,
-        apiKey: checkoutConfig.apiKey.substring(0, 15) + '...',
-        integritySignature: checkoutConfig.integritySignature.substring(0, 20) + '...',
-        redirectionUrl: checkoutConfig.redirectionUrl,
-        renderMode: checkoutConfig.renderMode
-      });
-
-      // Log para depuración: mostrar qué se usó para generar la firma
-      console.log('🔐 Signature was generated from:', {
-        orderId: newOrderId,
-        amount: formatBoldAmount(options.amount),
-        currency: options.currency || 'COP',
-        concatenated: `${newOrderId}${formatBoldAmount(options.amount)}${options.currency || 'COP'}`
-      });
-
-      // 8. Crear instancia de checkout
+      // Crear instancia de checkout
       if (!window.BoldCheckout) {
         throw new Error('BoldCheckout no está disponible. El script no se cargó correctamente.');
       }
 
-      console.log('🚀 Creating Bold checkout instance...');
       const checkout = new window.BoldCheckout(checkoutConfig);
       checkoutInstanceRef.current = checkout;
 
-      // 9. Abrir checkout
-      console.log('📱 Opening Bold checkout...');
+      // Abrir checkout
       checkout.open();
-      console.log('✅ Bold checkout opened successfully');
 
       // Limpiar timeout
       clearTimeout(timeoutId);
@@ -156,7 +124,6 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
         : 'Error al abrir el checkout de Bold';
       
       setError(errorMessage);
-      console.error('❌ Bold checkout error:', err);
       
       // Mostrar detalles del error
       if (err instanceof Error) {

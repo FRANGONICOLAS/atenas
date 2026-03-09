@@ -7,9 +7,7 @@ import type {
 } from '@/types/bold.types';
 
 export const boldService = {
-  /**
-   * Obtener configuración de Bold desde variables de entorno
-   */
+  // Obtener configuración de Bold desde variables de entorno
   getBoldConfig(): { apiKey: string; isProduction: boolean; redirectionUrl: string } {
     // En producción, usar variables de entorno
     const apiKey = import.meta.env.VITE_BOLD_API_KEY || '';
@@ -23,9 +21,7 @@ export const boldService = {
     return { apiKey, isProduction, redirectionUrl };
   },
 
-  /**
-   * Solicitar firma de integridad a Supabase Edge Function
-   */
+  // Solicitar firma de integridad a Supabase Edge Function
   async requestIntegritySignature(
     request: BoldSignatureRequest
   ): Promise<BoldSignatureResponse> {
@@ -63,9 +59,7 @@ export const boldService = {
     }
   },
 
-  /**
-   * Crear registro de transacción Bold en Supabase
-   */
+  // Crear registro de transacción Bold en Supabase
   async createBoldTransaction(
     transaction: Omit<BoldTransaction, 'bold_transaction_id' | 'created_at' | 'updated_at'>
   ): Promise<BoldTransaction> {
@@ -79,9 +73,7 @@ export const boldService = {
     return data;
   },
 
-  /**
-   * Actualizar estado de transacción Bold
-   */
+  // Actualizar estado de transacción Bold
   async updateBoldTransaction(
     orderId: string,
     updates: Partial<BoldTransaction>
@@ -100,9 +92,7 @@ export const boldService = {
     return data;
   },
 
-  /**
-   * Obtener transacción Bold por order_id
-   */
+  // Obtener transacción Bold por order_id
   async getBoldTransactionByOrderId(orderId: string): Promise<BoldTransaction | null> {
     const { data, error } = await client
       .from('bold_transactions')
@@ -118,9 +108,7 @@ export const boldService = {
     return data;
   },
 
-  /**
-   * Obtener transacciones Bold de un usuario
-   */
+  // Obtener transacciones Bold de un usuario
   async getUserBoldTransactions(userId: string): Promise<BoldTransaction[]> {
     const { data, error } = await client
       .from('bold_transactions')
@@ -130,5 +118,17 @@ export const boldService = {
 
     if (error) throw error;
     return data || [];
+  },
+
+  // Obtener transacciones Bold de un usuario con info del proyecto
+  async getUserBoldTransactionsWithProjects(userId: string): Promise<import('@/types/bold.types').BoldTransactionWithProject[]> {
+    const { data, error } = await client
+      .from('bold_transactions')
+      .select('*, project(project_id, name, category)')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return (data || []) as import('@/types/bold.types').BoldTransactionWithProject[];
   }
 };

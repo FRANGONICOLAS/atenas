@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DollarSign, RefreshCw } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { donationService } from '@/api/services/donation.service';
-import type { DonationWithProject } from '@/types/donation.types';
+import { boldService } from '@/api/services/bold.service';
+import type { BoldTransactionWithProject } from '@/types/bold.types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+// import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -35,7 +36,7 @@ const parseAmount = (value: string | number | null | undefined) => {
 };
 
 const formatCurrency = (amount: number, currency?: string) => {
-  const finalCurrency = currency || 'USD';
+  const finalCurrency = currency || 'COP';
   try {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -58,20 +59,27 @@ const formatDate = (value?: string | null) => {
   });
 };
 
-const getProjectName = (donation: DonationWithProject) => {
-  return donation.project?.name || 'Proyecto sin nombre';
+const getProjectName = (tx: BoldTransactionWithProject) => {
+  return tx.project?.name || 'Libre Inversión';
 };
 
 const getPaymentMethodLabel = (value?: string | null) => {
   if (!value) return 'No especificado';
-  const normalized = value.replace(/_/g, ' ').toLowerCase();
-  return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  const map: Record<string, string> = {
+    CARD: 'Tarjeta',
+    PSE: 'PSE',
+    NEQUI: 'Nequi',
+    DAVIPLATA: 'Daviplata',
+    BANCOLOMBIA_TRANSFER: 'Bancolombia Transferencia',
+    BANCOLOMBIA_QR: 'Bancolombia QR',
+  };
+  return map[value.toUpperCase()] ?? value.replace(/_/g, ' ').toLowerCase().replace(/^\w/, c => c.toUpperCase());
 };
 
 export const DonationsHistory = () => {
   const { t } = useLanguage();
   const { user, isLoading: isAuthLoading } = useAuth();
-  const [donations, setDonations] = useState<DonationWithProject[]>([]);
+  const [transactions, setTransactions] = useState<BoldTransactionWithProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -81,7 +89,7 @@ export const DonationsHistory = () => {
     if (isAuthLoading) return;
 
     if (!user?.id) {
-      setDonations([]);
+      setTransactions([]);
       setLoading(false);
       setError(null);
       return;
@@ -90,7 +98,7 @@ export const DonationsHistory = () => {
     let isActive = true;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const loadDonations = async (attempt = 0) => {
+    const loadTransactions = async (attempt = 0) => {
       if (!isActive) return;
       if (attempt === 0) {
         setLoading(true);
@@ -98,9 +106,9 @@ export const DonationsHistory = () => {
       }
 
       try {
-        const data = await donationService.getUserDonations(user.id);
+        const data = await boldService.getUserBoldTransactionsWithProjects(user.id);
         if (!isActive) return;
-        setDonations(data);
+        setTransactions(data);
         setLoading(false);
         setRetryCount(0);
       } catch (err) {
@@ -108,7 +116,7 @@ export const DonationsHistory = () => {
         if (attempt < MAX_RETRIES) {
           const nextAttempt = attempt + 1;
           setRetryCount(nextAttempt);
-          retryTimer = setTimeout(() => loadDonations(nextAttempt), RETRY_DELAYS_MS[attempt]);
+          retryTimer = setTimeout(() => loadTransactions(nextAttempt), RETRY_DELAYS_MS[attempt]);
         } else {
           setError(err instanceof Error ? err.message : 'Error al cargar donaciones');
           setLoading(false);
@@ -116,7 +124,7 @@ export const DonationsHistory = () => {
       }
     };
 
-    loadDonations(0);
+    loadTransactions(0);
 
     return () => {
       isActive = false;
@@ -124,40 +132,36 @@ export const DonationsHistory = () => {
     };
   }, [user?.id, isAuthLoading]);
 
-  const sortedDonations = useMemo(() => {
-    const items = [...donations];
+  const sortedTransactions = useMemo(() => {
+    const items = [...transactions];
 
     items.sort((a, b) => {
-      const amountA = parseAmount(a.amount);
-      const amountB = parseAmount(b.amount);
-      const dateA = new Date(a.date || a.created_at || '').getTime();
-      const dateB = new Date(b.date || b.created_at || '').getTime();
+      const amountA = a.amount ?? 0;
+      const amountB = b.amount ?? 0;
+      const dateA = new Date(a.created_at || '').getTime();
+      const dateB = new Date(b.created_at || '').getTime();
 
       switch (sortBy) {
-        case 'date_asc':
-          return dateA - dateB;
-        case 'amount_desc':
-          return amountB - amountA;
-        case 'amount_asc':
-          return amountA - amountB;
+        case 'date_asc':  return dateA - dateB;
+        case 'amount_desc': return amountB - amountA;
+        case 'amount_asc':  return amountA - amountB;
         case 'date_desc':
-        default:
-          return dateB - dateA;
+        default:           return dateB - dateA;
       }
     });
 
     return items;
-  }, [donations, sortBy]);
+  }, [transactions, sortBy]);
 
   const handleRetry = () => {
     if (!user?.id) return;
     setError(null);
     setRetryCount(0);
     setLoading(true);
-    donationService
-      .getUserDonations(user.id)
+    boldService
+      .getUserBoldTransactionsWithProjects(user.id)
       .then((data) => {
-        setDonations(data);
+        setTransactions(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -165,6 +169,18 @@ export const DonationsHistory = () => {
         setLoading(false);
       });
   };
+
+  // const getStatusBadge = (status: string) => {
+  //   const upper = status?.toUpperCase();
+  //   const variants: Record<string, { variant: 'default' | 'secondary' | 'destructive' | 'outline'; label: string }> = {
+  //     APPROVED: { variant: 'default', label: t.donatorDashboard.transactionStatus.APPROVED },
+  //     PENDING:  { variant: 'secondary', label: t.donatorDashboard.transactionStatus.PENDING },
+  //     DECLINED: { variant: 'destructive', label: t.donatorDashboard.transactionStatus.DECLINED },
+  //     ERROR:    { variant: 'destructive', label: t.donatorDashboard.transactionStatus.ERROR },
+  //   };
+  //   const cfg = variants[upper] ?? { variant: 'outline' as const, label: status };
+  //   return <Badge variant={cfg.variant}>{cfg.label}</Badge>;
+  // };
 
   return (
     <Card>
@@ -213,86 +229,76 @@ export const DonationsHistory = () => {
           </div>
         )}
 
-        {!loading && !error && sortedDonations.length === 0 && (
+        {!loading && !error && sortedTransactions.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground">
             <DollarSign className="h-10 w-10 opacity-50" />
             <p>{t.donatorDashboard.status.noDonations}</p>
           </div>
         )}
 
-        {!loading && !error && sortedDonations.length > 0 && (
+        {!loading && !error && sortedTransactions.length > 0 && (
           <>
+            {/* Desktop table */}
             <div className="hidden md:block">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>{t.donatorDashboard.table.project}</TableHead>
-                    <TableHead>{t.donatorDashboard.table.currency}</TableHead>
                     <TableHead>{t.donatorDashboard.table.amount}</TableHead>
                     <TableHead>{t.donatorDashboard.table.date}</TableHead>
                     <TableHead>{t.donatorDashboard.table.method}</TableHead>
+                    {/* <TableHead>{t.donatorDashboard.table.status}</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedDonations.map((donation) => {
-                    const amount = parseAmount(donation.amount);
-                    const displayDate = donation.date || donation.created_at;
-
-                    return (
-                      <TableRow key={donation.donation_id}>
-                        <TableCell className="font-medium">
-                          {getProjectName(donation)}
-                        </TableCell>
-                        <TableCell>{donation.currency || 'USD'}</TableCell>
-                        <TableCell>{formatCurrency(amount, donation.currency)}</TableCell>
-                        <TableCell>{formatDate(displayDate)}</TableCell>
-                        <TableCell>{getPaymentMethodLabel(donation.pay_method)}</TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  {sortedTransactions.map((tx) => (
+                    <TableRow key={tx.bold_transaction_id}>
+                      <TableCell className="font-medium">{getProjectName(tx)}</TableCell>
+                      <TableCell>{formatCurrency(tx.amount, tx.currency)}</TableCell>
+                      <TableCell>{formatDate(tx.created_at)}</TableCell>
+                      <TableCell>{getPaymentMethodLabel(tx.payment_method)}</TableCell>
+                      {/* <TableCell>{getStatusBadge(tx.status)}</TableCell> */}
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
 
+            {/* Mobile cards */}
             <div className="space-y-4 md:hidden">
-              {sortedDonations.map((donation) => {
-                const amount = parseAmount(donation.amount);
-                const displayDate = donation.date || donation.created_at;
-
-                return (
-                  <div
-                    key={donation.donation_id}
-                    className="rounded-lg border border-border p-4 shadow-sm"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.project}</p>
-                        <p className="font-semibold text-foreground">{getProjectName(donation)}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.amount}</p>
-                        <p className="font-semibold text-foreground">
-                          {formatCurrency(amount, donation.currency)}
-                        </p>
-                      </div>
+              {sortedTransactions.map((tx) => (
+                <div
+                  key={tx.bold_transaction_id}
+                  className="rounded-lg border border-border p-4 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.project}</p>
+                      <p className="font-semibold text-foreground">{getProjectName(tx)}</p>
                     </div>
-                    <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">{t.donatorDashboard.table.currency}</p>
-                        <p className="font-medium">{donation.currency || 'USD'}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">{t.donatorDashboard.table.date}</p>
-                        <p className="font-medium">{formatDate(displayDate)}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">{t.donatorDashboard.table.method}</p>
-                        <p className="font-medium">{getPaymentMethodLabel(donation.pay_method)}</p>
-                      </div>
+                    <div className="text-right">
+                      <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.amount}</p>
+                      <p className="font-semibold text-foreground">
+                        {formatCurrency(tx.amount, tx.currency)}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">{t.donatorDashboard.table.date}</p>
+                      <p className="font-medium">{formatDate(tx.created_at)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">{t.donatorDashboard.table.method}</p>
+                      <p className="font-medium">{getPaymentMethodLabel(tx.payment_method)}</p>
+                    </div>
+                    {/* <div>
+                      <p className="text-muted-foreground">{t.donatorDashboard.table.status}</p>
+                      <div className="mt-1">{getStatusBadge(tx.status)}</div>
+                    </div> */}
+                  </div>
+                </div>
+              ))}
             </div>
           </>
         )}

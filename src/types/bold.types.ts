@@ -70,6 +70,15 @@ export interface BoldWebhookPayload {
   };
 }
 
+// Transacción Bold con datos del proyecto relacionado
+export interface BoldTransactionWithProject extends BoldTransaction {
+  project?: {
+    project_id: string;
+    name: string;
+    category: string;
+  } | null;
+}
+
 // Transacción Bold guardada en Supabase
 export interface BoldTransaction {
   bold_transaction_id: string;

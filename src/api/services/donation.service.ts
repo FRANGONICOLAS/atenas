@@ -89,14 +89,23 @@ export const donationService = {
     const projectIds = Array.from(uniqueProjects.keys());
     
     if (projectIds.length > 0) {
-      const { data: beneficiaries } = await client
-        .from('beneficiaries_project')
-        .select('beneficiary_id')
+      // Beneficiaries belong to headquarters; get HQ linked to these projects first
+      const { data: hqProjects } = await client
+        .from('headquarters_project')
+        .select('headquarters_id')
         .in('project_id', projectIds);
 
-      // Contar beneficiarios únicos
-      const uniqueBeneficiaries = new Set(beneficiaries?.map(b => b.beneficiary_id) || []);
-      beneficiariesImpacted = uniqueBeneficiaries.size;
+      const hqIds = [...new Set(hqProjects?.map(h => h.headquarters_id) || [])];
+
+      if (hqIds.length > 0) {
+        const { data: beneficiaries } = await client
+          .from('beneficiary')
+          .select('beneficiary_id')
+          .in('headquarters_id', hqIds);
+
+        const uniqueBeneficiaries = new Set(beneficiaries?.map(b => b.beneficiary_id) || []);
+        beneficiariesImpacted = uniqueBeneficiaries.size;
+      }
     }
 
     // Obtener las 3 donaciones más recientes

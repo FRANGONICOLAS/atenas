@@ -49,7 +49,7 @@ const DonationPage = () => {
     amount: finalAmount,
     currency: 'COP',
     description: description || `Donación ${destination === 'free' ? 'Libre Inversión' : `para ${projects.find(p => p.project_id === selectedProject)?.name || 'UAO'}`}`,
-    projectId: selectedProject,
+    projectId: destination === 'project' && selectedProject ? selectedProject : undefined,
     onSuccess: (orderId) => {
       setCompletedOrderId(orderId);
       setIsComplete(true);
