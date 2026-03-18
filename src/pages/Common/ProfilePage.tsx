@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   User, 
   Mail, 
@@ -22,20 +22,32 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useAuth } from '@/hooks/useAuth';
+import { userService } from '@/api/services/user.service';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 
 const ProfilePage = () => {
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
     username: user?.username || '',
     email: user?.email || '',
-    phone: user?.user_metadata?.phone || '',
+    phone: user?.phone || '',
   });
+
+  useEffect(() => {
+    if (!user) return;
+    setFormData({
+      first_name: user.first_name || '',
+      last_name: user.last_name || '',
+      username: user.username || '',
+      email: user.email || '',
+      phone: user.phone || '',
+    });
+  }, [user]);
 
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
@@ -54,11 +66,22 @@ const ProfilePage = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    // TODO: Implement save logic with userService
-    // toast.success('Perfil actualizado correctamente');
-    toast.success(t.auth.updateProfileSuccess);
-    setIsEditing(false);
+  const handleSave = async () => {
+    if (!user?.id) return;
+    try {
+      await userService.update(user.id, {
+        first_name: formData.first_name || undefined,
+        last_name: formData.last_name || undefined,
+        username: formData.username || undefined,
+        phone: formData.phone || undefined,
+      });
+      await refreshUser();
+      toast.success(t.auth.updateProfileSuccess);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      toast.error('No se pudo actualizar el perfil');
+    }
   };
 
   const handleCancel = () => {
@@ -67,7 +90,7 @@ const ProfilePage = () => {
       last_name: user?.last_name || '',
       username: user?.username || '',
       email: user?.email || '',
-      phone: user?.user_metadata?.phone || '',
+      phone: user?.phone || '',
     });
     setIsEditing(false);
   };

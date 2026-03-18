@@ -9,6 +9,7 @@ interface UserWithRole extends User {
   username?: string;
   first_name?: string;
   last_name?: string;
+  phone?: string | null;
   headquarter_id?: string | null;
   hasCompletedProfile?: boolean;
 }
@@ -36,6 +37,7 @@ const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> =
       username: dbUser?.username,
       first_name: dbUser?.first_name,
       last_name: dbUser?.last_name,
+      phone: dbUser?.phone ?? null,
       headquarter_id: dbUser?.headquarter_id ?? null,
       hasCompletedProfile,
     };
@@ -92,16 +94,19 @@ export const useAuth = () => {
     };
 
     // Cargar sesión inicial
-    authService.getSession().then((session) => {
-      if (mounted) {
-        handleSession(session);
-      }
-    }).catch((err) => {
-      if (mounted) {
-        setUser(null);
-        setIsLoading(false);
-      }
-    });
+    authService
+      .getSession()
+      .then((session) => {
+        if (mounted) {
+          handleSession(session);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setUser(null);
+          setIsLoading(false);
+        }
+      });
 
     // Escuchar cambios de autenticación
     const {
@@ -126,6 +131,18 @@ export const useAuth = () => {
     };
   }, []);
 
+  const refreshUser = async () => {
+    const session = await authService.getSession();
+    if (session?.user) {
+      try {
+        const enriched = await enrichUserWithDBData(session.user);
+        setUser(enriched);
+      } catch (err) {
+        console.error("Error refrescando usuario:", err);
+      }
+    }
+  };
+
   const signOut = async () => {
     await authService.signOut();
     setUser(null);
@@ -136,5 +153,6 @@ export const useAuth = () => {
     isLoading,
     isAuthenticated: !!user,
     signOut,
+    refreshUser,
   };
 };
