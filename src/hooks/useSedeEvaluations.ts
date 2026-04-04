@@ -7,10 +7,7 @@ import {
 } from "@/api/services";
 import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import { useAuth } from "@/hooks/useAuth";
-import type {
-  Evaluation,
-  EvaluationType,
-} from "@/types";
+import type { Evaluation, EvaluationType } from "@/types";
 import type { EvaluationRow } from "@/api/types";
 
 interface EvaluationJoinRow {
@@ -31,12 +28,6 @@ const resolveEvaluationType = (evaluation: EvaluationRow): EvaluationType => {
     case "psychological_emotional":
       return "psychological_emotional";
   }
-};
-
-const extractObservations = (detail: unknown): string | undefined => {
-  if (!detail || typeof detail !== "object") return undefined;
-  const value = (detail as Record<string, unknown>).observaciones;
-  return typeof value === "string" ? value : undefined;
 };
 
 const extractComments = (evaluation: EvaluationRow): string => {

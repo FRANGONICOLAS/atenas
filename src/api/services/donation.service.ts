@@ -1,12 +1,17 @@
-import { client } from '../supabase/client';
-import type { DonationFromDB, DonationWithProject, DonationStats } from '@/types/donation.types';
+import { client } from "@/api/supabase/client";
+import type {
+  DonationFromDB,
+  DonationWithProject,
+  DonationStats,
+} from "@/types/donation.types";
 
 export const donationService = {
   // Obtener todas las donaciones de un usuario
   async getUserDonations(userId: string): Promise<DonationWithProject[]> {
     const { data, error } = await client
-      .from('donation')
-      .select(`
+      .from("donation")
+      .select(
+        `
         *,
         project(
           project_id,
@@ -14,9 +19,10 @@ export const donationService = {
           category,
           finance_goal
         )
-      `)
-      .eq('user_id', userId)
-      .order('date', { ascending: false });
+      `,
+      )
+      .eq("user_id", userId)
+      .order("date", { ascending: false });
 
     if (error) throw error;
     return data || [];
@@ -28,7 +34,7 @@ export const donationService = {
     const donations = await this.getUserDonations(userId);
 
     // Filtrar solo donaciones aprobadas
-    const approvedDonations = donations.filter(d => d.status === 'approved');
+    const approvedDonations = donations.filter((d) => d.status === "approved");
 
     // Calcular total donado
     const totalDonated = approvedDonations.reduce((sum, donation) => {
@@ -37,7 +43,7 @@ export const donationService = {
 
     // Obtener proyectos únicos apoyados
     const uniqueProjects = new Map<string, DonationWithProject[]>();
-    approvedDonations.forEach(donation => {
+    approvedDonations.forEach((donation) => {
       if (donation.project_id) {
         if (!uniqueProjects.has(donation.project_id)) {
           uniqueProjects.set(donation.project_id, []);
@@ -50,60 +56,73 @@ export const donationService = {
 
     // Obtener información detallada de proyectos apoyados con progreso
     const supportedProjects = await Promise.all(
-      Array.from(uniqueProjects.entries()).map(async ([projectId, projectDonations]) => {
-        const totalDonatedToProject = projectDonations.reduce((sum, d) => 
-          sum + parseFloat(d.amount), 0
-        );
+      Array.from(uniqueProjects.entries()).map(
+        async ([projectId, projectDonations]) => {
+          const totalDonatedToProject = projectDonations.reduce(
+            (sum, d) => sum + parseFloat(d.amount),
+            0,
+          );
 
-        const project = projectDonations[0].project;
-        
-        // Obtener total recaudado del proyecto (todas las donaciones)
-        const { data: allProjectDonations } = await client
-          .from('donation')
-          .select('amount')
-          .eq('project_id', projectId)
-          .eq('status', 'approved');
+          const project = projectDonations[0].project;
 
-        const totalProjectRaised = allProjectDonations?.reduce((sum, d) => 
-          sum + parseFloat(d.amount), 0
-        ) || 0;
+          // Obtener total recaudado del proyecto (todas las donaciones)
+          const { data: allProjectDonations } = await client
+            .from("donation")
+            .select("amount")
+            .eq("project_id", projectId)
+            .eq("status", "approved");
 
-        const financeGoal = typeof project?.finance_goal === 'string' 
-          ? parseFloat(project.finance_goal) 
-          : (project?.finance_goal || 1);
-        const progress = Math.min((totalProjectRaised / financeGoal) * 100, 100);
+          const totalProjectRaised =
+            allProjectDonations?.reduce(
+              (sum, d) => sum + parseFloat(d.amount),
+              0,
+            ) || 0;
 
-        return {
-          project_id: projectId,
-          project_name: project?.name || 'Proyecto',
-          category: project?.category || 'General',
-          totalDonated: totalDonatedToProject,
-          progress: Math.round(progress),
-          finance_goal: financeGoal
-        };
-      })
+          const financeGoal =
+            typeof project?.finance_goal === "string"
+              ? parseFloat(project.finance_goal)
+              : project?.finance_goal || 1;
+          const progress = Math.min(
+            (totalProjectRaised / financeGoal) * 100,
+            100,
+          );
+
+          return {
+            project_id: projectId,
+            project_name: project?.name || "Proyecto",
+            category: project?.category || "General",
+            totalDonated: totalDonatedToProject,
+            progress: Math.round(progress),
+            finance_goal: financeGoal,
+          };
+        },
+      ),
     );
 
     // Obtener número de beneficiarios impactados
     let beneficiariesImpacted = 0;
     const projectIds = Array.from(uniqueProjects.keys());
-    
+
     if (projectIds.length > 0) {
       // Beneficiaries belong to headquarters; get HQ linked to these projects first
       const { data: hqProjects } = await client
-        .from('headquarters_project')
-        .select('headquarters_id')
-        .in('project_id', projectIds);
+        .from("headquarters_project")
+        .select("headquarters_id")
+        .in("project_id", projectIds);
 
-      const hqIds = [...new Set(hqProjects?.map(h => h.headquarters_id) || [])];
+      const hqIds = [
+        ...new Set(hqProjects?.map((h) => h.headquarters_id) || []),
+      ];
 
       if (hqIds.length > 0) {
         const { data: beneficiaries } = await client
-          .from('beneficiary')
-          .select('beneficiary_id')
-          .in('headquarters_id', hqIds);
+          .from("beneficiary")
+          .select("beneficiary_id")
+          .in("headquarters_id", hqIds);
 
-        const uniqueBeneficiaries = new Set(beneficiaries?.map(b => b.beneficiary_id) || []);
+        const uniqueBeneficiaries = new Set(
+          beneficiaries?.map((b) => b.beneficiary_id) || [],
+        );
         beneficiariesImpacted = uniqueBeneficiaries.size;
       }
     }
@@ -116,19 +135,21 @@ export const donationService = {
       projectsSupported,
       beneficiariesImpacted,
       recentDonations,
-      supportedProjects: supportedProjects.sort((a, b) => b.totalDonated - a.totalDonated)
+      supportedProjects: supportedProjects.sort(
+        (a, b) => b.totalDonated - a.totalDonated,
+      ),
     };
   },
 
   // Obtener donación por ID
   async getDonationById(donationId: string): Promise<DonationFromDB | null> {
     const { data, error } = await client
-      .from('donation')
-      .select('*')
-      .eq('donation_id', donationId)
+      .from("donation")
+      .select("*")
+      .eq("donation_id", donationId)
       .single();
 
     if (error) throw error;
     return data;
-  }
+  },
 };

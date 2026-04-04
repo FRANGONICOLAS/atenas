@@ -15,20 +15,28 @@ interface UserWithRole extends User {
 }
 
 // Enriquece el usuario de Supabase con datos de la base de datos
-const enrichUserWithDBData = async (supabaseUser: User): Promise<UserWithRole> => {
+const enrichUserWithDBData = async (
+  supabaseUser: User,
+): Promise<UserWithRole> => {
   try {
     const dbUser = await userService.getById(supabaseUser.id);
     // Get all user roles from user_role table
     const userRoles = await userService.getUserRoles(supabaseUser.id);
     const meta = supabaseUser.user_metadata ?? {};
-    const metaRole = typeof meta["role"] === "string" ? meta["role"] : undefined;
-    
+    const metaRole =
+      typeof meta["role"] === "string" ? meta["role"] : undefined;
+
     // Si no tiene roles en la BD, usar el rol de metadata o "donator"
-    const finalRoles = userRoles.length > 0 ? userRoles : [metaRole || "donator"];
+    const finalRoles =
+      userRoles.length > 0 ? userRoles : [metaRole || "donator"];
     const primaryRole = finalRoles[0];
 
     // Verificar si el perfil está completo
-    const hasCompletedProfile = !!(dbUser?.username && dbUser?.first_name && dbUser?.last_name);
+    const hasCompletedProfile = !!(
+      dbUser?.username &&
+      dbUser?.first_name &&
+      dbUser?.last_name
+    );
 
     return {
       ...supabaseUser,
@@ -62,26 +70,14 @@ export const useAuth = () => {
 
     const handleSession = async (session: Session | null) => {
       if (!mounted || isProcessing) return;
-      
+
       isProcessing = true;
 
       if (session?.user) {
-        try {
-          const enrichedUser = await enrichUserWithDBData(session.user);
-          if (mounted) {
-            setUser(enrichedUser);
-            setIsLoading(false);
-          }
-        } catch (err) {
-          console.error("Error enriqueciendo usuario:", err);
-          if (mounted) {
-            const meta = session.user.user_metadata ?? {};
-            setUser({
-              ...session.user,
-              role: (meta["role"] as string) || "DONATOR",
-            });
-            setIsLoading(false);
-          }
+        const enrichedUser = await enrichUserWithDBData(session.user);
+        if (mounted) {
+          setUser(enrichedUser);
+          setIsLoading(false);
         }
       } else {
         if (mounted) {
@@ -112,15 +108,14 @@ export const useAuth = () => {
     const {
       data: { subscription },
     } = authService.onAuthStateChange(async (event, session) => {
-      
       if (!mounted) return;
 
       // Solo procesar eventos de cambio real, no los iniciales
-      if (event === 'SIGNED_OUT') {
+      if (event === "SIGNED_OUT") {
         isProcessing = false;
         setUser(null);
         setIsLoading(false);
-      } else if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+      } else if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
         await handleSession(session);
       }
     });
@@ -134,12 +129,8 @@ export const useAuth = () => {
   const refreshUser = async () => {
     const session = await authService.getSession();
     if (session?.user) {
-      try {
-        const enriched = await enrichUserWithDBData(session.user);
-        setUser(enriched);
-      } catch (err) {
-        console.error("Error refrescando usuario:", err);
-      }
+      const enriched = await enrichUserWithDBData(session.user);
+      setUser(enriched);
     }
   };
 
