@@ -1,27 +1,6 @@
-import L from 'leaflet';
 import { MapPin, Phone, Mail, Clock, Users, Building2 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import 'leaflet/dist/leaflet.css';
-
-const createCustomMarkerIcon = (status: string = "active") => {
-  // Color según el estado usando los colores del sistema de diseño
-  // primary: hsl(200 98% 39%) = #0284c7 (azul para active)
-  // secondary: hsl(142 70.5628% 45.2941%) = #23a55a (verde para maintenance)
-  const color = status === "maintenance" ? "#23a55a" : "#0284c7";
-  
-  return L.divIcon({
-    html: `<svg width='32' height='40' viewBox='0 0 32 40' xmlns='http://www.w3.org/2000/svg' style='filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2))'>
-      <path d='M16 0C7.73 0 1 6.73 1 15c0 10 15 25 15 25s15-15 15-25c0-8.27-6.73-15-15-15z' fill='${color}' stroke='white' stroke-width='1'/>
-      <circle cx='16' cy='15' r='5' fill='white'/>
-    </svg>`,
-    iconSize: [32, 40],
-    iconAnchor: [16, 40],
-    popupAnchor: [0, -40],
-    className: 'custom-marker',
-  });
-};
 
 interface LocationCardProps {
   location: {
@@ -42,6 +21,12 @@ interface LocationCardProps {
 }
 
 export const LocationCard = ({ location, index }: LocationCardProps) => {
+  const mapQuery = location.lat && location.lng
+    ? `${location.lat},${location.lng}`
+    : `${location.address || ''} ${location.city || ''}`.trim();
+  const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=15&output=embed`;
+  const mapOpenUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+
   return (
     <Card className="overflow-hidden">
       <div className={`grid lg:grid-cols-2 gap-0 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
@@ -145,31 +130,25 @@ export const LocationCard = ({ location, index }: LocationCardProps) => {
             </div>
 
             {/* Mapa individual de la sede */}
-            {location.lat && location.lng && (
-              <div className="mt-4 rounded-lg overflow-hidden border border-border h-[200px]">
-                <MapContainer
-                  // @ts-expect-error - react-leaflet types issue
-                  center={[location.lat, location.lng] as [number, number]}
-                  zoom={15}
-                  style={{ height: '100%', width: '100%' }}
-                  scrollWheelZoom={false}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker 
-                    position={[location.lat, location.lng] as [number, number]}
-                    // @ts-expect-error - react-leaflet types issue
-                    icon={createCustomMarkerIcon(location.status)}
-                  >
-                    <Popup>
-                      <div className="text-sm">
-                        <strong>{location.name}</strong><br/>
-                        {location.address}
-                      </div>
-                    </Popup>
-                  </Marker>
-                </MapContainer>
+            {mapQuery && (
+              <div className="mt-4 rounded-lg overflow-hidden border border-border h-[200px] relative group">
+                <iframe
+                  src={mapEmbedUrl}
+                  title={`Mapa de ${location.name}`}
+                  className="w-full h-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <a
+                  href={mapOpenUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0"
+                  aria-label={`Abrir ubicación de ${location.name} en Google Maps`}
+                />
+                <div className="absolute bottom-2 right-2 bg-card/90 text-foreground text-xs px-2 py-1 rounded border border-border opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  Abrir en Google Maps
+                </div>
               </div>
             )}
           </CardContent>
