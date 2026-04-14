@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const Footer = () => {
@@ -27,9 +27,11 @@ const Footer = () => {
           {/* Logo & Description */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
-              </div>
+              <img
+                src="/Logo_Atenas.png"
+                alt="Logo institucional Fundación Sociodeportiva Atenas"
+                className="h-10 w-auto object-contain"
+              />
               <span className="font-bold text-lg">Fundación Sociodeportiva Atenas</span>
             </div>
             <p className="text-primary-foreground/80 text-sm">
