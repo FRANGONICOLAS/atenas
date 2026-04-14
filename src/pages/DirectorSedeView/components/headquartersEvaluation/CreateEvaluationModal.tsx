@@ -2,11 +2,6 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { evaluationService } from "@/api/services";
-import type {
-  AntropometricData,
-  EmotionalData,
-  TechnicalTacticalData,
-} from "@/types/beneficiary.types";
 import type { Json } from "@/api/types";
 import { useSedeBeneficiaries } from "@/hooks/useSedeBeneficiaries";
 import { Button } from "@/components/ui/button";
@@ -31,6 +26,7 @@ import { Brain, Ruler, Activity } from "lucide-react";
 import { BeneficiaryAntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryAntropometricForm";
 import { TechnicalTecticalForm } from "@/pages/DirectorView/components/Beneficiaries/TechnicalTecticalForm";
 import { EmotionalForm } from "@/pages/DirectorView/components/Beneficiaries/EmotionalForm";
+import { hasEvaluationDetail } from "@/lib/evaluationUtils";
 
 interface CreateEvaluationModalProps {
   open: boolean;
@@ -47,9 +43,11 @@ export const CreateEvaluationModal = ({
   const { beneficiaries, loading } = useSedeBeneficiaries();
   const [beneficiaryId, setBeneficiaryId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<
-    "anthropometric" | "technical_tactic" | "psychological_emotional"
-  >("anthropometric");
-  const [detailPayload, setDetailPayload] = useState<Record<string, unknown> | undefined>();
+    "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL"
+  >("ANTHROPOMETRIC");
+  const [anthropometricDetail, setAnthropometricDetail] = useState<Json | undefined>();
+  const [technicalDetail, setTechnicalDetail] = useState<Json | undefined>();
+  const [emotionalDetail, setEmotionalDetail] = useState<Json | undefined>();
   const [saving, setSaving] = useState(false);
 
   const beneficiaryOptions = useMemo(() => {
@@ -66,8 +64,10 @@ export const CreateEvaluationModal = ({
 
   const resetForm = () => {
     setBeneficiaryId("");
-    setDetailPayload(undefined);
-    setActiveTab("anthropometric");
+    setAnthropometricDetail(undefined);
+    setTechnicalDetail(undefined);
+    setEmotionalDetail(undefined);
+    setActiveTab("ANTHROPOMETRIC");
   };
 
   const handleClose = () => {
@@ -83,33 +83,44 @@ export const CreateEvaluationModal = ({
       return;
     }
 
-    if (!detailPayload) {
+    const evaluationEntries = [
+      {
+        type: "ANTHROPOMETRIC" as const,
+        detail: anthropometricDetail,
+      },
+      {
+        type: "TECHNICAL" as const,
+        detail: technicalDetail,
+      },
+      {
+        type: "EMOTIONAL" as const,
+        detail: emotionalDetail,
+      },
+    ].filter((entry) => hasEvaluationDetail(entry.detail));
+
+    if (evaluationEntries.length === 0) {
       toast.error(t.evaluations.complete);
       return;
     }
 
-    // determine evaluation type mapping
-    let typeKey: 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
-    switch (activeTab) {
-      case 'anthropometric':
-        typeKey = 'anthropometric';
-        break;
-      case 'technical_tactic':
-        typeKey = 'technical_tactic';
-        break;
-      case 'psychological_emotional':
-        typeKey = 'psychological_emotional';
-        break;
-      default:
-        typeKey = 'anthropometric';
-    }
-
     try {
       setSaving(true);
-      await evaluationService.createForBeneficiary(beneficiaryId, {
-        type: typeKey,
-        questions_answers: detailPayload as Json,
-      });
+
+      for (const entry of evaluationEntries) {
+        await evaluationService.createForBeneficiary(beneficiaryId, {
+          type: entry.type,
+          ...(entry.type === "ANTHROPOMETRIC"
+            ? { anthropometric_detail: entry.detail }
+            : {}),
+          ...(entry.type === "TECHNICAL"
+            ? { technical_tactic_detail: entry.detail }
+            : {}),
+          ...(entry.type === "EMOTIONAL"
+            ? { emotional_detail: entry.detail }
+            : {}),
+        });
+      }
+
       toast.success(t.evaluations.createSuccess, {
         description: selectedBeneficiary
           ? t.evaluations.savedFor.replace('{{name}}', `${selectedBeneficiary.first_name} ${selectedBeneficiary.last_name}`)
@@ -171,46 +182,40 @@ export const CreateEvaluationModal = ({
               {t.evaluations.selectPrompt}
             </div>
           ) : (
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "anthropometric" | "technical_tactic" | "psychological_emotional")} className="w-full">
+            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL")} className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="anthropometric" className="flex items-center gap-2">
+                <TabsTrigger value="ANTHROPOMETRIC" className="flex items-center gap-2">
                   <Ruler className="w-4 h-4" />
                   {t.evaluations.tabs.anthropometric}
                 </TabsTrigger>
-                <TabsTrigger value="technical_tactic" className="flex items-center gap-2">
+                <TabsTrigger value="TECHNICAL" className="flex items-center gap-2">
                   <Activity className="w-4 h-4" />
                   {t.evaluations.tabs.technical}
                 </TabsTrigger>
-                <TabsTrigger value="psychological_emotional" className="flex items-center gap-2">
+                <TabsTrigger value="EMOTIONAL" className="flex items-center gap-2">
                   <Brain className="w-4 h-4" />
                   {t.evaluations.tabs.emotional}
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="anthropometric" className="py-4">
+              <TabsContent value="ANTHROPOMETRIC" className="py-4">
                 <BeneficiaryAntropometricForm
-                  data={detailPayload as Json | undefined}
-                  onChange={(data) =>
-                    setDetailPayload(data as Record<string, unknown>)
-                  }
+                  data={anthropometricDetail}
+                  onChange={(data) => setAnthropometricDetail(data)}
                 />
               </TabsContent>
 
-              <TabsContent value="technical_tactic" className="py-4">
+              <TabsContent value="TECHNICAL" className="py-4">
                 <TechnicalTecticalForm
-                  data={detailPayload as Json | undefined}
-                  onChange={(data) =>
-                    setDetailPayload(data as Record<string, unknown>)
-                  }
+                  data={technicalDetail}
+                  onChange={(data) => setTechnicalDetail(data)}
                 />
               </TabsContent>
 
-              <TabsContent value="psychological_emotional" className="py-4">
+              <TabsContent value="EMOTIONAL" className="py-4">
                 <EmotionalForm
-                  data={detailPayload as Json | undefined}
-                  onChange={(data) =>
-                    setDetailPayload(data as Record<string, unknown>)
-                  }
+                  data={emotionalDetail}
+                  onChange={(data) => setEmotionalDetail(data)}
                 />
               </TabsContent>
             </Tabs>

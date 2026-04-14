@@ -2,11 +2,6 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useLanguage } from '@/contexts/LanguageContext';
 import { evaluationService } from "@/api/services";
-import type {
-	AntropometricData,
-	EmotionalData,
-	TechnicalTacticalData,
-} from "@/types/beneficiary.types";
 import type { Json } from "@/api/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,11 +14,15 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Brain, Ruler, Activity } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { BeneficiaryAntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryAntropometricForm";
 import { TechnicalTecticalForm } from "@/pages/DirectorView/components/Beneficiaries/TechnicalTecticalForm";
 import { EmotionalForm } from "@/pages/DirectorView/components/Beneficiaries/EmotionalForm";
+import {
+	evaluationTypeLabels,
+	getEvaluationDetailByType,
+	normalizeEvaluationType,
+} from "@/lib/evaluationUtils";
 
 interface EditEvaluationModalProps {
 	open: boolean;
@@ -41,10 +40,10 @@ export const EditEvaluationModal = ({
 	onSaved,
 }: EditEvaluationModalProps) => {
 	const { t } = useLanguage();
-	const [activeTab, setActiveTab] = useState<
-	"anthropometric" | "technical_tactic" | "psychological_emotional"
->("anthropometric");
-	const [detailPayload, setDetailPayload] = useState<Record<string, unknown> | undefined>();
+	const [evaluationType, setEvaluationType] = useState<
+		"ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL" | null
+	>(null);
+	const [detailPayload, setDetailPayload] = useState<Json | undefined>();
 	const [loading, setLoading] = useState(false);
 	const [saving, setSaving] = useState(false);
 
@@ -55,29 +54,15 @@ export const EditEvaluationModal = ({
 			try {
 				setLoading(true);
 				const data = await evaluationService.getById(evaluationId);
-					setDetailPayload(
-						(data.questions_answers as Record<string, unknown> | null) || undefined,
-					);
-					switch (data.type) {
-						case 'anthropometric':
-							setActiveTab('anthropometric');
-							break;
-						case 'technical_tactic':
-							setActiveTab('technical_tactic');
-							break;
-						case 'psychological_emotional':
-							setActiveTab('psychological_emotional');
-							break;
-						default:
-							setActiveTab('anthropometric');
-					}
-				setLoading(false);
-			}
-				catch (error) {
+				setEvaluationType(normalizeEvaluationType(data.type));
+				setDetailPayload(getEvaluationDetailByType(data) ?? undefined);
+			} catch (error) {
 				console.error("Error loading evaluation:", error);
 				toast.error(t.evaluations.loadError, {
 					description: "No se pudo cargar la evaluacion",
 				});
+			} finally {
+				setLoading(false);
 			}
 		};
 
@@ -91,33 +76,26 @@ export const EditEvaluationModal = ({
 	};
 
 	const handleSave = async () => {
-		if (!evaluationId) return;
+		if (!evaluationId || !evaluationType) return;
 
 		if (!detailPayload) {
 			toast.error(t.evaluations.complete);
 			return;
 		}
 
-		let typeKey: 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
-		switch (activeTab) {
-			case 'anthropometric':
-				typeKey = 'anthropometric';
-				break;
-			case 'technical_tactic':
-				typeKey = 'technical_tactic';
-				break;
-			case 'psychological_emotional':
-				typeKey = 'psychological_emotional';
-				break;
-			default:
-				typeKey = 'anthropometric';
-		}
-
 		try {
 			setSaving(true);
 			await evaluationService.updateEvaluation(evaluationId, {
-				type: typeKey,
-				questions_answers: detailPayload as Json,
+				type: evaluationType,
+				...(evaluationType === "ANTHROPOMETRIC"
+					? { anthropometric_detail: detailPayload }
+					: {}),
+				...(evaluationType === "TECHNICAL"
+					? { technical_tactic_detail: detailPayload }
+					: {}),
+				...(evaluationType === "EMOTIONAL"
+					? { emotional_detail: detailPayload }
+					: {}),
 			});
 			toast.success(t.evaluations.updateSuccess, {
 				description: beneficiaryName
@@ -133,6 +111,46 @@ export const EditEvaluationModal = ({
 			});
 		} finally {
 			setSaving(false);
+		}
+	};
+
+	const renderForm = () => {
+		if (loading) {
+			return (
+				<div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+					Cargando evaluacion...
+				</div>
+			);
+		}
+
+		switch (evaluationType) {
+			case "ANTHROPOMETRIC":
+				return (
+					<BeneficiaryAntropometricForm
+						data={detailPayload}
+						onChange={(data) => setDetailPayload(data)}
+					/>
+				);
+			case "TECHNICAL":
+				return (
+					<TechnicalTecticalForm
+						data={detailPayload}
+						onChange={(data) => setDetailPayload(data)}
+					/>
+				);
+			case "EMOTIONAL":
+				return (
+					<EmotionalForm
+						data={detailPayload}
+						onChange={(data) => setDetailPayload(data)}
+					/>
+				);
+			default:
+				return (
+					<div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+						No hay un formulario disponible para este tipo de evaluación.
+					</div>
+				);
 		}
 	};
 
@@ -152,60 +170,27 @@ export const EditEvaluationModal = ({
 						<Input value={beneficiaryName || "Beneficiario"} disabled />
 					</div>
 
-					{loading ? (
-						<div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-							Cargando evaluacion...
-						</div>
-					) : (
-						<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "anthropometric" | "technical_tactic" | "psychological_emotional")} className="w-full">
-							<TabsList className="grid w-full grid-cols-3">
-								<TabsTrigger value="anthropometric" className="flex items-center gap-2">
-									<Ruler className="w-4 h-4" />
-									{t.evaluations.tabs.anthropometric}
-								</TabsTrigger>
-								<TabsTrigger value="technical_tactic" className="flex items-center gap-2">
-									<Activity className="w-4 h-4" />
-									{t.evaluations.tabs.technical}
-								</TabsTrigger>
-								<TabsTrigger value="psychological_emotional" className="flex items-center gap-2">
-									<Brain className="w-4 h-4" />
-									{t.evaluations.tabs.emotional}
-								</TabsTrigger>
-							</TabsList>
+					<div className="space-y-2">
+						<Label>Tipo de evaluación</Label>
+						{evaluationType ? (
+							<Badge variant="secondary" className="w-fit">
+								{evaluationTypeLabels[evaluationType]}
+							</Badge>
+						) : (
+							<div className="text-sm text-muted-foreground">
+								No se pudo identificar el tipo de evaluación.
+							</div>
+						)}
+					</div>
 
-							<TabsContent value="anthropometric" className="py-4">
-								<BeneficiaryAntropometricForm
-									data={detailPayload as Json | undefined}
-									onChange={(data) =>
-										setDetailPayload(data as Record<string, unknown>)
-									}
-								/>
-							</TabsContent>
-
-							<TabsContent value="technical_tactic" className="py-4">
-								<TechnicalTecticalForm
-									data={detailPayload as Json | undefined}
-									onChange={(data) =>
-										setDetailPayload(data as TechnicalTacticalData)
-									}
-								/>
-							</TabsContent>
-
-							<TabsContent value="psychological_emotional" className="py-4">
-								<EmotionalForm
-									data={detailPayload as Json | undefined}
-									onChange={(data) => setDetailPayload(data as EmotionalData)}
-								/>
-							</TabsContent>
-						</Tabs>
-					)}
+					{renderForm()}
 				</div>
 
 				<DialogFooter>
 					<Button variant="outline" onClick={handleClose} disabled={saving}>
 						{t.evaluations.actions.cancel}
 					</Button>
-					<Button onClick={handleSave} disabled={saving || !detailPayload}>
+					<Button onClick={handleSave} disabled={saving || !evaluationType || !detailPayload}>
 						{saving ? t.evaluations.actions.saving : t.evaluations.actions.save}
 					</Button>
 				</DialogFooter>

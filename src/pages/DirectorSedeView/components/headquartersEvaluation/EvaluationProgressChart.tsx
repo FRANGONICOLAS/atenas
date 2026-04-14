@@ -19,7 +19,8 @@ import { evaluationService } from "@/api/services";
 import { subMonths, subYears } from "date-fns";
 import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import type { EvaluationRow } from "@/api/types";
-import type { EvaluationType } from "@/types/evaluation.types";
+import type { EvaluationType } from "@/types";
+import { evaluationTypeLabels, normalizeEvaluationType } from "@/lib/evaluationUtils";
 
 // register chart components
 ChartJS.register(
@@ -46,9 +47,9 @@ interface EvaluationProgressChartProps {
 
 const typeOptions: Array<{ value: EvaluationType | "all"; label: string }> = [
   { value: "all", label: "Todas" },
-  { value: "anthropometric", label: "Antropométrica" },
-  { value: "technical_tactic", label: "Técnico‑Táctica" },
-  { value: "psychological_emotional", label: "Psicológica/Emocional" },
+  { value: "ANTHROPOMETRIC", label: evaluationTypeLabels.ANTHROPOMETRIC },
+  { value: "TECHNICAL", label: evaluationTypeLabels.TECHNICAL },
+  { value: "EMOTIONAL", label: evaluationTypeLabels.EMOTIONAL },
 ];
 
 const rangeOptions: Array<{ value: "month" | "year"; label: string }> = [
@@ -94,7 +95,12 @@ export default function EvaluationProgressChart({ beneficiaryId }: EvaluationPro
 
     return evaluations
       .filter((ev) => {
-        if (typeFilter !== "all" && ev.type !== typeFilter) return false;
+        if (
+          typeFilter !== "all" &&
+          normalizeEvaluationType(ev.type) !== typeFilter
+        ) {
+          return false;
+        }
         const created = ev.created_at ? new Date(ev.created_at) : null;
         if (!created) return false;
         if (created < cutoff) return false;
@@ -113,14 +119,14 @@ export default function EvaluationProgressChart({ beneficiaryId }: EvaluationPro
 
   const lastTypeScores = useMemo(() => {
     const types: EvaluationType[] = [
-      "anthropometric",
-      "technical_tactic",
-      "psychological_emotional",
+      "ANTHROPOMETRIC",
+      "TECHNICAL",
+      "EMOTIONAL",
     ];
     const result: Record<EvaluationType, number> = {
-      anthropometric: 0,
-      technical_tactic: 0,
-      psychological_emotional: 0,
+      ANTHROPOMETRIC: 0,
+      TECHNICAL: 0,
+      EMOTIONAL: 0,
     };
     types.forEach((t) => {
       const matches = evaluations
@@ -254,14 +260,14 @@ export default function EvaluationProgressChart({ beneficiaryId }: EvaluationPro
                 labels: [
                   "Antropométrica",
                   "Técnico‑Táctica",
-                  "Psicológica/Emocional",
+                  "Emocional",
                 ],
                 datasets: [
                   {
                     data: [
-                      lastTypeScores.anthropometric,
-                      lastTypeScores.technical_tactic,
-                      lastTypeScores.psychological_emotional,
+                      lastTypeScores.ANTHROPOMETRIC,
+                      lastTypeScores.TECHNICAL,
+                      lastTypeScores.EMOTIONAL,
                     ],
                     backgroundColor: [
                       "#3b82f6",

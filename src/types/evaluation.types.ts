@@ -1,4 +1,4 @@
-export type EvaluationType = 'anthropometric' | 'technical_tactic' | 'psychological_emotional';
+export type EvaluationType = 'ANTHROPOMETRIC' | 'TECHNICAL' | 'EMOTIONAL';
 
 export interface Evaluation {
   id: string;
@@ -15,5 +15,7 @@ import type { Json } from "@/api/types";
 
 export interface EvaluationPayload {
   type: EvaluationType;
-  questions_answers?: Json | null;
+  anthropometric_detail?: Json | null;
+  technical_tactic_detail?: Json | null;
+  emotional_detail?: Json | null;
 }

@@ -1,6 +1,7 @@
 import { client } from "@/api/supabase/client";
 import type { EvaluationRow } from "@/api/types";
 import type { EvaluationPayload } from "@/types";
+import { buildEvaluationInsertPayload } from "@/lib/evaluationUtils";
 
 interface EvaluationJoinRow {
   beneficiary_id: string | null;
@@ -25,7 +26,9 @@ export const evaluationService = {
   async getById(evaluationId: string): Promise<EvaluationRow> {
     const { data, error } = await client
       .from("evaluation")
-      .select("id, created_at, type, questions_answers")
+      .select(
+        "id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail",
+      )
       .eq("id", evaluationId)
       .single();
 
@@ -37,7 +40,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id (first_name, last_name)",
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail), beneficiary: beneficiary_id (first_name, last_name)",
       )
       .eq("evaluation_id", evaluationId)
       .single();
@@ -52,13 +55,10 @@ export const evaluationService = {
   ): Promise<EvaluationRow> {
     const { data, error } = await client
       .from("evaluation")
-      .insert([
-        {
-          type: payload.type,
-          questions_answers: payload.questions_answers ?? null,
-        },
-      ])
-      .select("id, created_at, type, questions_answers")
+      .insert([buildEvaluationInsertPayload(payload)])
+      .select(
+        "id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail",
+      )
       .single();
 
     if (error) throw error;
@@ -80,7 +80,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers), beneficiary: beneficiary_id!inner (first_name, last_name, headquarters_id)",
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail), beneficiary: beneficiary_id!inner (first_name, last_name, headquarters_id)",
       )
       .eq("beneficiary.headquarters_id", headquarterId)
       .order("evaluation_id", { ascending: false });
@@ -93,7 +93,7 @@ export const evaluationService = {
     const { data, error } = await client
       .from("beneficiary's_evaluation")
       .select(
-        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, questions_answers)"
+        "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail)"
       )
       .eq("beneficiary_id", beneficiaryId);
 
@@ -123,12 +123,11 @@ export const evaluationService = {
   ): Promise<EvaluationRow> {
     const { data, error } = await client
       .from("evaluation")
-      .update({
-        type: payload.type,
-        questions_answers: payload.questions_answers ?? null,
-      })
+      .update(buildEvaluationInsertPayload(payload))
       .eq("id", evaluationId)
-      .select("id, created_at, type, questions_answers")
+      .select(
+        "id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail",
+      )
       .single();
 
     if (error) throw error;

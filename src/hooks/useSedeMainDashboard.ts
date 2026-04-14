@@ -172,7 +172,7 @@ export const useSedeMainDashboard = () => {
   // Top jugadores: best technical_tactic score per beneficiary, filterable by category
   const topJugadores = useMemo(() => {
     const techEvals = evaluations.filter(
-      (e) => e.evaluation.type === "technical_tactic",
+      (e) => e.evaluation.type === "TECHNICAL",
     );
 
     // Keep only the best score per beneficiary
@@ -205,7 +205,7 @@ export const useSedeMainDashboard = () => {
   // General sede indicators derived from evaluations
   const indicadores = useMemo(() => {
     const techEvals = evaluations.filter(
-      (e) => e.evaluation.type === "technical_tactic" && e.score > 0,
+      (e) => e.evaluation.type === "TECHNICAL" && e.score > 0,
     );
     const avgDeportivo =
       techEvals.length

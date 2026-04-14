@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { evaluationService } from "@/api/services";
-// import types if needed for question parsing
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,11 +15,12 @@ import {
 } from "@/components/ui/breadcrumb";
 import EvaluationProgressChart from "@/pages/DirectorSedeView/components/headquartersEvaluation/EvaluationProgressChart";
 import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
+import { getEvaluationDetailByType, normalizeEvaluationType } from "@/lib/evaluationUtils";
 
 interface EvaluationDetailState {  beneficiaryId: string;  beneficiaryName: string;
   createdAt: string;
-  type: "anthropometric" | "technical_tactic" | "psychological_emotional";
-  questions?: Record<string, unknown> | null;
+  type: "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL";
+  detail?: Record<string, unknown> | null;
 }
 
 const formatDate = (dateString: string) => {
@@ -84,17 +84,16 @@ const EvaluationDetailPage = () => {
         const beneficiaryName = `${data.beneficiary?.first_name ?? ""} ${
           data.beneficiary?.last_name ?? ""
         }`.trim();
+        const type = normalizeEvaluationType(data.evaluation?.type) ?? "EMOTIONAL";
 
         setDetail({
           beneficiaryId: data.beneficiary_id || "",
           beneficiaryName: beneficiaryName || "Beneficiario",
           createdAt: data.evaluation?.created_at || new Date().toISOString(),
-          type: data.evaluation?.type as EvaluationDetailState["type"],
-          questions:
-            (data.evaluation?.questions_answers as Record<
-              string,
-              unknown
-            > | null) ?? null,
+          type,
+          detail: data.evaluation
+            ? (getEvaluationDetailByType(data.evaluation) as Record<string, unknown> | null)
+            : null,
         });
       } catch (error) {
         console.error("Error loading evaluation detail:", error);
@@ -180,7 +179,7 @@ const EvaluationDetailPage = () => {
           <div className="mb-4">
             <span className="font-semibold">Tipo:</span>{" "}
             <span>{getEvaluationTypeLabel(detail.type)}</span></div>
-          {renderDetailList(detail.questions as Record<string, unknown>)}
+          {renderDetailList(detail.detail as Record<string, unknown>)}
         </CardContent>
       </Card>
 

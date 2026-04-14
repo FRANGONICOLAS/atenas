@@ -1,19 +1,28 @@
 import { client } from "@/api/supabase/client";
 import { storageService } from "./storage.service";
-import type { BeneficiaryRow } from "@/api/types";
+import type { BeneficiaryRow, EvaluationRow, Json } from "@/api/types";
 import type {
-  AntropometricData,
-  TechnicalTacticalData,
-  EmotionalData,
-  BeneficiaryEvaluationDetail,
   Beneficiary,
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
+import type { EvaluationType } from "@/types";
+import {
+  buildEvaluationInsertPayload,
+  hasEvaluationDetail,
+  normalizeEvaluationType,
+} from "@/lib/evaluationUtils";
 
 interface LatestEvaluationLookupRow {
   beneficiary_id: string;
-  evaluation: BeneficiaryEvaluationDetail | null;
+  evaluation: EvaluationRow | null;
+}
+
+interface LatestEvaluationBucket {
+  latest: EvaluationRow | null;
+  anthropometric: EvaluationRow | null;
+  technical: EvaluationRow | null;
+  emotional: EvaluationRow | null;
 }
 
 type EvaluationPayload = Pick<
@@ -21,19 +30,62 @@ type EvaluationPayload = Pick<
   "anthropometric_detail" | "technical_tactic_detail" | "emotional_detail"
 >;
 
-const hasEvaluationPayload = (payload: EvaluationPayload) => {
-  return Boolean(
-    payload.anthropometric_detail ||
-      payload.technical_tactic_detail ||
-      payload.emotional_detail
-  );
+const getEvaluationTimestamp = (evaluation: EvaluationRow | null) => {
+  if (!evaluation?.created_at) return 0;
+  return new Date(evaluation.created_at).getTime();
 };
 
-const extractEvaluationPayload = (payload: EvaluationPayload) => ({
-  anthropometric_detail: payload.anthropometric_detail ?? null,
-  technical_tactic_detail: payload.technical_tactic_detail ?? null,
-  emotional_detail: payload.emotional_detail ?? null,
-});
+const createEvaluation = async (
+  type: EvaluationType,
+  detail: Json,
+) => {
+  const payload = buildEvaluationInsertPayload({
+    type,
+    anthropometric_detail:
+      type === "ANTHROPOMETRIC" ? detail : null,
+    technical_tactic_detail:
+      type === "TECHNICAL" ? detail : null,
+    emotional_detail: type === "EMOTIONAL" ? detail : null,
+  });
+
+  const { data, error } = await client
+    .from("evaluation")
+    .insert([payload])
+    .select(
+      "id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail",
+    )
+    .single();
+
+  if (error) throw error;
+  return data as EvaluationRow;
+};
+
+const extractEvaluationEntries = (payload: EvaluationPayload) => {
+  const entries: Array<{ type: EvaluationType; detail: Json }> = [];
+
+  if (hasEvaluationDetail(payload.anthropometric_detail)) {
+    entries.push({
+      type: "ANTHROPOMETRIC",
+      detail: payload.anthropometric_detail as Json,
+    });
+  }
+
+  if (hasEvaluationDetail(payload.technical_tactic_detail)) {
+    entries.push({
+      type: "TECHNICAL",
+      detail: payload.technical_tactic_detail as Json,
+    });
+  }
+
+  if (hasEvaluationDetail(payload.emotional_detail)) {
+    entries.push({
+      type: "EMOTIONAL",
+      detail: payload.emotional_detail as Json,
+    });
+  }
+
+  return entries;
+};
 
 const stripEvaluationFields = <T extends EvaluationPayload>(payload: T) => {
   const {
@@ -43,17 +95,6 @@ const stripEvaluationFields = <T extends EvaluationPayload>(payload: T) => {
     ...rest
   } = payload;
   return rest;
-};
-
-const createEvaluation = async (payload: EvaluationPayload) => {
-  const { data, error } = await client
-    .from("evaluation")
-    .insert([extractEvaluationPayload(payload)])
-    .select("id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail")
-    .single();
-
-  if (error) throw error;
-  return data;
 };
 
 const linkBeneficiaryEvaluation = async (
@@ -74,34 +115,54 @@ const linkBeneficiaryEvaluation = async (
 
 const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
   if (beneficiaryIds.length === 0) {
-    return new Map<string, BeneficiaryEvaluationDetail>();
+    return new Map<string, LatestEvaluationBucket>();
   }
 
   const { data, error } = await client
     .from("beneficiary's_evaluation")
     .select(
-      "beneficiary_id, evaluation: evaluation_id (id, created_at, anthropometric_detail, technical_tactic_detail, emotional_detail)"
+      "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail)"
     )
     .in("beneficiary_id", beneficiaryIds);
 
   if (error) throw error;
 
-  const latestByBeneficiary = new Map<string, BeneficiaryEvaluationDetail>();
+  const latestByBeneficiary = new Map<string, LatestEvaluationBucket>();
 
   (data as LatestEvaluationLookupRow[] || []).forEach((row) => {
     if (!row?.evaluation) return;
     const evaluation = row.evaluation;
-    const existing = latestByBeneficiary.get(row.beneficiary_id);
-    const evaluationDate = evaluation.created_at
-      ? new Date(evaluation.created_at).getTime()
-      : 0;
-    const existingDate = existing?.created_at
-      ? new Date(existing.created_at).getTime()
-      : 0;
+    const existing = latestByBeneficiary.get(row.beneficiary_id) ?? {
+      latest: null,
+      anthropometric: null,
+      technical: null,
+      emotional: null,
+    };
+    const evaluationDate = getEvaluationTimestamp(evaluation);
 
-    if (!existing || evaluationDate >= existingDate) {
-      latestByBeneficiary.set(row.beneficiary_id, evaluation);
+    if (evaluationDate >= getEvaluationTimestamp(existing.latest)) {
+      existing.latest = evaluation;
     }
+
+    switch (normalizeEvaluationType(evaluation.type)) {
+      case "ANTHROPOMETRIC":
+        if (evaluationDate >= getEvaluationTimestamp(existing.anthropometric)) {
+          existing.anthropometric = evaluation;
+        }
+        break;
+      case "TECHNICAL":
+        if (evaluationDate >= getEvaluationTimestamp(existing.technical)) {
+          existing.technical = evaluation;
+        }
+        break;
+      case "EMOTIONAL":
+        if (evaluationDate >= getEvaluationTimestamp(existing.emotional)) {
+          existing.emotional = evaluation;
+        }
+        break;
+    }
+
+    latestByBeneficiary.set(row.beneficiary_id, existing);
   });
 
   return latestByBeneficiary;
@@ -143,10 +204,12 @@ const attachLatestEvaluation = async (rows: BeneficiaryRow[]): Promise<Beneficia
 
     return {
       ...beneficiary,
-      anthropometric_detail: latest.anthropometric_detail ?? undefined,
-      technical_tactic_detail: latest.technical_tactic_detail ?? undefined,
-      emotional_detail: latest.emotional_detail ?? undefined,
-      latest_evaluation: latest,
+      anthropometric_detail:
+        latest.anthropometric?.anthropometric_detail ?? undefined,
+      technical_tactic_detail:
+        latest.technical?.technical_tactic_detail ?? undefined,
+      emotional_detail: latest.emotional?.emotional_detail ?? undefined,
+      latest_evaluation: latest.latest ?? undefined,
     };
   });
 };
@@ -259,8 +322,7 @@ export const beneficiaryService = {
 
   // Crea un nuevo beneficiario
   async create(beneficiaryData: CreateBeneficiaryData): Promise<Beneficiary> {
-    const evaluationPayload = extractEvaluationPayload(beneficiaryData);
-    const shouldCreateEvaluation = hasEvaluationPayload(beneficiaryData);
+    const evaluationEntries = extractEvaluationEntries(beneficiaryData);
     const beneficiaryPayload = stripEvaluationFields(beneficiaryData);
 
     const { data, error } = await client
@@ -292,20 +354,17 @@ export const beneficiaryService = {
 
     if (error) throw error;
 
-    if (!shouldCreateEvaluation) {
+    if (evaluationEntries.length === 0) {
       return mapBeneficiaryRow(data);
     }
 
-    const evaluation = await createEvaluation(evaluationPayload);
-    await linkBeneficiaryEvaluation(data.beneficiary_id, evaluation.id);
+    for (const entry of evaluationEntries) {
+      const evaluation = await createEvaluation(entry.type, entry.detail);
+      await linkBeneficiaryEvaluation(data.beneficiary_id, evaluation.id);
+    }
 
-    return {
-      ...mapBeneficiaryRow(data),
-      anthropometric_detail: (evaluation.anthropometric_detail as AntropometricData) ?? undefined,
-      technical_tactic_detail: (evaluation.technical_tactic_detail as TechnicalTacticalData) ?? undefined,
-      emotional_detail: (evaluation.emotional_detail as EmotionalData) ?? undefined,
-      latest_evaluation: evaluation,
-    };
+    const [beneficiary] = await attachLatestEvaluation([data]);
+    return beneficiary ?? mapBeneficiaryRow(data);
   },
 
   // Actualiza un beneficiario existente
@@ -313,8 +372,7 @@ export const beneficiaryService = {
     beneficiaryId: string,
     updates: UpdateBeneficiaryData,
   ): Promise<Beneficiary> {
-    const evaluationPayload = extractEvaluationPayload(updates);
-    const shouldCreateEvaluation = hasEvaluationPayload(updates);
+    const evaluationEntries = extractEvaluationEntries(updates);
     const beneficiaryUpdates = stripEvaluationFields(updates);
 
     const { data, error } = await client
@@ -326,20 +384,17 @@ export const beneficiaryService = {
 
     if (error) throw error;
 
-    if (!shouldCreateEvaluation) {
+    if (evaluationEntries.length === 0) {
       return mapBeneficiaryRow(data);
     }
 
-    const evaluation = await createEvaluation(evaluationPayload);
-    await linkBeneficiaryEvaluation(beneficiaryId, evaluation.id);
+    for (const entry of evaluationEntries) {
+      const evaluation = await createEvaluation(entry.type, entry.detail);
+      await linkBeneficiaryEvaluation(beneficiaryId, evaluation.id);
+    }
 
-    return {
-      ...mapBeneficiaryRow(data),
-      anthropometric_detail: (evaluation.anthropometric_detail as AntropometricData) ?? undefined,
-      technical_tactic_detail: (evaluation.technical_tactic_detail as TechnicalTacticalData) ?? undefined,
-      emotional_detail: (evaluation.emotional_detail as EmotionalData) ?? undefined,
-      latest_evaluation: evaluation,
-    };
+    const [beneficiary] = await attachLatestEvaluation([data]);
+    return beneficiary ?? mapBeneficiaryRow(data);
   },
 
   // Elimina un beneficiario

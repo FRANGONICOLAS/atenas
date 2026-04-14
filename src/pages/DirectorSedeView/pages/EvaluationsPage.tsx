@@ -17,6 +17,7 @@ import {
   EditEvaluationModal,
 } from "@/pages/DirectorSedeView/components/headquartersEvaluation";
 import type { Evaluation, EvaluationType } from "@/types";
+import { normalizeEvaluationType } from "@/lib/evaluationUtils";
 import {
   Select,
   SelectTrigger,
@@ -61,11 +62,7 @@ const EvaluationsPage = () => {
     () => [
       { value: "all", label: "Todas las categorias" },
       ...(
-        [
-          "anthropometric",
-          "technical_tactic",
-          "psychological_emotional",
-        ] as EvaluationType[]
+        ["ANTHROPOMETRIC", "TECHNICAL", "EMOTIONAL"] as EvaluationType[]
       ).map((type) => ({
         value: type,
         label: getEvaluationTypeLabel(type),
@@ -81,7 +78,7 @@ const EvaluationsPage = () => {
         .includes(evaluationSearch.toLowerCase());
       const matchesCategory =
         evaluationTypeFilter === "all" ||
-        evaluation.type === evaluationTypeFilter;
+        normalizeEvaluationType(evaluation.type) === evaluationTypeFilter;
 
       return matchesSearch && matchesCategory;
     });

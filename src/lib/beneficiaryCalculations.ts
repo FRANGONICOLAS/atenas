@@ -1,5 +1,6 @@
 import type { TechnicalTacticalData, AntropometricData } from '@/types/beneficiary.types';
 import type { EvaluationRow } from '@/api/types';
+import { getEvaluationDetailByType, normalizeEvaluationType } from '@/lib/evaluationUtils';
 
 export const calculatePerformance = (technicalData?: TechnicalTacticalData | null): number => {
   if (!technicalData) return 0;
@@ -87,18 +88,20 @@ export const getTechnicalAverage = (technicalData?: TechnicalTacticalData | null
  * - psicológica/emocional: por ahora no hay valor numérico asociado, devuelve 0.
  */
 export const getEvaluationScore = (evaluation: EvaluationRow): number => {
-  switch (evaluation.type) {
-    case 'technical_tactic':
-      return calculatePerformance(evaluation.questions_answers as TechnicalTacticalData | null);
-    case 'anthropometric': {
-      const data = evaluation.questions_answers as AntropometricData | null;
+  switch (normalizeEvaluationType(evaluation.type)) {
+    case 'TECHNICAL':
+      return calculatePerformance(
+        evaluation.technical_tactic_detail as TechnicalTacticalData | null,
+      );
+    case 'ANTHROPOMETRIC': {
+      const data = getEvaluationDetailByType(evaluation) as AntropometricData | null;
       if (!data) return 0;
       if (typeof data.imc === 'number') {
         return data.imc;
       }
       return calculateIMC(data.peso, data.talla) ?? 0;
     }
-    case 'psychological_emotional':
+    case 'EMOTIONAL':
       return 0;
     default:
       return 0;

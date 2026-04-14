@@ -9,6 +9,11 @@ import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import { useAuth } from "@/hooks/useAuth";
 import type { Evaluation, EvaluationType } from "@/types";
 import type { EvaluationRow } from "@/api/types";
+import {
+  getEvaluationComment,
+  evaluationTypeLabels,
+  normalizeEvaluationType,
+} from "@/lib/evaluationUtils";
 
 interface EvaluationJoinRow {
   beneficiary_id: string | null;
@@ -20,26 +25,11 @@ interface EvaluationJoinRow {
 }
 
 const resolveEvaluationType = (evaluation: EvaluationRow): EvaluationType => {
-  switch (evaluation.type) {
-    case "anthropometric":
-      return "anthropometric";
-    case "technical_tactic":
-      return "technical_tactic";
-    case "psychological_emotional":
-      return "psychological_emotional";
-  }
+  return normalizeEvaluationType(evaluation.type) ?? "EMOTIONAL";
 };
 
 const extractComments = (evaluation: EvaluationRow): string => {
-  if (
-    !evaluation.questions_answers ||
-    typeof evaluation.questions_answers !== "object"
-  ) {
-    return "";
-  }
-  const val = (evaluation.questions_answers as Record<string, unknown>)
-    .observaciones;
-  return typeof val === "string" ? val : "";
+  return getEvaluationComment(evaluation);
 };
 
 const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
@@ -225,11 +215,11 @@ export const useSedeEvaluations = () => {
 
   const getEvaluationTypeLabel = (type: EvaluationType) => {
     const labels: Record<EvaluationType, string> = {
-      anthropometric: "Antropométrica",
-      technical_tactic: "Técnico‑Táctica",
-      psychological_emotional: "Psicológica/Emocional",
+        ANTHROPOMETRIC: "Antropométrica",
+        TECHNICAL: "Técnico‑Táctica",
+        EMOTIONAL: "Emocional",
     };
-    return labels[type] || type;
+      return labels[type] || evaluationTypeLabels[type] || type;
   };
 
   return {
