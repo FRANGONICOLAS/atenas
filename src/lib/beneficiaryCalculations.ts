@@ -2,16 +2,50 @@ import type { TechnicalTacticalData, AntropometricData } from '@/types/beneficia
 import type { EvaluationRow } from '@/api/types';
 import { getEvaluationDetailByType, normalizeEvaluationType } from '@/lib/evaluationUtils';
 
-export const calculatePerformance = (technicalData?: TechnicalTacticalData | null): number => {
-  if (!technicalData) return 0;
+const readPath = (obj: Record<string, unknown>, path: string): unknown => {
+  return path
+    .split('.')
+    .reduce<unknown>((acc, key) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[key] : undefined), obj);
+};
 
-  const skills = [
-    technicalData.pase,
-    technicalData.recepcion,
-    technicalData.remate,
-    technicalData.regate,
-    technicalData.ubicacion_espacio_temporal
-  ].filter(v => v !== undefined && v !== null && typeof v === 'number') as number[];
+const collectTechnicalScores = (technicalData?: TechnicalTacticalData | null): number[] => {
+  if (!technicalData) return [];
+
+  const source = technicalData as Record<string, unknown>;
+  const candidatePaths = [
+    'pase',
+    'recepcion',
+    'remate',
+    'regate',
+    'ubicacion_espacio_temporal',
+    'pase.precision_pase_corto',
+    'pase.precision_pase_largo',
+    'pase.uso_perfil_debil_pase',
+    'pase.pase_en_movimiento',
+    'recepcion.precision_pase_corto',
+    'recepcion.precision_pase_largo',
+    'recepcion.uso_perfil_debil_pase',
+    'recepcion.pase_en_movimiento',
+    'remate.potencia_remate',
+    'remate.precision_remate',
+    'remate.remate_perfil_debil',
+    'remate.remate_cabeza',
+    'remate.remate_en_movimiento',
+    'conduccion.control_balon_conduccion',
+    'conduccion.conduccion_perfil_debil',
+    'conduccion.velocidad_conduccion',
+    'conduccion.cambios_direccion',
+    'conduccion.vision_periferica',
+    'conduccion.conduccion_bajo_presion',
+  ];
+
+  return candidatePaths
+    .map((path) => readPath(source, path))
+    .filter((value): value is number => typeof value === 'number' && Number.isFinite(value));
+};
+
+export const calculatePerformance = (technicalData?: TechnicalTacticalData | null): number => {
+  const skills = collectTechnicalScores(technicalData);
 
   if (skills.length === 0) return 0;
 
@@ -64,15 +98,7 @@ export const calculateWaistHipRatio = (cintura?: number, cadera?: number): numbe
  * @returns Promedio de habilidades (1-5) o 0 si no hay datos
  */
 export const getTechnicalAverage = (technicalData?: TechnicalTacticalData | null): number => {
-  if (!technicalData) return 0;
-
-  const skills = [
-    technicalData.pase,
-    technicalData.recepcion,
-    technicalData.remate,
-    technicalData.regate,
-    technicalData.ubicacion_espacio_temporal
-  ].filter(v => v !== undefined && v !== null && typeof v === 'number') as number[];
+  const skills = collectTechnicalScores(technicalData);
 
   if (skills.length === 0) return 0;
 
@@ -85,7 +111,7 @@ export const getTechnicalAverage = (technicalData?: TechnicalTacticalData | null
  *
  * - técnico‑táctica: utiliza el performance convertido a 0‑100 (calculatePerformance).
  * - antropométrica: retorna IMC si está disponible o lo calcula a partir de peso/talla.
- * - psicológica/emocional: por ahora no hay valor numérico asociado, devuelve 0.
+ * - emocional: por ahora no hay valor numérico asociado, devuelve 0.
  */
 export const getEvaluationScore = (evaluation: EvaluationRow): number => {
   switch (normalizeEvaluationType(evaluation.type)) {

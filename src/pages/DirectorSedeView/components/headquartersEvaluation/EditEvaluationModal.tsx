@@ -186,7 +186,7 @@ export const EditEvaluationModal = ({
 					{renderForm()}
 				</div>
 
-				<DialogFooter>
+				<DialogFooter className="sticky bottom-0 -mx-6 px-6 py-4 border-t bg-background">
 					<Button variant="outline" onClick={handleClose} disabled={saving}>
 						{t.evaluations.actions.cancel}
 					</Button>
