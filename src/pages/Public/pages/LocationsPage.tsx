@@ -1,98 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from "@/components/CTA";
 import { FullScreenLoader } from '@/components/common/FullScreenLoader';
-import { headquarterService } from "@/api/services";
-import type { Headquarter } from "@/types/headquarter.types";
 import { LocationsHero, LocationsMap, LocationCard } from "../components";
-
-interface LocationWithStats extends Headquarter {
-  beneficiaryCount: number;
-  image: string | null;
-  phone?: string;
-  email?: string;
-  schedule?: string;
-  lat: number | null;
-  lng: number | null;
-}
+import { usePublicLocations } from '@/hooks/usePublicData';
 
 const LocationsPage = () => {
   const { t } = useLanguage();
-  const [locations, setLocations] = useState<LocationWithStats[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // Función para geocodificar direcciones
-  const geocodeAddress = async (
-    address: string,
-    city?: string,
-  ): Promise<{ lat: number; lng: number } | null> => {
-    try {
-      const fullAddress = city ? `${address}, ${city}` : address;
-      console.log("Geocoding:", fullAddress);
-
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1&addressdetails=1`,
-      );
-      const data = await response.json();
-
-      if (data && data.length > 0) {
-        const result = data[0];
-        return {
-          lat: parseFloat(result.lat),
-          lng: parseFloat(result.lon),
-        };
-      }
-      return null;
-    } catch (error) {
-      console.error("Error geocoding address:", error);
-      return null;
-    }
-  };
-
-  const loadHeadquarters = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await headquarterService.getAll();
-
-      // Cargar conteo de beneficiarios y geocodificar para cada sede
-      const locationsWithStats = await Promise.all(
-        data.map(async (hq, index) => {
-          const beneficiaryCount = await headquarterService.getBeneficiaryCount(
-            hq.headquarters_id,
-          );
-
-          // Geocodificar la dirección real
-          let coords: { lat: number; lng: number } | null = null;
-          if (hq.address) {
-            coords = await geocodeAddress(hq.address, hq.city || undefined);
-            // Esperar un poco entre solicitudes para respetar los límites de la API
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-          }
-
-          return {
-            ...hq,
-            beneficiaryCount,
-            image: hq.image_url,
-            phone: "+57 300 123 4567", // Estos campos pueden agregarse a la BD después
-            email: `${hq.name.toLowerCase().replace(/\s+/g, "")}@fundaciondeportiva.org`,
-            schedule: t.locations.defaultSchedule,
-            lat: coords?.lat || null,
-            lng: coords?.lng || null,
-          };
-        }),
-      );
-
-      setLocations(locationsWithStats);
-    } catch (error) {
-      console.error("Error loading headquarters:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadHeadquarters();
-  }, [loadHeadquarters]);
+  const { data: locations = [], isLoading: loading } = usePublicLocations(
+    t.locations.defaultSchedule,
+  );
 
   if (loading) {
     return <FullScreenLoader message={t.locations.loading} />;

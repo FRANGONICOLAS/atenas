@@ -41,7 +41,7 @@ export function useSiteContents(keys: string[]) {
       queryKey: ['siteContent', key] as const,
       queryFn: (): Promise<SiteContent | null> => contentService.getContentByKey(key),
       staleTime: 1000 * 60 * 60,
-      cacheTime: 1000 * 60 * 60 * 24,
+      gcTime: 1000 * 60 * 60 * 24,
       retry: 1,
     })),
   });

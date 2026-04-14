@@ -10,34 +10,27 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import CTA from '@/components/CTA';
 import { FullScreenLoader } from '@/components/common/FullScreenLoader';
-import { galleryService } from '@/api/services';
 import type { GalleryItem, GalleryItemType } from '@/types';
 import { toast } from 'sonner';
+import { usePublicGalleryItems } from '@/hooks/usePublicData';
 
 const GalleryPage = () => {
   const { t } = useLanguage();
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [filter, setFilter] = useState<'all' | 'photo' | 'video'>('all');
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: galleryItems = [],
+    isLoading: loading,
+    error,
+  } = usePublicGalleryItems();
 
   useEffect(() => {
-    loadGalleryItems();
-  }, []);
-
-  const loadGalleryItems = async () => {
-    try {
-      setLoading(true);
-      const items = await galleryService.getActiveItems();
-      setGalleryItems(items);
-    } catch (error) {
+    if (error) {
       toast.error(t.gallery.error, {
         description: error instanceof Error ? error.message : t.gallery.unknownError,
       });
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [error, t.gallery.error, t.gallery.unknownError]);
 
   const filteredItems = filter === 'all' 
     ? galleryItems 

@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ScrollToTop from "@/components/common/ScrollToTop";
+import { queryKeys } from "@/lib/queryKeys";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ProfileGuard } from "@/components/auth/ProfileGuard";
@@ -42,7 +43,20 @@ import {
   NotFound,
 } from "@/pages";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      gcTime: 1000 * 60 * 60,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 const App = () => {
   useEffect(() => {
@@ -59,7 +73,7 @@ const App = () => {
       "home_transformation_6",
     ];
     queryClient.prefetchQuery({
-      queryKey: ["siteContentsByKeys", keys],
+      queryKey: queryKeys.content.byKeys(keys),
       queryFn: () =>
         import("@/api/services/content.service").then((m) =>
           m.contentService.getContentsByKeys(keys),

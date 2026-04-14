@@ -248,4 +248,28 @@ export const projectService = {
 
     return data.reduce((sum, donation) => sum + (donation.amount || 0), 0);
   },
+
+  // Obtiene el total recaudado por múltiples proyectos en una sola consulta
+  async getTotalRaisedByProjectIds(projectIds: string[]): Promise<Record<string, number>> {
+    if (projectIds.length === 0) return {};
+
+    const { data, error } = await client
+      .from("donation")
+      .select("project_id, amount")
+      .in("project_id", projectIds);
+
+    if (error) throw error;
+
+    const totals: Record<string, number> = {};
+    projectIds.forEach((id) => {
+      totals[id] = 0;
+    });
+
+    (data || []).forEach((donation) => {
+      const projectId = donation.project_id;
+      totals[projectId] = (totals[projectId] || 0) + (donation.amount || 0);
+    });
+
+    return totals;
+  },
 };

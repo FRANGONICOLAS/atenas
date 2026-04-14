@@ -6,7 +6,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CTA from '@/components/CTA';
-import { useTestimonials } from '@/hooks/useTestimonial';
+import { usePublicTestimonials } from '@/hooks/usePublicData';
 import { useAuth } from '@/hooks/useAuth';
 import { CreateTestimonialModal } from '@/pages/Public/components/CreateTestimonialModal';
 
@@ -27,8 +27,8 @@ const TestimonialsPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   
-  // Usar el hook para obtener testimonios
-  const { testimonials: dbTestimonials, loading, handleCreate } = useTestimonials();
+  // Usar hook público con cache compartida entre rutas
+  const { testimonials: dbTestimonials, loading, handleCreate } = usePublicTestimonials();
 
   // Handler para abrir modal (verificar autenticación)
   const handleOpenCreateModal = () => {
