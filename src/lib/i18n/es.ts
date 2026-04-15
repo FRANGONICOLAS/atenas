@@ -274,6 +274,7 @@ export const es = {
     notFound: "No se encontraron jugadores",
     memberSince: "Miembro desde",
     performance: "Rendimiento",
+    reviews: "Evaluaciones",
     age: "años",
   },
   projects: {
@@ -496,6 +497,10 @@ export const es = {
       technical: "Técnico-Táctico",
       emotional: "Emocional",
     },
+    chartLabel: "Rendimiento %",
+    emptyEmotional: "Sin evaluaciones psicológicas-emocionales",
+    emptyAnthropometric: "Sin evaluaciones antropométricas",
+    emptyTechnical: "Sin evaluaciones técnico-tácticas",
     actions: {
       cancel: "Cancelar",
       save: "Guardar",

@@ -10,7 +10,6 @@ import { ProjectsTable } from "@/pages/DirectorView/components/Projects/Projects
 import { ProjectDetailDialog } from "@/pages/DirectorView/components/Projects/ProjectDetailDialog";
 import { HeadquarterProjectDialog } from "@/pages/DirectorSedeView/components/headquartersProject/HeadquarterProjectDialog";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Target, Plus, Download } from "lucide-react";
 import {
   generateProjectsExcel,
@@ -19,7 +18,6 @@ import {
 import type { Project, ProjectReport } from "@/types";
 
 const HeadquarterProjectPage = () => {
-  const { t } = useLanguage();
   const {
     filtered,
     loading,
@@ -66,8 +64,8 @@ const HeadquarterProjectPage = () => {
     description: string;
   }) => {
     if (!data.name || !data.category || !data.deadline) {
-      toast.error(t.common.requiredFields, {
-        description: t.projects.fieldsRequired,
+      toast.error("Complete los campos obligatorios", {
+        description: "Todos los campos marcados con * son obligatorios.",
       });
       return;
     }
@@ -128,27 +126,21 @@ const HeadquarterProjectPage = () => {
   const handleExportExcel = () => {
     const data = mapProjectsToReport(filtered);
     generateProjectsExcel(data, "proyectos-sede");
-    toast.success(t.reports.excelGenerated, {
-      description: t.projects.exported.replace(
-        "{{count}}",
-        String(data.length),
-      ),
+    toast.success("Excel generado", {
+      description: `Se exportaron ${data.length} proyectos.`,
     });
   };
 
   const handleExportPDF = () => {
     const data = mapProjectsToReport(filtered);
     generateProjectsPDF(data, "proyectos-sede");
-    toast.success(t.reports.pdfGenerated, {
-      description: t.projects.exported.replace(
-        "{{count}}",
-        String(data.length),
-      ),
+    toast.success("PDF generado", {
+      description: `Se exportaron ${data.length} proyectos.`,
     });
   };
 
   if (loading) {
-    return <FullScreenLoader message={t.projects.loading} />;
+    return <FullScreenLoader message="Cargando proyectos..." />;
   }
 
   return (

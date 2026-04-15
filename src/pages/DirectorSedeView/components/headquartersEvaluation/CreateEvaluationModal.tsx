@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { useLanguage } from '@/contexts/LanguageContext';
 import { evaluationService } from "@/api/services";
 import type { Json } from "@/api/types";
 import { useSedeBeneficiaries } from "@/hooks/useSedeBeneficiaries";
@@ -39,13 +38,14 @@ export const CreateEvaluationModal = ({
   onClose,
   onSaved,
 }: CreateEvaluationModalProps) => {
-  const { t } = useLanguage();
   const { beneficiaries, loading } = useSedeBeneficiaries();
   const [beneficiaryId, setBeneficiaryId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<
     "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL"
   >("ANTHROPOMETRIC");
-  const [anthropometricDetail, setAnthropometricDetail] = useState<Json | undefined>();
+  const [anthropometricDetail, setAnthropometricDetail] = useState<
+    Json | undefined
+  >();
   const [technicalDetail, setTechnicalDetail] = useState<Json | undefined>();
   const [emotionalDetail, setEmotionalDetail] = useState<Json | undefined>();
   const [saving, setSaving] = useState(false);
@@ -79,7 +79,7 @@ export const CreateEvaluationModal = ({
 
   const handleSave = async () => {
     if (!beneficiaryId) {
-      toast.error(t.evaluations.selectBeneficiary);
+      toast.error("Debe seleccionar un beneficiario.");
       return;
     }
 
@@ -99,7 +99,7 @@ export const CreateEvaluationModal = ({
     ].filter((entry) => hasEvaluationDetail(entry.detail));
 
     if (evaluationEntries.length === 0) {
-      toast.error(t.evaluations.complete);
+      toast.error("Complete al menos una evaluación.");
       return;
     }
 
@@ -121,17 +121,17 @@ export const CreateEvaluationModal = ({
         });
       }
 
-      toast.success(t.evaluations.createSuccess, {
+      toast.success("Evaluación creada con éxito.", {
         description: selectedBeneficiary
-          ? t.evaluations.savedFor.replace('{{name}}', `${selectedBeneficiary.first_name} ${selectedBeneficiary.last_name}`)
-          : t.evaluations.saved,
+          ? `Evaluación guardada para ${selectedBeneficiary.first_name} ${selectedBeneficiary.last_name}`
+          : "Evaluación guardada.",
       });
       onSaved();
       handleClose();
     } catch (error) {
       console.error("Error saving evaluation:", error);
-      toast.error(t.evaluations.createError, {
-        description: t.evaluations.createErrorDesc,
+      toast.error("Error al guardar la evaluación", {
+        description: "No se pudo guardar la evaluación. Intente nuevamente.",
       });
     } finally {
       setSaving(false);
@@ -141,95 +141,118 @@ export const CreateEvaluationModal = ({
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t.evaluations.addTitle}</DialogTitle>
-          <DialogDescription>
-            {t.evaluations.addDesc}
-          </DialogDescription>
-        </DialogHeader>
+        <div className="flex h-full flex-col">
+          <div className="px-6 py-6 space-y-6">
+            <DialogHeader>
+              <DialogTitle>Agregar evaluación</DialogTitle>
+              <DialogDescription>Seleccione el beneficiario y complete las evaluaciones necesarias.</DialogDescription>
+            </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>{t.evaluations.beneficiaryLabel}</Label>
-            <Select
-              value={beneficiaryId}
-              onValueChange={(value) => setBeneficiaryId(value)}
-              disabled={loading || saving}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={loading ? t.evaluations.loadingBeneficiaries : t.evaluations.selectPlaceholder}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {beneficiaryOptions.length === 0 ? (
-                  <SelectItem value="empty" disabled>
-                    {t.evaluations.noBeneficiaries}
-                  </SelectItem>
-                ) : (
-                  beneficiaryOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {option.label}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <Label>Beneficiario</Label>
+                <Select
+                  value={beneficiaryId}
+                  onValueChange={(value) => setBeneficiaryId(value)}
+                  disabled={loading || saving}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        loading
+                          ? "Cargando beneficiarios..."
+                          : "Selecciona un beneficiario"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {beneficiaryOptions.length === 0 ? (
+                      <SelectItem value="empty" disabled>
+                        No hay beneficiarios disponibles
+                      </SelectItem>
+                    ) : (
+                      beneficiaryOptions.map((option) => (
+                        <SelectItem key={option.id} value={option.id}>
+                          {option.label}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {!beneficiaryId ? (
+                <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                  Seleccione un beneficiario para comenzar.
+                </div>
+              ) : (
+                <Tabs
+                  value={activeTab}
+                  onValueChange={(value) =>
+                    setActiveTab(
+                      value as "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL",
+                    )
+                  }
+                  className="w-full"
+                >
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger
+                      value="ANTHROPOMETRIC"
+                      className="flex items-center gap-2"
+                    >
+                      <Ruler className="w-4 h-4" />
+                      Antropométrica
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="TECHNICAL"
+                      className="flex items-center gap-2"
+                    >
+                      <Activity className="w-4 h-4" />
+                      Técnico-Táctica
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="EMOTIONAL"
+                      className="flex items-center gap-2"
+                    >
+                      <Brain className="w-4 h-4" />
+                      Emocional
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="ANTHROPOMETRIC" className="py-4">
+                    <BeneficiaryAntropometricForm
+                      data={anthropometricDetail}
+                      onChange={(data) => setAnthropometricDetail(data)}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="TECHNICAL" className="py-4">
+                    <TechnicalTecticalForm
+                      data={technicalDetail}
+                      onChange={(data) => setTechnicalDetail(data)}
+                    />
+                  </TabsContent>
+
+                  <TabsContent value="EMOTIONAL" className="py-4">
+                    <EmotionalForm
+                      data={emotionalDetail}
+                      onChange={(data) => setEmotionalDetail(data)}
+                    />
+                  </TabsContent>
+                </Tabs>
+              )}
+            </div>
           </div>
 
-          {!beneficiaryId ? (
-            <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-              {t.evaluations.selectPrompt}
-            </div>
-          ) : (
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL")} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="ANTHROPOMETRIC" className="flex items-center gap-2">
-                  <Ruler className="w-4 h-4" />
-                  {t.evaluations.tabs.anthropometric}
-                </TabsTrigger>
-                <TabsTrigger value="TECHNICAL" className="flex items-center gap-2">
-                  <Activity className="w-4 h-4" />
-                  {t.evaluations.tabs.technical}
-                </TabsTrigger>
-                <TabsTrigger value="EMOTIONAL" className="flex items-center gap-2">
-                  <Brain className="w-4 h-4" />
-                  {t.evaluations.tabs.emotional}
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="ANTHROPOMETRIC" className="py-4">
-                <BeneficiaryAntropometricForm
-                  data={anthropometricDetail}
-                  onChange={(data) => setAnthropometricDetail(data)}
-                />
-              </TabsContent>
-
-              <TabsContent value="TECHNICAL" className="py-4">
-                <TechnicalTecticalForm
-                  data={technicalDetail}
-                  onChange={(data) => setTechnicalDetail(data)}
-                />
-              </TabsContent>
-
-              <TabsContent value="EMOTIONAL" className="py-4">
-                <EmotionalForm
-                  data={emotionalDetail}
-                  onChange={(data) => setEmotionalDetail(data)}
-                />
-              </TabsContent>
-            </Tabs>
-          )}
+          <DialogFooter className="border-t bg-background px-6 py-4">
+            <Button variant="outline" onClick={handleClose} disabled={saving}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} disabled={saving || !beneficiaryId}>
+              {saving ? 'Guardando...' : 'Guardar'}
+            </Button>
+          </DialogFooter>
         </div>
-
-        <DialogFooter className="sticky bottom-0 -mx-6 px-6 py-4 border-t bg-background">
-          <Button variant="outline" onClick={handleClose} disabled={saving}>
-            {t.evaluations.actions.cancel}
-          </Button>
-          <Button onClick={handleSave} disabled={saving || !beneficiaryId}>
-            {saving ? t.evaluations.actions.saving : t.evaluations.actions.save}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

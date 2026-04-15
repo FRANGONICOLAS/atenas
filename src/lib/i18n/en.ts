@@ -211,6 +211,7 @@ export const en = {
     notFound: 'No players found',
     memberSince: 'Member since',
     performance: 'Performance',
+    reviews: 'Evaluations',
     age: 'years',
   },
   projects: {
@@ -434,6 +435,10 @@ export const en = {
       technical: "Technical-Tactical",
       emotional: "Emotional",
     },
+    chartLabel: "Performance %",
+    emptyEmotional: "No psicological-emotional evaluations",
+    emptyAnthropometric: "No anthropometric evaluations",
+    emptyTechnical: "No technical-tactical evaluations",
     actions: {
       cancel: "Cancel",
       save: "Save",

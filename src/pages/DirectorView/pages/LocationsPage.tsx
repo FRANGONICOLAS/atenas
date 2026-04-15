@@ -1,13 +1,21 @@
-import { MapPin, Plus, Pencil, Trash2, Eye, Users, MapPinned, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { FullScreenLoader } from '@/components/common/FullScreenLoader';
-import { MapDialog } from '../components';
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { useLanguage } from '@/contexts/LanguageContext';
-import type { Headquarter } from '@/types';
-import { useHeadquarters } from '@/hooks/useHeadquarters';
-import { ImageUpload } from '@/components/common/ImageUpload';
+import {
+  MapPin,
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  Users,
+  MapPinned,
+  Calendar,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FullScreenLoader } from "@/components/common/FullScreenLoader";
+import { MapDialog } from "../components";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import type { Headquarter } from "@/types";
+import { useHeadquarters } from "@/hooks/useHeadquarters";
+import { ImageUpload } from "@/components/common/ImageUpload";
 import {
   Dialog,
   DialogContent,
@@ -15,32 +23,33 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import DeleteConfirmation from '@/components/modals/DeleteConfirmation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { headquarterService } from '@/api/services';
-import type { Project } from '@/types/project.types';
+} from "@/components/ui/select";
+import DeleteConfirmation from "@/components/modals/DeleteConfirmation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { headquarterService } from "@/api/services";
+import type { Project } from "@/types/project.types";
 
 const LocationsPage = () => {
-  const { t } = useLanguage();
   const [showMapDialog, setShowMapDialog] = useState(false);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<Headquarter | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<Headquarter | null>(
+    null,
+  );
   const [locationProjects, setLocationProjects] = useState<Project[]>([]);
   const [beneficiaryCount, setBeneficiaryCount] = useState(0);
   const [loadingDetails, setLoadingDetails] = useState(false);
-  
+
   const {
     headquarters,
     loading,
@@ -59,10 +68,12 @@ const LocationsPage = () => {
   } = useHeadquarters();
 
   const handleLocationClick = (locationId: string) => {
-    const location = headquarters.find((loc) => loc.headquarters_id === locationId);
+    const location = headquarters.find(
+      (loc) => loc.headquarters_id === locationId,
+    );
     if (location) {
-      toast.info(t.locations.infoTitle.replace('{{name}}', location.name), {
-        description: `${location.address || t.locations.noAddress} - ${location.city || ''}`,
+      toast.info(`Información de ${location.name}`, {
+        description: `${location.address || "Sin dirección"} - ${location.city || ""}`,
       });
     }
   };
@@ -78,22 +89,26 @@ const LocationsPage = () => {
 
     try {
       // Cargar conteo de beneficiarios
-      const count = await headquarterService.getBeneficiaryCount(location.headquarters_id);
+      const count = await headquarterService.getBeneficiaryCount(
+        location.headquarters_id,
+      );
       setBeneficiaryCount(count);
 
       // Cargar proyectos asociados
-      const projectsData = await headquarterService.getProjects(location?.headquarters_id);
-      setLocationProjects(projectsData.map(p => p.project));
+      const projectsData = await headquarterService.getProjects(
+        location?.headquarters_id,
+      );
+      setLocationProjects(projectsData.map((p) => p.project));
     } catch (error) {
-      console.error('Error loading location details:', error);
-      toast.error(t.common.detailsLoadingError);
+      console.error("Error loading location details:", error);
+      toast.error("Error al cargar los detalles");
     } finally {
       setLoadingDetails(false);
     }
   };
 
   if (loading) {
-    return <FullScreenLoader message={t.locations.loading} />;
+    return <FullScreenLoader message="Cargando sedes..." />;
   }
 
   return (
@@ -123,8 +138,8 @@ const LocationsPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {headquarters.map((location) => (
-            <Card 
-              key={location.headquarters_id} 
+            <Card
+              key={location.headquarters_id}
               className="overflow-hidden hover:shadow-lg transition-shadow"
             >
               {location.image_url && (
@@ -141,14 +156,20 @@ const LocationsPage = () => {
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{location.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {location.address || 'Sin dirección'}
+                      {location.address || "Sin dirección"}
                     </p>
                     {location.city && (
-                      <p className="text-sm text-muted-foreground">{location.city}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {location.city}
+                      </p>
                     )}
                   </div>
-                  <Badge variant={location.status === 'active' ? 'default' : 'secondary'}>
-                    {location.status === 'active' ? 'Activa' : 'Inactiva'}
+                  <Badge
+                    variant={
+                      location.status === "active" ? "default" : "secondary"
+                    }
+                  >
+                    {location.status === "active" ? "Activa" : "Inactiva"}
                   </Badge>
                 </div>
 
@@ -200,11 +221,11 @@ const LocationsPage = () => {
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editing ? 'Editar Sede' : 'Nueva Sede'}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Sede" : "Nueva Sede"}</DialogTitle>
             <DialogDescription>
               {editing
-                ? 'Actualiza la información de la sede'
-                : 'Completa los datos para crear una nueva sede'}
+                ? "Actualiza la información de la sede"
+                : "Completa los datos para crear una nueva sede"}
             </DialogDescription>
           </DialogHeader>
 
@@ -247,7 +268,10 @@ const LocationsPage = () => {
 
             <div className="space-y-2">
               <Label htmlFor="status">Estado</Label>
-              <Select value={form.status} onValueChange={(value) => setForm({ ...form, status: value })}>
+              <Select
+                value={form.status}
+                onValueChange={(value) => setForm({ ...form, status: value })}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -276,14 +300,11 @@ const LocationsPage = () => {
           </div>
 
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDialog(false)}
-            >
+            <Button variant="outline" onClick={() => setShowDialog(false)}>
               Cancelar
             </Button>
             <Button onClick={handleSave}>
-              {editing ? 'Actualizar' : 'Crear Sede'}
+              {editing ? "Actualizar" : "Crear Sede"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -326,9 +347,18 @@ const LocationsPage = () => {
                     <div>
                       <Label className="text-muted-foreground">Estado</Label>
                       <div className="mt-1">
-                        <Badge variant={selectedLocation.status === 'active' ? 'default' : 'secondary'}>
-                          {selectedLocation.status === 'active' ? 'Activa' : 
-                           selectedLocation.status === 'inactive' ? 'Inactiva' : 'Mantenimiento'}
+                        <Badge
+                          variant={
+                            selectedLocation.status === "active"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {selectedLocation.status === "active"
+                            ? "Activa"
+                            : selectedLocation.status === "inactive"
+                              ? "Inactiva"
+                              : "Mantenimiento"}
                         </Badge>
                       </div>
                     </div>
@@ -340,8 +370,10 @@ const LocationsPage = () => {
                     <div className="flex items-start gap-2">
                       <MapPinned className="w-4 h-4 mt-1 text-muted-foreground" />
                       <div className="flex-1">
-                        <Label className="text-muted-foreground">Dirección</Label>
-                        <p>{selectedLocation.address || 'No especificada'}</p>
+                        <Label className="text-muted-foreground">
+                          Dirección
+                        </Label>
+                        <p>{selectedLocation.address || "No especificada"}</p>
                       </div>
                     </div>
 
@@ -349,22 +381,26 @@ const LocationsPage = () => {
                       <MapPin className="w-4 h-4 mt-1 text-muted-foreground" />
                       <div className="flex-1">
                         <Label className="text-muted-foreground">Ciudad</Label>
-                        <p>{selectedLocation.city || 'No especificada'}</p>
+                        <p>{selectedLocation.city || "No especificada"}</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-2">
                       <Calendar className="w-4 h-4 mt-1 text-muted-foreground" />
                       <div className="flex-1">
-                        <Label className="text-muted-foreground">Fecha de Creación</Label>
+                        <Label className="text-muted-foreground">
+                          Fecha de Creación
+                        </Label>
                         <p>
-                          {selectedLocation.created_at 
-                            ? new Date(selectedLocation.created_at).toLocaleDateString('es-ES', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric'
+                          {selectedLocation.created_at
+                            ? new Date(
+                                selectedLocation.created_at,
+                              ).toLocaleDateString("es-ES", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
                               })
-                            : 'No disponible'}
+                            : "No disponible"}
                         </p>
                       </div>
                     </div>
@@ -382,16 +418,26 @@ const LocationsPage = () => {
                 </CardHeader>
                 <CardContent>
                   {loadingDetails ? (
-                    <p className="text-muted-foreground">Cargando estadísticas...</p>
+                    <p className="text-muted-foreground">
+                      Cargando estadísticas...
+                    </p>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">Beneficiarios</p>
-                        <p className="text-2xl font-bold text-blue-600">{beneficiaryCount}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Beneficiarios
+                        </p>
+                        <p className="text-2xl font-bold text-blue-600">
+                          {beneficiaryCount}
+                        </p>
                       </div>
                       <div className="p-4 bg-green-50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">Proyectos Asociados</p>
-                        <p className="text-2xl font-bold text-green-600">{locationProjects.length}</p>
+                        <p className="text-sm text-muted-foreground">
+                          Proyectos Asociados
+                        </p>
+                        <p className="text-2xl font-bold text-green-600">
+                          {locationProjects.length}
+                        </p>
                       </div>
                     </div>
                   )}
@@ -402,12 +448,14 @@ const LocationsPage = () => {
               {locationProjects.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Proyectos Asociados</CardTitle>
+                    <CardTitle className="text-lg">
+                      Proyectos Asociados
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       {locationProjects.map((project) => (
-                        <div 
+                        <div
                           key={project.project_id}
                           className="p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                         >
@@ -420,8 +468,20 @@ const LocationsPage = () => {
                                 </p>
                               )}
                             </div>
-                            <Badge variant={project.status === 'active' ? 'default' : 'secondary'}>
-                              {project.status === 'active' ? 'Activo' : project.status === 'completed' ? 'Completado' : project.status === 'pending' ? 'Pendiente' : project.status}
+                            <Badge
+                              variant={
+                                project.status === "active"
+                                  ? "default"
+                                  : "secondary"
+                              }
+                            >
+                              {project.status === "active"
+                                ? "Activo"
+                                : project.status === "completed"
+                                  ? "Completado"
+                                  : project.status === "pending"
+                                    ? "Pendiente"
+                                    : project.status}
                             </Badge>
                           </div>
                         </div>
@@ -446,9 +506,7 @@ const LocationsPage = () => {
               <Pencil className="w-4 h-4 mr-2" />
               Editar
             </Button>
-            <Button onClick={() => setShowDetailDialog(false)}>
-              Cerrar
-            </Button>
+            <Button onClick={() => setShowDetailDialog(false)}>Cerrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -47,6 +47,29 @@ export const hasEvaluationDetail = (detail?: Json | null): boolean => {
   return Object.values(detail).some(hasMeaningfulValue);
 };
 
+const parseEvaluationDetail = (rawDetail?: Json | null) => {
+  if (rawDetail === null || rawDetail === undefined) {
+    return null;
+  }
+
+  if (typeof rawDetail === "string") {
+    try {
+      const parsed = JSON.parse(rawDetail);
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? parsed
+        : null;
+    } catch {
+      return null;
+    }
+  }
+
+  if (typeof rawDetail === "object" && !Array.isArray(rawDetail)) {
+    return rawDetail;
+  }
+
+  return null;
+};
+
 export const getEvaluationDetailByType = (
   evaluation: Pick<
     EvaluationRow,
@@ -60,7 +83,7 @@ export const getEvaluationDetailByType = (
   if (!normalizedType) return null;
 
   const field = evaluationDetailFieldByType[normalizedType];
-  return evaluation[field] ?? null;
+  return parseEvaluationDetail(evaluation[field]);
 };
 
 export const getEvaluationComment = (
@@ -79,7 +102,10 @@ export const getEvaluationComment = (
 
   const record = detail as Record<string, unknown>;
   const comment =
-    record.observaciones ?? record.observation ?? record.observacion ?? record.comentarios;
+    record.observaciones ??
+    record.observation ??
+    record.observacion ??
+    record.comentarios;
 
   return typeof comment === "string" ? comment : "";
 };
@@ -93,12 +119,12 @@ export const buildEvaluationInsertPayload = (payload: {
   type: payload.type,
   anthropometric_detail:
     payload.type === "ANTHROPOMETRIC"
-      ? payload.anthropometric_detail ?? null
+      ? (payload.anthropometric_detail ?? null)
       : null,
   technical_tactic_detail:
     payload.type === "TECHNICAL"
-      ? payload.technical_tactic_detail ?? null
+      ? (payload.technical_tactic_detail ?? null)
       : null,
   emotional_detail:
-    payload.type === "EMOTIONAL" ? payload.emotional_detail ?? null : null,
+    payload.type === "EMOTIONAL" ? (payload.emotional_detail ?? null) : null,
 });

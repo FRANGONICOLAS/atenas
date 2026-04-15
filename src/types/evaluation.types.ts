@@ -1,4 +1,4 @@
-export type EvaluationType = 'ANTHROPOMETRIC' | 'TECHNICAL' | 'EMOTIONAL';
+export type EvaluationType = "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL";
 
 export interface Evaluation {
   id: string;
@@ -9,6 +9,21 @@ export interface Evaluation {
   score: number;
   comments: string;
   evaluator: string;
+}
+
+export interface EvaluationPanelItem {
+  id: string;
+  date: string;
+  type: EvaluationType;
+  score: number;
+  notes?: string;
+  metrics?: Record<string, number | string>;
+  graphMetrics?: Record<string, number | string>;
+}
+
+export interface EvaluationPanelProps {
+  evaluations: EvaluationPanelItem[];
+  emptyLabel: string;
 }
 
 import type { Json } from "@/api/types";

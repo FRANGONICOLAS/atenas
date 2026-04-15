@@ -16,7 +16,7 @@ export type BeneficiaryStatus =
 // Interfaz para datos antropométricos
 export interface AntropometricData {
   genero?: "hombre" | "mujer";
-  
+
   // Medidas Antropométricas
   peso?: number;
   talla?: number;
@@ -27,7 +27,7 @@ export interface AntropometricData {
   perimetro_brazo?: number;
   perimetro_muslo?: number;
   perimetro_pantorrilla?: number;
-  
+
   // Pliegues Cutáneos
   pliegue_tricipital?: number;
   pliegue_bicipital?: number;
@@ -36,7 +36,7 @@ export interface AntropometricData {
   pliegue_abdominal?: number;
   pliegue_muslo?: number;
   pliegue_pantorrilla?: number;
-  
+
   // Diámetros Óseos
   biacromial?: number;
   bicrestal?: number;
@@ -44,17 +44,17 @@ export interface AntropometricData {
   biepicondilar_femur?: number;
   biestiloideo_muneca?: number;
   bitrocantereo?: number;
-  
+
   // Composición Corporal
   porcentaje_grasa?: number;
   masa_magra?: number;
   masa_osea?: number;
-  
+
   // Somatotipo
   endomorfina?: number;
   mesomorfina?: number;
   ectomorfina?: number;
-  
+
   [key: string]: unknown;
 }
 
@@ -69,14 +69,59 @@ export interface TechnicalTacticalData {
   [key: string]: unknown;
 }
 
+export interface EmotionalQuestionValue {
+  question: string;
+  answer: string;
+  value: number;
+}
+
 // Interfaz para datos emocionales
 export interface EmotionalData {
-  triste_desanimado?: string;
-  dificultad_concentracion?: string;
-  estres_ansiedad?: string;
-  problemas_sueno?: string;
-  poca_energia?: string;
-  apoyo_social?: string;
+  fantastic_1?: number | EmotionalQuestionValue;
+  fantastic_2?: number | EmotionalQuestionValue;
+  fantastic_3?: number | EmotionalQuestionValue;
+  fantastic_4?: number | EmotionalQuestionValue;
+  fantastic_5?: number | EmotionalQuestionValue;
+  fantastic_6?: number | EmotionalQuestionValue;
+  fantastic_7?: number | EmotionalQuestionValue;
+  fantastic_8?: number | EmotionalQuestionValue;
+  fantastic_9?: number | EmotionalQuestionValue;
+  fantastic_10?: number | EmotionalQuestionValue;
+  fantastic_11?: number | EmotionalQuestionValue;
+  fantastic_12?: number | EmotionalQuestionValue;
+  fantastic_13?: number | EmotionalQuestionValue;
+  fantastic_14?: number | EmotionalQuestionValue;
+  fantastic_15?: number | EmotionalQuestionValue;
+  fantastic_16?: number | EmotionalQuestionValue;
+  fantastic_17?: number | EmotionalQuestionValue;
+  fantastic_18?: number | EmotionalQuestionValue;
+  fantastic_19?: number | EmotionalQuestionValue;
+  fantastic_20?: number | EmotionalQuestionValue;
+  fantastic_21?: number | EmotionalQuestionValue;
+  fantastic_22?: number | EmotionalQuestionValue;
+  fantastic_23?: number | EmotionalQuestionValue;
+  fantastic_24?: number | EmotionalQuestionValue;
+  fantastic_25?: number | EmotionalQuestionValue;
+  fantastic_26?: number | EmotionalQuestionValue;
+  fantastic_27?: number | EmotionalQuestionValue;
+  fantastic_28?: number | EmotionalQuestionValue;
+  fantastic_29?: number | EmotionalQuestionValue;
+  fantastic_30?: number | EmotionalQuestionValue;
+  fantastic_31?: number | EmotionalQuestionValue;
+  fantastic_32?: number | EmotionalQuestionValue;
+  fantastic_33?: number | EmotionalQuestionValue;
+  fantastic_34?: number | EmotionalQuestionValue;
+  fantastic_35?: number | EmotionalQuestionValue;
+  fantastic_36?: number | EmotionalQuestionValue;
+  fantastic_37?: number | EmotionalQuestionValue;
+  fantastic_38?: number | EmotionalQuestionValue;
+  fantastic_39?: number | EmotionalQuestionValue;
+  fantastic_40?: number | EmotionalQuestionValue;
+  fantastic_41?: number | EmotionalQuestionValue;
+  fantastic_42?: number | EmotionalQuestionValue;
+  fantastic_43?: number | EmotionalQuestionValue;
+  fantastic_44?: number | EmotionalQuestionValue;
+  fantastic_45?: number | EmotionalQuestionValue;
   observaciones?: string;
   [key: string]: unknown;
 }
@@ -186,6 +231,8 @@ export interface SedeStats {
   avgPerf: number;
 }
 
+import type { EvaluationPanelItem } from "@/types/evaluation.types";
+
 // Interfaz para vista pública de beneficiarios (con edad calculada)
 export interface BeneficiaryPublic {
   id: string;
@@ -197,4 +244,9 @@ export interface BeneficiaryPublic {
   photoUrl: string | null;
   status?: string;
   registryDate: string;
+}
+
+export interface BeneficiaryPublicWithDetails extends BeneficiaryPublic {
+  guardian?: string;
+  evaluations?: EvaluationPanelItem[];
 }

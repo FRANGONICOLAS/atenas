@@ -12,7 +12,6 @@ import { ProjectsTable } from "../components/Projects/ProjectsTable";
 import { ProjectDialog } from "../components/Projects/ProjectDialog";
 import { ProjectDetailDialog } from "../components/Projects/ProjectDetailDialog";
 import { toast } from "sonner";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Target, Plus, Download } from "lucide-react";
 import {
   generateProjectsExcel,
@@ -21,7 +20,6 @@ import {
 import type { Project, ProjectReport } from "@/types";
 
 const ProjectsPage = () => {
-  const { t } = useLanguage();
   const { user } = useAuth();
   const {
     projects,
@@ -97,8 +95,8 @@ const ProjectsPage = () => {
     headquarters_id?: string | number;
   }) => {
     if (!data.name || !data.category || !data.deadline) {
-      toast.error(t.common.requiredFields, {
-        description: t.projects.fieldsRequired,
+      toast.error("Complete los campos requeridos", {
+        description: "Todos los campos marcados con * son obligatorios.",
       });
       return;
     }
@@ -165,27 +163,21 @@ const ProjectsPage = () => {
   const handleExportExcel = () => {
     const data = mapProjectsToReport(filteredProjects);
     generateProjectsExcel(data, "proyectos");
-    toast.success(t.reports.excelGenerated, {
-      description: t.projects.exported.replace(
-        "{{count}}",
-        String(data.length),
-      ),
+    toast.success("Excel generado", {
+      description: `Se exportaron ${data.length} proyectos.`,
     });
   };
 
   const handleExportPDF = () => {
     const data = mapProjectsToReport(filteredProjects);
     generateProjectsPDF(data, "proyectos");
-    toast.success(t.reports.pdfGenerated, {
-      description: t.projects.exported.replace(
-        "{{count}}",
-        String(data.length),
-      ),
+    toast.success("PDF generado", {
+      description: `Se exportaron ${data.length} proyectos.`,
     });
   };
 
   if (projectsLoading) {
-    return <FullScreenLoader message={t.projects.loading} />;
+    return <FullScreenLoader message="Cargando proyectos..." />;
   }
 
   return (
