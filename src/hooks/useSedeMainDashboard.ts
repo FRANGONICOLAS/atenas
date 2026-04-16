@@ -9,6 +9,7 @@ import {
 import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import { useAuth } from "@/hooks/useAuth";
 import type { EvaluationRow } from "@/api/types";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
 
 export const BENEFICIARY_CATEGORIES = [
   "Categoría 1",
@@ -30,6 +31,13 @@ interface BeneficiarySlim {
   beneficiary_id: string;
   category: string;
   status?: string;
+}
+
+interface SedeDashboardCache {
+  assignedHeadquarterId: string;
+  assignedHeadquarterName: string;
+  beneficiaries: BeneficiarySlim[];
+  evaluations: EvaluationWithMeta[];
 }
 
 export const useSedeMainDashboard = () => {
@@ -82,10 +90,23 @@ export const useSedeMainDashboard = () => {
     return [];
   };
 
-  const loadData = async () => {
+  const loadData = async (forceRefresh = false) => {
     if (!user?.id) {
       setLoading(false);
       return;
+    }
+
+    const cacheKey = `sede:main-dashboard:${user.id}`;
+    if (!forceRefresh) {
+      const cached = getTimedCache<SedeDashboardCache>(cacheKey);
+      if (cached) {
+        setAssignedHeadquarterId(cached.assignedHeadquarterId);
+        setAssignedHeadquarterName(cached.assignedHeadquarterName);
+        setBeneficiaries(cached.beneficiaries);
+        setEvaluations(cached.evaluations);
+        setLoading(false);
+        return;
+      }
     }
 
     try {
@@ -145,6 +166,20 @@ export const useSedeMainDashboard = () => {
         });
       }
       setEvaluations(mapped);
+      setTimedCache(
+        cacheKey,
+        {
+          assignedHeadquarterId: hq.headquarters_id,
+          assignedHeadquarterName: hq.name,
+          beneficiaries: benefsData.map((b) => ({
+            beneficiary_id: b.beneficiary_id,
+            category: b.category,
+            status: b.status,
+          })),
+          evaluations: mapped,
+        },
+        FIVE_MINUTES_MS,
+      );
     } catch (error) {
       console.error("Error loading sede dashboard data:", error);
       toast.error("Error al cargar datos", {
