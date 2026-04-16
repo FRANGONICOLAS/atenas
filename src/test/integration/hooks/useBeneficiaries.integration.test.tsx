@@ -1,6 +1,8 @@
 import { renderHook, waitFor, act } from "@testing-library/react";
+import { useAuth } from "@/hooks/useAuth";
 import { useBeneficiaries } from "@/hooks/useBeneficiaries";
 
+const useAuthMock = useAuth as jest.MockedFunction<typeof useAuth>;
 const toastSuccessMock = jest.fn();
 const toastErrorMock = jest.fn();
 
@@ -8,6 +10,7 @@ const getAllBeneficiariesMock = jest.fn();
 const createBeneficiaryMock = jest.fn();
 const updateBeneficiaryMock = jest.fn();
 const uploadPhotoMock = jest.fn();
+const getUserByIdMock = jest.fn();
 
 const getAllHeadquartersMock = jest.fn();
 
@@ -21,6 +24,10 @@ jest.mock("sonner", () => ({
   },
 }));
 
+jest.mock("@/hooks/useAuth", () => ({
+  useAuth: jest.fn(),
+}));
+
 jest.mock("@/api/services", () => ({
   beneficiaryService: {
     getAll: (...args: unknown[]) => getAllBeneficiariesMock(...args),
@@ -32,6 +39,9 @@ jest.mock("@/api/services", () => ({
   },
   headquarterService: {
     getAll: (...args: unknown[]) => getAllHeadquartersMock(...args),
+  },
+  userService: {
+    getById: (...args: unknown[]) => getUserByIdMock(...args),
   },
 }));
 
@@ -52,12 +62,20 @@ jest.mock("@/lib/reportGenerator", () => ({
 describe("useBeneficiaries integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useAuthMock.mockReturnValue({
+      user: { first_name: "Juan", last_name: "Pérez" },
+      isLoading: false,
+      isAuthenticated: true,
+      signOut: jest.fn(),
+      refreshUser: jest.fn(),
+    });
 
     createSafeParseMock.mockReturnValue({ success: true });
     updateSafeParseMock.mockReturnValue({ success: true });
 
     getAllBeneficiariesMock.mockResolvedValue([]);
     getAllHeadquartersMock.mockResolvedValue([]);
+    getUserByIdMock.mockResolvedValue(null);
   });
 
   it("integrates create flow and triggers reload", async () => {

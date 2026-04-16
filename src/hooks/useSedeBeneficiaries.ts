@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { beneficiaryService, headquarterService, userService } from "@/api/services";
+import {
+  beneficiaryService,
+  headquarterService,
+  userService,
+} from "@/api/services";
 import { useAuth } from "@/hooks/useAuth";
 import type { Headquarter } from "@/types";
 import type {
@@ -29,7 +33,8 @@ export const applySedeBeneficiaryFilters = (
   if (!assignedHeadquarterId) return [];
 
   return beneficiaries.filter((b) => {
-    const matchesAssignedHeadquarter = b.headquarters_id === assignedHeadquarterId;
+    const matchesAssignedHeadquarter =
+      b.headquarters_id === assignedHeadquarterId;
     const matchesSearch =
       b.first_name.toLowerCase().includes(search.toLowerCase()) ||
       b.last_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,8 +70,15 @@ export const useSedeBeneficiaries = () => {
   // Headquarters for filters
   const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
   const [headquartersLoading, setHeadquartersLoading] = useState(true);
-  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<string | null>(null);
-  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<string | null>(null);
+  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<
+    string | null
+  >(null);
+  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<
+    string | null
+  >(null);
+  const [headquarterDirectorNames, setHeadquarterDirectorNames] = useState<
+    Record<string, string>
+  >({});
 
   const resolveHeadquarterFromUser = async () => {
     try {
@@ -82,7 +94,10 @@ export const useSedeBeneficiaries = () => {
         return hq ? [hq] : [];
       }
     } catch (error) {
-      console.warn("No se pudo resolver sede desde user.headquarter_id:", error);
+      console.warn(
+        "No se pudo resolver sede desde user.headquarter_id:",
+        error,
+      );
     }
 
     return [];
@@ -133,7 +148,9 @@ export const useSedeBeneficiaries = () => {
 
       // Fallback: headquarters.user_id -> user.id
       if (directorHeadquarters.length === 0) {
-        directorHeadquarters = await headquarterService.getByDirectorId(user.id);
+        directorHeadquarters = await headquarterService.getByDirectorId(
+          user.id,
+        );
       }
 
       // Fallback: metadata del usuario.
@@ -193,6 +210,45 @@ export const useSedeBeneficiaries = () => {
     if (authLoading) return;
     void loadAssignedHeadquarter();
   }, [authLoading, user?.id]);
+
+  useEffect(() => {
+    let canceled = false;
+    const loadDirectorNames = async () => {
+      const userIds = Array.from(
+        new Set(
+          headquarters.map((hq) => hq.user_id).filter(Boolean) as string[],
+        ),
+      );
+
+      if (userIds.length === 0) {
+        setHeadquarterDirectorNames({});
+        return;
+      }
+
+      const results = await Promise.all(
+        userIds.map(async (userId) => {
+          try {
+            const user = await userService.getById(userId);
+            return [
+              userId,
+              user ? `${user.first_name} ${user.last_name}` : "Desconocido",
+            ] as const;
+          } catch (error) {
+            return [userId, "Desconocido"] as const;
+          }
+        }),
+      );
+
+      if (!canceled) {
+        setHeadquarterDirectorNames(Object.fromEntries(results));
+      }
+    };
+
+    void loadDirectorNames();
+    return () => {
+      canceled = true;
+    };
+  }, [headquarters]);
 
   useEffect(() => {
     void loadBeneficiaries(assignedHeadquarterId);
@@ -286,7 +342,8 @@ export const useSedeBeneficiaries = () => {
     try {
       if (!assignedHeadquarterId) {
         toast.error("Sede no asignada", {
-          description: "No se puede actualizar un beneficiario sin sede asignada.",
+          description:
+            "No se puede actualizar un beneficiario sin sede asignada.",
         });
         return false;
       }
@@ -307,7 +364,10 @@ export const useSedeBeneficiaries = () => {
 
       let photoUrl = payload.photo_url;
       if (photoFile) {
-        photoUrl = await beneficiaryService.uploadPhoto(beneficiaryId, photoFile);
+        photoUrl = await beneficiaryService.uploadPhoto(
+          beneficiaryId,
+          photoFile,
+        );
       }
 
       await beneficiaryService.update(beneficiaryId, {
@@ -337,19 +397,27 @@ export const useSedeBeneficiaries = () => {
     editId?: string,
   ) => {
     if (isEditing && editId) {
-      return await handleUpdate(editId, beneficiaryData as UpdateBeneficiaryData);
+      return await handleUpdate(
+        editId,
+        beneficiaryData as UpdateBeneficiaryData,
+      );
     }
     return await handleCreate(beneficiaryData as CreateBeneficiaryData);
   };
 
-  const handleDelete = async (beneficiaryId: string, beneficiaryName: string) => {
+  const handleDelete = async (
+    beneficiaryId: string,
+    beneficiaryName: string,
+  ) => {
     try {
       // Verificar si el beneficiario tiene evaluaciones
-      const evaluationCount = await beneficiaryService.countEvaluations(beneficiaryId);
-      
+      const evaluationCount =
+        await beneficiaryService.countEvaluations(beneficiaryId);
+
       if (evaluationCount > 0) {
         toast.error("No se puede eliminar", {
-          description: "No puedes eliminar un beneficiario que tiene evaluaciones registradas",
+          description:
+            "No puedes eliminar un beneficiario que tiene evaluaciones registradas",
         });
         return;
       }
@@ -368,17 +436,54 @@ export const useSedeBeneficiaries = () => {
     }
   };
 
+  const headquarterMap = useMemo(
+    () =>
+      headquarters.reduce<Record<string, string>>((acc, hq) => {
+        acc[hq.headquarters_id] = hq.name;
+        return acc;
+      }, {}),
+    [headquarters],
+  );
+
+  const headquarterDirectorMap = useMemo(
+    () =>
+      headquarters.reduce<Record<string, string>>((acc, hq) => {
+        acc[hq.headquarters_id] =
+          headquarterDirectorNames[hq.user_id] || "Desconocido";
+        return acc;
+      }, {}),
+    [headquarters, headquarterDirectorNames],
+  );
+
+  const currentUserName =
+    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
+  const generatedByLabel = currentUserName
+    ? `Director de sede: ${currentUserName}`
+    : "Director de sede";
+
   const handleExportExcel = (beneficiariesToExport?: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered);
-    generateBeneficiariesExcel(data, "beneficiarios");
+    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
+      headquarterMap,
+      headquarterDirectorMap,
+    });
+    generateBeneficiariesExcel(data, "beneficiarios", {
+      generatedBy: generatedByLabel,
+      headquartersName: assignedHeadquarterName || "Sin sede",
+    });
     toast.success("Reporte Excel generado", {
       description: `Se exportaron ${data.length} beneficiarios`,
     });
   };
 
   const handleExportPDF = (beneficiariesToExport?: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered);
-    generateBeneficiariesPDF(data, "beneficiarios");
+    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
+      headquarterMap,
+      headquarterDirectorMap,
+    });
+    generateBeneficiariesPDF(data, "beneficiarios", {
+      generatedBy: generatedByLabel,
+      headquartersName: assignedHeadquarterName || "Sin sede",
+    });
     toast.success("Reporte PDF generado", {
       description: `Se exportaron ${data.length} beneficiarios`,
     });

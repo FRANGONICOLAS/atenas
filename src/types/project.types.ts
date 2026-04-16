@@ -38,6 +38,8 @@ export interface ProjectReport {
   id: number;
   name: string;
   category: string;
+  type: ProjectType;
+  headquarter: string;
   goal: number;
   raised: number;
   progress: number;

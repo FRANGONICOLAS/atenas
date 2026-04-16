@@ -21,6 +21,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { translations } from "@/lib/i18n/i18n";
 import type { EvaluationPanelProps } from "@/types/evaluation.types";
 
 ChartJS.register(
@@ -35,16 +36,23 @@ ChartJS.register(
   Filler,
 );
 
-function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
-  const { language, t } = useLanguage();
+function EvaluationPanel({
+  evaluations,
+  emptyLabel,
+  showGraph = true,
+  languageOverride,
+}: EvaluationPanelProps) {
+  const { language: contextLanguage, t: contextT } = useLanguage();
+  const language = languageOverride ?? contextLanguage;
+  const t = languageOverride ? translations[language] : contextT;
   const locale = language === "en" ? "en-US" : "es-ES";
   const [openGraph, setOpenGraph] = useState<"radar" | "line" | null>(null);
 
   const graphTitle =
     openGraph === "radar"
-      ? "Radar de parámetros"
+      ? t.evaluations.graphRadarTitle
       : openGraph === "line"
-        ? "Progreso histórico"
+        ? t.evaluations.graphLineTitle
         : "";
 
   const fantasticSections = useMemo(
@@ -259,6 +267,22 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
     : [];
 
   const formatMetricKey = (key: string) => {
+    const metricLabelMap: Record<string, { en: string; es: string }> = {
+      pase: { es: "Pase", en: "Pass" },
+      recepcion: { es: "Recepción", en: "Reception" },
+      remate: { es: "Remate", en: "Shooting" },
+      regate: { es: "Regate", en: "Dribbling" },
+      conduccion: { es: "Conducción", en: "Ball control" },
+      ubicacion_espacio_temporal: {
+        es: "Ubicación espacio-temporal",
+        en: "Spatial positioning",
+      },
+    };
+
+    if (metricLabelMap[key]) {
+      return metricLabelMap[key][language];
+    }
+
     if (key.includes(" ")) {
       return key;
     }
@@ -282,7 +306,7 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
       ...(prevEv
         ? [
             {
-              label: "Anterior",
+              label: t.evaluations.previous,
               data: metricKeys.map((k) => prevEv.parsedMetrics[k] || 0),
               borderColor: "rgba(16, 185, 129, 0.8)",
               backgroundColor: "rgba(16, 185, 129, 0.2)",
@@ -292,7 +316,7 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
           ]
         : []),
       {
-        label: "Actual",
+        label: t.evaluations.current,
         data: metricKeys.map((k) => latestEv.parsedMetrics[k] || 0),
         borderColor: "rgb(59, 130, 246)",
         backgroundColor: "rgba(59, 130, 246, 0.3)",
@@ -330,7 +354,7 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
     ),
     datasets: [
       {
-        label: "Evolución Score %",
+        label: t.evaluations.scoreTrend,
         data: sortedEvaluations.map((ev) => ev.score),
         fill: true,
         borderColor: "rgb(59, 130, 246)",
@@ -342,31 +366,33 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
 
   return (
     <>
-      <div className="space-y-6">
-        {/* Sección de Gráficos */}
-        <div className="grid grid-cols-1 gap-4">
-          {/* Radar: Comparación de Parámetros actuales */}
-          <div className=" w-full bg-card p-4 rounded-xl border border-border flex flex-col">
-            <div className="flex items-center justify-between mb-2 gap-3">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase">
-                Análisis de Parámetros
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setOpenGraph("radar")}
-              >
-                Ver gráfico
-              </Button>
+      {showGraph && (
+        <div className="space-y-6">
+          {/* Sección de Gráficos */}
+          <div className="grid grid-cols-1 gap-4">
+            {/* Radar: Comparación de Parámetros actuales */}
+            <div className=" w-full bg-card p-4 rounded-xl border border-border flex flex-col">
+              <div className="flex items-center justify-between mb-2 gap-3">
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  {t.evaluations.analysisParameters}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOpenGraph("radar")}
+                >
+                  {t.evaluations.viewGraph}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Lista detallada de iteraciones */}
       <div className="space-y-2">
         <span className="text-[10px] font-bold text-muted-foreground uppercase px-1">
-          Historial de registros
+          {t.evaluations.historyTitle}
         </span>
         <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
           {[...sortedEvaluations].reverse().map((ev) => (
@@ -413,33 +439,35 @@ function EvaluationPanel({ evaluations, emptyLabel }: EvaluationPanelProps) {
           ))}
         </div>
       </div>
-      <Dialog
-        open={openGraph !== null}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) {
-            setOpenGraph(null);
-          }
-        }}
-      >
-        <DialogContent className="max-w-5xl w-full max-h-[90vh] overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>{graphTitle}</DialogTitle>
-          </DialogHeader>
-          <div className="h-[60vh]">
-            {openGraph === "radar" ? (
-              <Radar data={radarData} options={radarOptions} />
-            ) : (
-              <Line
-                data={lineData}
-                options={{
-                  ...radarOptions,
-                  scales: { y: { min: 0, max: 100 } },
-                }}
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {showGraph && (
+        <Dialog
+          open={openGraph !== null}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) {
+              setOpenGraph(null);
+            }
+          }}
+        >
+          <DialogContent className="max-w-5xl w-full max-h-[90vh] overflow-hidden">
+            <DialogHeader>
+              <DialogTitle>{graphTitle}</DialogTitle>
+            </DialogHeader>
+            <div className="h-[60vh]">
+              {openGraph === "radar" ? (
+                <Radar data={radarData} options={radarOptions} />
+              ) : (
+                <Line
+                  data={lineData}
+                  options={{
+                    ...radarOptions,
+                    scales: { y: { min: 0, max: 100 } },
+                  }}
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }

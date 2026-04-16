@@ -143,6 +143,10 @@ const BeneficiariesPage = () => {
     handleExportPDF(filtered);
   };
 
+  const handleExportSingleBeneficiary = (beneficiary: Beneficiary) => {
+    handleExportPDF([beneficiary]);
+  };
+
   if (loading) {
     return <FullScreenLoader message="Cargando beneficiarios..." />;
   }
@@ -156,14 +160,6 @@ const BeneficiariesPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">Beneficiarios</h2>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleExportExcelClick}>
-            <Download className="w-4 h-4 mr-2" />
-            Excel
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPDFClick}>
-            <Download className="w-4 h-4 mr-2" />
-            PDF
-          </Button>
           <Button size="sm" onClick={openCreate}>
             <Plus className="w-4 h-4 mr-2" />
             Nuevo Beneficiario
@@ -187,15 +183,35 @@ const BeneficiariesPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <BeneficiaryFilters
-            search={search}
-            onSearchChange={setSearch}
-            headquarterFilter={headquarterFilter}
-            onHeadquarterFilterChange={setHeadquarterFilter}
-            categoryFilter={categoryFilter}
-            onCategoryFilterChange={setCategoryFilter}
-            headquarters={headquarters}
-          />
+          <div className="flex flex-col gap-4">
+            <BeneficiaryFilters
+              search={search}
+              onSearchChange={setSearch}
+              headquarterFilter={headquarterFilter}
+              onHeadquarterFilterChange={setHeadquarterFilter}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={setCategoryFilter}
+              headquarters={headquarters}
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportExcelClick}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar filtro Excel
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportPDFClick}
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar filtro PDF
+              </Button>
+            </div>
+          </div>
 
           <Tabs value={statusTab} onValueChange={setStatusTab} className="mt-4">
             <TabsList className="grid w-full grid-cols-5">
@@ -215,6 +231,7 @@ const BeneficiariesPage = () => {
                   setDeleteTarget(b);
                   setShowDelete(true);
                 }}
+                onExport={handleExportSingleBeneficiary}
                 calculateAge={calculateAge}
                 getStatusBadge={getStatusBadge}
                 getPerformanceColor={getPerformanceColor}

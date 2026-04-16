@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { BarChart3, Edit, Trash2 } from "lucide-react";
+import { BarChart3, Download, Edit, Trash2 } from "lucide-react";
 import type { Evaluation } from "@/types";
 
 interface EvaluationTableProps {
@@ -16,9 +16,10 @@ interface EvaluationTableProps {
   onView: (evaluation: Evaluation) => void;
   onEdit: (evaluation: Evaluation) => void;
   onDelete: (evaluation: Evaluation) => void;
+  onExport?: (evaluation: Evaluation) => void;
   formatDate: (dateString: string) => string;
   getPerformanceColor: (value: number) => string;
-  getTypeLabel: (type: Evaluation['type']) => string;
+  getTypeLabel: (type: Evaluation["type"]) => string;
 }
 
 export const EvaluationTable = ({
@@ -26,6 +27,7 @@ export const EvaluationTable = ({
   onView,
   onEdit,
   onDelete,
+  onExport,
   formatDate,
   getPerformanceColor,
   getTypeLabel,
@@ -55,9 +57,7 @@ export const EvaluationTable = ({
               <TableCell className="font-medium">
                 {evaluation.beneficiaryName}
               </TableCell>
-              <TableCell>
-                {getTypeLabel(evaluation.type)}
-              </TableCell>
+              <TableCell>{getTypeLabel(evaluation.type)}</TableCell>
               <TableCell className="text-sm text-muted-foreground">
                 {formatDate(evaluation.date)}
               </TableCell>
@@ -81,6 +81,17 @@ export const EvaluationTable = ({
                   >
                     <Edit className="h-4 w-4" />
                   </Button>
+                  {onExport ? (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8"
+                      onClick={() => onExport(evaluation)}
+                      title="Exportar beneficiario"
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+                  ) : null}
                   <Button
                     size="icon"
                     variant="ghost"

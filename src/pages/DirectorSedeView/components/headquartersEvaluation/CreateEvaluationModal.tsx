@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Brain, Ruler, Activity } from "lucide-react";
-import { BeneficiaryAntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryAntropometricForm";
+import { AntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/AntropometricForm";
 import { TechnicalTecticalForm } from "@/pages/DirectorView/components/Beneficiaries/TechnicalTecticalForm";
 import { EmotionalForm } from "@/pages/DirectorView/components/Beneficiaries/EmotionalForm";
 import { hasEvaluationDetail } from "@/lib/evaluationUtils";
@@ -145,7 +145,10 @@ export const CreateEvaluationModal = ({
           <div className="px-6 py-6 space-y-6">
             <DialogHeader>
               <DialogTitle>Agregar evaluación</DialogTitle>
-              <DialogDescription>Seleccione el beneficiario y complete las evaluaciones necesarias.</DialogDescription>
+              <DialogDescription>
+                Seleccione el beneficiario y complete las evaluaciones
+                necesarias.
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-6">
@@ -220,7 +223,7 @@ export const CreateEvaluationModal = ({
                   </TabsList>
 
                   <TabsContent value="ANTHROPOMETRIC" className="py-4">
-                    <BeneficiaryAntropometricForm
+                    <AntropometricForm
                       data={anthropometricDetail}
                       onChange={(data) => setAnthropometricDetail(data)}
                     />
@@ -249,7 +252,7 @@ export const CreateEvaluationModal = ({
               Cancelar
             </Button>
             <Button onClick={handleSave} disabled={saving || !beneficiaryId}>
-              {saving ? 'Guardando...' : 'Guardar'}
+              {saving ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
         </div>

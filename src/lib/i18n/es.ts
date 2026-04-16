@@ -218,48 +218,76 @@ export const es = {
     placeholder: "Imagen de categoria",
     items: {
       sub6: {
-        name: 'Categoria Sub 6',
-        schedule: 'Lunes, Miércoles, Viernes - 3:00 PM',
-        description: 'Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.',
-        achievements: ['Participación en 5 torneos locales', 'Formación de 15 jugadores para categoría superior'],
+        name: "Categoria Sub 6",
+        schedule: "Lunes, Miércoles, Viernes - 3:00 PM",
+        description:
+          "Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.",
+        achievements: [
+          "Participación en 5 torneos locales",
+          "Formación de 15 jugadores para categoría superior",
+        ],
       },
       sub8: {
-        name: 'Categoria Sub 8',
-        schedule: 'Lunes, Miércoles, Viernes - 3:00 PM',
-        description: 'Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.',
-        achievements: ['Participación en 5 torneos locales', 'Formación de 15 jugadores para categoría superior'],
+        name: "Categoria Sub 8",
+        schedule: "Lunes, Miércoles, Viernes - 3:00 PM",
+        description:
+          "Iniciación al fútbol a través del juego. Desarrollo de habilidades motoras básicas y trabajo en equipo.",
+        achievements: [
+          "Participación en 5 torneos locales",
+          "Formación de 15 jugadores para categoría superior",
+        ],
       },
       sub10: {
-        name: 'Categoria Sub 10',
-        schedule: 'Martes, Jueves, Sábado - 3:30 PM',
-        description: 'Desarrollo de fundamentos técnicos del fútbol. Introducción a tácticas básicas de juego.',
-        achievements: ['Campeones torneo municipal 2023', '8 jugadores seleccionados para selección departamental'],
+        name: "Categoria Sub 10",
+        schedule: "Martes, Jueves, Sábado - 3:30 PM",
+        description:
+          "Desarrollo de fundamentos técnicos del fútbol. Introducción a tácticas básicas de juego.",
+        achievements: [
+          "Campeones torneo municipal 2023",
+          "8 jugadores seleccionados para selección departamental",
+        ],
       },
       sub12: {
-        name: 'Categoria Sub 12',
-        schedule: 'Lunes a Viernes - 4:00 PM',
-        description: 'Perfeccionamiento técnico y táctico. Desarrollo de la visión de juego y posicionamiento.',
-        achievements: ['Subcampeones liga regional', '12 convocados a pruebas de clubes profesionales'],
+        name: "Categoria Sub 12",
+        schedule: "Lunes a Viernes - 4:00 PM",
+        description:
+          "Perfeccionamiento técnico y táctico. Desarrollo de la visión de juego y posicionamiento.",
+        achievements: [
+          "Subcampeones liga regional",
+          "12 convocados a pruebas de clubes profesionales",
+        ],
       },
       sub14: {
-        name: 'Categoria Sub 14',
-        schedule: 'Lunes a Sábado - 4:30 PM',
-        description: 'Especialización por posición. Preparación física específica y desarrollo mental.',
-        achievements: ['Participación en torneos nacionales', '5 jugadores fichados por academias profesionales'],
+        name: "Categoria Sub 14",
+        schedule: "Lunes a Sábado - 4:30 PM",
+        description:
+          "Especialización por posición. Preparación física específica y desarrollo mental.",
+        achievements: [
+          "Participación en torneos nacionales",
+          "5 jugadores fichados por academias profesionales",
+        ],
       },
       sub16: {
-        name: 'Categoria Sub 16',
-        schedule: 'Lunes a Sábado - 5:00 PM',
-        description: 'Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.',
-        achievements: ['3 jugadores en divisiones inferiores de clubes profesionales', 'Campeones nacionales sub-17'],
+        name: "Categoria Sub 16",
+        schedule: "Lunes a Sábado - 5:00 PM",
+        description:
+          "Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.",
+        achievements: [
+          "3 jugadores en divisiones inferiores de clubes profesionales",
+          "Campeones nacionales sub-17",
+        ],
       },
       sub18: {
-        name: 'Categoria Sub 18',
-        schedule: 'Lunes a Sábado - 5:00 PM',
-        description: 'Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.',
-        achievements: ['3 jugadores en divisiones inferiores de clubes profesionales', 'Campeones nacionales sub-17'],
+        name: "Categoria Sub 18",
+        schedule: "Lunes a Sábado - 5:00 PM",
+        description:
+          "Alto rendimiento y preparación para el fútbol profesional. Formación integral del deportista.",
+        achievements: [
+          "3 jugadores en divisiones inferiores de clubes profesionales",
+          "Campeones nacionales sub-17",
+        ],
       },
-    }
+    },
   },
   players: {
     title: "Nuestros Jugadores",
@@ -331,31 +359,36 @@ export const es = {
       items: {
         andres: {
           name: "Andrés Rodríguez",
-          title: "De un barrio vulnerable a las divisiones inferiores de un club profesional",
-          description: "Andrés llegó a la fundación con 10 años. Sin recursos económicos, encontró en el fútbol una salida. Hoy, a sus 17 años, está firmado con un club profesional y es embajador de nuestra fundación."
+          title:
+            "De un barrio vulnerable a las divisiones inferiores de un club profesional",
+          description:
+            "Andrés llegó a la fundación con 10 años. Sin recursos económicos, encontró en el fútbol una salida. Hoy, a sus 17 años, está firmado con un club profesional y es embajador de nuestra fundación.",
         },
         laura: {
           name: "Laura Jiménez",
           title: "Máxima goleadora y seleccionada nacional sub-15",
-          description: "Laura demostró que con talento y dedicación no hay límites. Fue convocada a la selección nacional y hoy inspira a decenas de niñas en la fundación."
-        }
-      }
+          description:
+            "Laura demostró que con talento y dedicación no hay límites. Fue convocada a la selección nacional y hoy inspira a decenas de niñas en la fundación.",
+        },
+      },
     },
     moreTestimonials: "Más Testimonios",
-    memberRole: "Miembro de la fundación",    modal: {
-      title: 'Crear Testimonio',
-      description: 'Comparte tu experiencia con la fundación. Tu testimonio será revisado antes de publicarse.',
-      formTitle: 'Título',
-      formTitlePlaceholder: 'Un título para tu testimonio',
-      formContent: 'Contenido',
-      formContentPlaceholder: 'Escribe tu testimonio aquí...',
-      submit: 'Enviar Testimonio',
-      submitting: 'Enviando...',
-      cancel: 'Cancelar',
-      rating: 'Calificación',
-      star: 'estrella',
-      stars: 'estrellas',
-    }
+    memberRole: "Miembro de la fundación",
+    modal: {
+      title: "Crear Testimonio",
+      description:
+        "Comparte tu experiencia con la fundación. Tu testimonio será revisado antes de publicarse.",
+      formTitle: "Título",
+      formTitlePlaceholder: "Un título para tu testimonio",
+      formContent: "Contenido",
+      formContentPlaceholder: "Escribe tu testimonio aquí...",
+      submit: "Enviar Testimonio",
+      submitting: "Enviando...",
+      cancel: "Cancelar",
+      rating: "Calificación",
+      star: "estrella",
+      stars: "estrellas",
+    },
   },
   donation: {
     title: "Haz tu Donación",
@@ -365,14 +398,16 @@ export const es = {
     enterCustomAmount: "Ingresa otro monto",
     continue: "Continuar",
     selectDestination: "Destino de tu donación",
-    destinationDescription: "Elige si deseas donar para libre inversión o a un proyecto específico",
+    destinationDescription:
+      "Elige si deseas donar para libre inversión o a un proyecto específico",
     generalFund: {
       title: "Libre Inversión",
-      description: "Tu donación se utilizará donde más se necesite para apoyar a los proyectos y beneficiarios de la fundación",
+      description:
+        "Tu donación se utilizará donde más se necesite para apoyar a los proyectos y beneficiarios de la fundación",
     },
     specificProject: {
       title: "Proyecto Específico",
-      description: "Elige un proyecto al que deseas destinar tu donación"
+      description: "Elige un proyecto al que deseas destinar tu donación",
     },
     selectProject: "Selecciona un proyecto",
     freeInvestment: "Inversión Libre",
@@ -384,7 +419,8 @@ export const es = {
     thankYou: "¡Gracias por tu donación!",
     back: "Atrás",
     confirmDonation: "Confirma tu Donación",
-    confirmSubtitle: "Procesaremos tu pago de forma segura con Bold Payment Gateway",
+    confirmSubtitle:
+      "Procesaremos tu pago de forma segura con Bold Payment Gateway",
     messageLabel: "Mensaje o dedicatoria (opcional)",
     messagePlaceholder: "Escribe un mensaje para acompañar tu donación...",
     summaryAmount: "Monto a donar",
@@ -392,20 +428,23 @@ export const es = {
     payWithBold: "Pagar con Bold",
     donorLabel: "Donante",
     securePaymentTitle: "Pago seguro con Bold",
-    securePaymentDesc: "Tu información de pago es procesada de forma segura. No almacenamos datos de tarjetas.",
+    securePaymentDesc:
+      "Tu información de pago es procesada de forma segura. No almacenamos datos de tarjetas.",
     paymentMethods: "Métodos de pago disponibles:",
     paymentMethodsList: "Tarjeta de crédito/débito • PSE • Nequi • Daviplata",
     loginRequired: "Debes iniciar sesión para realizar una donación.",
     proceedToPayment: "Proceder al pago",
     processing: "Procesando...",
-    terms: "Al continuar, aceptas que procesaremos tu donación a través de Bold Payment Gateway",
+    terms:
+      "Al continuar, aceptas que procesaremos tu donación a través de Bold Payment Gateway",
     boldForm: {
       title: "Realizar Donación",
       supportProject: "Apoya el proyecto:",
       defaultDescription: "Realiza tu donación de forma segura con Bold",
       transactionInitiated: "¡Transacción iniciada exitosamente!",
       orderId: "ID de orden:",
-      confirmationMessage: "Recibirás la confirmación una vez se complete el pago.",
+      confirmationMessage:
+        "Recibirás la confirmación una vez se complete el pago.",
       orCustomAmount: "O ingresa un monto personalizado",
       totalToDonate: "Total a donar:",
       projectLabel: "Proyecto:",
@@ -415,25 +454,28 @@ export const es = {
       orderId: "ID de Orden:",
       success: {
         title: "¡Pago Exitoso!",
-        message: "Tu donación ha sido procesada correctamente. ¡Gracias por tu generosidad!",
-        button: "Ver mis donaciones"
+        message:
+          "Tu donación ha sido procesada correctamente. ¡Gracias por tu generosidad!",
+        button: "Ver mis donaciones",
       },
       declined: {
         title: "Pago Rechazado",
-        message: "Tu pago no pudo ser procesado. Por favor, intenta nuevamente o usa otro método de pago.",
-        button: "Intentar de nuevo"
+        message:
+          "Tu pago no pudo ser procesado. Por favor, intenta nuevamente o usa otro método de pago.",
+        button: "Intentar de nuevo",
       },
       pending: {
         title: "Pago Pendiente",
-        message: "Tu pago está siendo procesado. Recibirás una confirmación por correo cuando se complete.",
-        button: "Ver mis donaciones"
+        message:
+          "Tu pago está siendo procesado. Recibirás una confirmación por correo cuando se complete.",
+        button: "Ver mis donaciones",
       },
       process: {
         title: "Procesando...",
         message: "Estamos verificando el estado de tu pago.",
-        button: "Volver al inicio"
-      }
-    }
+        button: "Volver al inicio",
+      },
+    },
   },
   auth: {
     login: "Iniciar Sesión",
@@ -450,11 +492,11 @@ export const es = {
     role: "Rol",
     donor: "Donador",
     coach: "Entrenador",
-    welcome: '¡Bienvenido de nuevo!',
-    loggingIn: 'Ingresando...',
-    signingUp: 'Creando cuenta...',
-    accountCreated: '¡Cuenta creada exitosamente!',
-    verifyEmail: 'Por favor verifica tu email para activar tu cuenta',
+    welcome: "¡Bienvenido de nuevo!",
+    loggingIn: "Ingresando...",
+    signingUp: "Creando cuenta...",
+    accountCreated: "¡Cuenta creada exitosamente!",
+    verifyEmail: "Por favor verifica tu email para activar tu cuenta",
     logoutSuccess: "Sesión cerrada exitosamente",
     logoutError: "Error al cerrar sesión",
     updateProfileSuccess: "Perfil actualizado correctamente",
@@ -484,20 +526,31 @@ export const es = {
     updateError: "Error al actualizar evaluación",
     updateErrorDesc: "No se pudo actualizar la evaluación",
     addTitle: "Agregar evaluación",
-    addDesc: "Selecciona el beneficiario y completa las evaluaciones necesarias.",
+    addDesc:
+      "Selecciona el beneficiario y completa las evaluaciones necesarias.",
     editTitle: "Editar evaluación",
     editDesc: "Actualiza los formularios de evaluación del beneficiario.",
     beneficiaryLabel: "Beneficiario",
     loadingBeneficiaries: "Cargando beneficiarios...",
     selectPlaceholder: "Selecciona beneficiario",
     noBeneficiaries: "Sin beneficiarios disponibles",
-    selectPrompt: "Selecciona un beneficiario para habilitar los formularios de evaluación.",
+    selectPrompt:
+      "Selecciona un beneficiario para habilitar los formularios de evaluación.",
     tabs: {
       anthropometric: "Antropométrico",
       technical: "Técnico-Táctico",
       emotional: "Emocional",
     },
     chartLabel: "Rendimiento %",
+    graphRadarTitle: "Radar de parámetros",
+    graphLineTitle: "Progreso histórico",
+    analysisParameters: "Análisis de parámetros",
+    progressCardTitle: "Comparativa de evaluaciones",
+    viewGraph: "Ver gráfico",
+    scoreTrend: "Evolución Score %",
+    previous: "Anterior",
+    current: "Actual",
+    historyTitle: "Historial de registros",
     emptyEmotional: "Sin evaluaciones psicológicas-emocionales",
     emptyAnthropometric: "Sin evaluaciones antropométricas",
     emptyTechnical: "Sin evaluaciones técnico-tácticas",
@@ -505,7 +558,7 @@ export const es = {
       cancel: "Cancelar",
       save: "Guardar",
       saving: "Guardando...",
-    }
+    },
   },
   common: {
     requiredFields: "Campos requeridos",
@@ -546,24 +599,24 @@ export const es = {
       projects: "Proyectos que Apoyas",
       impact: "Tu Impacto",
       recentDonations: "Donaciones Recientes",
-      overview: "Panel de Donación"
+      overview: "Panel de Donación",
     },
     stats: {
       totalDonated: "Total Donado",
       projectsSupported: "Proyectos Apoyados",
       beneficiariesImpacted: "Niños Beneficiados",
-      donationsMade: "Donaciones realizadas"
+      donationsMade: "Donaciones realizadas",
     },
     actions: {
       refresh: "Actualizar",
       retry: "Reintentar",
-      sortBy: "Ordenar por"
+      sortBy: "Ordenar por",
     },
     sort: {
       dateNewest: "Fecha: más reciente",
       dateOldest: "Fecha: más antigua",
       amountHigh: "Monto: mayor a menor",
-      amountLow: "Monto: menor a mayor"
+      amountLow: "Monto: menor a mayor",
     },
     table: {
       project: "Proyecto",
@@ -572,13 +625,13 @@ export const es = {
       date: "Fecha",
       method: "Método de pago",
       status: "Estado",
-      orderId: "Orden"
+      orderId: "Orden",
     },
     transactionStatus: {
       APPROVED: "Aprobado",
       PENDING: "Pendiente",
       DECLINED: "Rechazado",
-      ERROR: "Error"
+      ERROR: "Error",
     },
     status: {
       loading: "Cargando estadísticas de donaciones...",
@@ -586,12 +639,12 @@ export const es = {
       error: "Error",
       noDonations: "No hay donaciones registradas.",
       noProjects: "No has apoyado proyectos aún",
-      noRecent: "No tienes donaciones recientes"
+      noRecent: "No tienes donaciones recientes",
     },
     descriptions: {
       contributionsStatus: "Estado de tus contribuciones",
       recentContributions: "Últimas contribuciones",
-      directBenefits: "Beneficios directos de tus donaciones"
-    }
-  }
+      directBenefits: "Beneficios directos de tus donaciones",
+    },
+  },
 };

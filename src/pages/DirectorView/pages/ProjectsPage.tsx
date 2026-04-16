@@ -21,6 +21,11 @@ import type { Project, ProjectReport } from "@/types";
 
 const ProjectsPage = () => {
   const { user } = useAuth();
+  const currentUserName =
+    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
+  const generatedByLabel = currentUserName
+    ? `Director: ${currentUserName}`
+    : "Director";
   const {
     projects,
     projectsLoading,
@@ -154,6 +159,8 @@ const ProjectsPage = () => {
       id: p.id,
       name: p.name,
       category: p.category,
+      type: p.type,
+      headquarter: getHqName(p.headquarters_id),
       goal: p.goal,
       raised: p.raised,
       progress: p.progress,
@@ -162,7 +169,9 @@ const ProjectsPage = () => {
 
   const handleExportExcel = () => {
     const data = mapProjectsToReport(filteredProjects);
-    generateProjectsExcel(data, "proyectos");
+    generateProjectsExcel(data, "proyectos", {
+      generatedBy: generatedByLabel,
+    });
     toast.success("Excel generado", {
       description: `Se exportaron ${data.length} proyectos.`,
     });
@@ -170,7 +179,9 @@ const ProjectsPage = () => {
 
   const handleExportPDF = () => {
     const data = mapProjectsToReport(filteredProjects);
-    generateProjectsPDF(data, "proyectos");
+    generateProjectsPDF(data, "proyectos", {
+      generatedBy: generatedByLabel,
+    });
     toast.success("PDF generado", {
       description: `Se exportaron ${data.length} proyectos.`,
     });

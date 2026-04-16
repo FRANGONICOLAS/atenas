@@ -217,7 +217,10 @@ export interface BeneficiaryReport {
   age?: number;
   category: string;
   headquarters_id: string;
+  headquarter_name?: string;
+  headquarter_director?: string;
   phone: string;
+  guardian?: string;
   registry_date: string;
   status?: string;
   performance?: number;

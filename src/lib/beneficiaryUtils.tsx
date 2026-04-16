@@ -1,6 +1,11 @@
 import { Badge } from '@/components/ui/badge';
 import type { Beneficiary, BeneficiaryReport } from '@/types/beneficiary.types';
 
+export interface BeneficiaryReportOptions {
+  headquarterMap?: Record<string, string>;
+  headquarterDirectorMap?: Record<string, string>;
+}
+
 // Calcula la edad basada en la fecha de nacimiento
 export const calculateAge = (birthDate: string): number => {
   const today = new Date();
@@ -38,7 +43,10 @@ export const getPerformanceColor = (value: number): string => {
 };
 
 // Mapea un array de beneficiarios a formato de reporte
-export const mapToReport = (items: Beneficiary[]): BeneficiaryReport[] =>
+export const mapToReport = (
+  items: Beneficiary[],
+  options: BeneficiaryReportOptions = {},
+): BeneficiaryReport[] =>
   items.map((b) => ({
     beneficiary_id: b.beneficiary_id,
     first_name: b.first_name,
@@ -46,7 +54,12 @@ export const mapToReport = (items: Beneficiary[]): BeneficiaryReport[] =>
     age: calculateAge(b.birth_date),
     category: b.category,
     headquarters_id: b.headquarters_id,
+    headquarter_name:
+      options.headquarterMap?.[b.headquarters_id] || b.headquarters_id,
+    headquarter_director:
+      options.headquarterDirectorMap?.[b.headquarters_id] || '',
     phone: b.phone,
+    guardian: b.guardian || '',
     registry_date: b.registry_date,
     status: b.status,
     performance: b.performance,

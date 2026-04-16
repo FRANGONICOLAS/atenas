@@ -11,6 +11,15 @@ export interface Evaluation {
   evaluator: string;
 }
 
+export interface EvaluationReport {
+  beneficiaryId: string;
+  beneficiaryName: string;
+  headquarterName: string | null;
+  date: string;
+  type: EvaluationType;
+  questions: Record<string, unknown> | null;
+}
+
 export interface EvaluationPanelItem {
   id: string;
   date: string;
@@ -24,6 +33,8 @@ export interface EvaluationPanelItem {
 export interface EvaluationPanelProps {
   evaluations: EvaluationPanelItem[];
   emptyLabel: string;
+  showGraph?: boolean;
+  languageOverride?: "es" | "en";
 }
 
 import type { Json } from "@/api/types";

@@ -15,6 +15,7 @@ import {
 import { Line, PolarArea } from "react-chartjs-2";
 import "chartjs-adapter-date-fns";
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { evaluationService } from "@/api/services";
 import { subMonths, subYears } from "date-fns";
 import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
@@ -159,138 +160,201 @@ export default function EvaluationProgressChart({ beneficiaryId }: EvaluationPro
 
   return (
     <div className="space-y-4">
-      {/* filters */}
-      <div className="flex flex-wrap gap-4">
-        <div className="w-40">
-          <Select onValueChange={(v) => setTypeFilter(v as EvaluationType | "all")} value={typeFilter}>
-            <SelectTrigger>
-              <SelectValue placeholder="Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              {typeOptions.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        {typeFilter !== "all" && (
-          <div className="w-40">
-            <Select onValueChange={(v) => setRangeFilter(v as "month" | "year")} value={rangeFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Rango" />
-              </SelectTrigger>
-              <SelectContent>
-                {rangeOptions.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Evaluaciones totales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-semibold">{evaluations.length}</div>
+            <div className="text-sm text-muted-foreground">Registros cargados</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Tipo seleccionado</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">
+              {typeFilter === "all"
+                ? "Todas"
+                : evaluationTypeLabels[typeFilter]}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Mostrar historial completo o por tipo
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Rango</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-semibold">
+              {rangeFilter === "month" ? "Último mes" : "Último año"}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Periodo de visualización
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {typeFilter !== "all" ? (
-        // show line chart for specific type
-        chartData.length === 0 ? (
-          <div className="text-center py-10 text-sm text-muted-foreground">
-            No hay datos para mostrar en ese periodo.
-          </div>
-        ) : (
-          <div className="flex justify-center" style={{ width: "100%", height: 400 }}>
-            <Line
-              options={{
-                responsive: true,
-                elements: {
-                  point: {
-                    pointStyle: 'rectRounded',
-                    radius: 6,
-                    hoverRadius: 8,
-                  },
-                },
-                scales: {
-                  x: {
-                    type: "time",
-                    time: { unit: "day", tooltipFormat: "dd/MM/yyyy" },
-                    title: { display: false },
-                  },
-                  y: {
-                    beginAtZero: true,
-                  },
-                },
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: (context) => `${context.parsed.y}`,
-                    },
-                  },
-                  legend: { display: false },
-                },
-              }}
-              data={{
-                labels: chartData.map((p) => p.date),
-                datasets: [
-                  {
-                    label: "Valor",
-                    data: chartData.map((p) => p.value),
-                    borderColor: "#3b82f6",
-                    backgroundColor: "#3b82f6",
-                    tension: 0.1,
-                    showLine: true,
-                  },
-                ],
-              }}
-            />
-          </div>
-        )
-      ) : (
+      <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm">Filtros</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Tipo</p>
+                <Select onValueChange={(v) => setTypeFilter(v as EvaluationType | "all")} value={typeFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {typeOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {typeFilter !== "all" && (
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Rango</p>
+                  <Select onValueChange={(v) => setRangeFilter(v as "month" | "year")} value={rangeFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Rango" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {rangeOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        // typeFilter === 'all', show only polar area
-        Object.values(lastTypeScores).every((v) => v === 0) ? (
-          <div className="text-center py-10 text-sm text-muted-foreground">
-            No hay evaluaciones disponibles para generar la gráfica.
-          </div>
-        ) : (
-          <div className="flex justify-center" style={{ width: "100%", height: 400 }}>
-            <PolarArea
-              data={{
-                labels: [
-                  "Antropométrica",
-                  "Técnico‑Táctica",
-                  "Emocional",
-                ],
-                datasets: [
-                  {
-                    data: [
-                      lastTypeScores.ANTHROPOMETRIC,
-                      lastTypeScores.TECHNICAL,
-                      lastTypeScores.EMOTIONAL,
-                    ],
-                    backgroundColor: [
-                      "#3b82f6",
-                      "#10b981",
-                      "#f59e0b",
-                    ],
-                  },
-                ],
-              }}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: { position: 'bottom' },
-                  tooltip: { enabled: true },
-                },
-                scales: {
-                  r: { beginAtZero: true, suggestedMax: 100 },
-                },
-              }}
-            />
-          </div>
-        )
-      )}
+        <div className="space-y-4">
+          {typeFilter !== "all" ? (
+            chartData.length === 0 ? (
+              <div className="text-center py-10 text-sm text-muted-foreground">
+                No hay datos para mostrar en ese periodo.
+              </div>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-sm">Tendencia de evaluación</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[400px] w-full">
+                    <Line
+                      options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        elements: {
+                          point: {
+                            pointStyle: 'rectRounded',
+                            radius: 6,
+                            hoverRadius: 8,
+                          },
+                        },
+                        scales: {
+                          x: {
+                            type: "time",
+                            time: { unit: "day", tooltipFormat: "dd/MM/yyyy" },
+                            title: { display: false },
+                          },
+                          y: {
+                            beginAtZero: true,
+                          },
+                        },
+                        plugins: {
+                          tooltip: {
+                            callbacks: {
+                              label: (context) => `${context.parsed.y}`,
+                            },
+                          },
+                          legend: { display: false },
+                        },
+                      }}
+                      data={{
+                        labels: chartData.map((p) => p.date),
+                        datasets: [
+                          {
+                            label: "Valor",
+                            data: chartData.map((p) => p.value),
+                            borderColor: "#3b82f6",
+                            backgroundColor: "rgba(59, 130, 246, 0.12)",
+                            tension: 0.1,
+                            fill: true,
+                          },
+                        ],
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          ) : Object.values(lastTypeScores).every((v) => v === 0) ? (
+            <div className="text-center py-10 text-sm text-muted-foreground">
+              No hay evaluaciones disponibles para generar la gráfica.
+            </div>
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-sm">Distribución por tipo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px] w-full">
+                  <PolarArea
+                    data={{
+                      labels: [
+                        "Antropométrica",
+                        "Técnico‑Táctica",
+                        "Emocional",
+                      ],
+                      datasets: [
+                        {
+                          data: [
+                            lastTypeScores.ANTHROPOMETRIC,
+                            lastTypeScores.TECHNICAL,
+                            lastTypeScores.EMOTIONAL,
+                          ],
+                          backgroundColor: [
+                            "#3b82f6",
+                            "#10b981",
+                            "#f59e0b",
+                          ],
+                        },
+                      ],
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { enabled: true },
+                      },
+                      scales: {
+                        r: { beginAtZero: true, suggestedMax: 100 },
+                      },
+                    }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

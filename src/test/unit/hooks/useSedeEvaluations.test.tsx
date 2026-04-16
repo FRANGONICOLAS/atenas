@@ -12,6 +12,7 @@ const getByIdUserMock = jest.fn();
 
 const getByHeadquarterIdEvaluationMock = jest.fn();
 const deleteEvaluationMock = jest.fn();
+const generateEvaluationsPDFMock = jest.fn();
 
 const useAuthMock = jest.fn();
 
@@ -24,6 +25,11 @@ jest.mock("sonner", () => ({
 
 jest.mock("@/hooks/useAuth", () => ({
   useAuth: (...args: unknown[]) => useAuthMock(...args),
+}));
+
+jest.mock("@/lib/reportGenerator", () => ({
+  generateEvaluationsPDF: (...args: unknown[]) =>
+    generateEvaluationsPDFMock(...args),
 }));
 
 jest.mock("@/api/services", () => ({
@@ -72,7 +78,7 @@ describe("useSedeEvaluations unit", () => {
           id: "e-2",
           created_at: "2026-02-02",
           type: "technical_tactic",
-          questions_answers: { pase: 5 },
+          technical_tactic_detail: { pase: 5 },
         },
         beneficiary: {
           first_name: "Ana",
@@ -85,7 +91,7 @@ describe("useSedeEvaluations unit", () => {
           id: "e-1",
           created_at: "2026-01-01",
           type: "anthropometric",
-          questions_answers: { peso: 40, talla: 140 },
+          anthropometric_detail: { peso: 40, talla: 140 },
         },
         beneficiary: {
           first_name: "Carlos",
@@ -110,6 +116,33 @@ describe("useSedeEvaluations unit", () => {
     expect(result.current.evaluations[0].id).toBe("e-2");
     expect(result.current.evaluations[0].beneficiaryName).toBe("Ana Lopez");
     expect(result.current.evaluations[0].score).toBe(100);
+  });
+
+  it("exports a PDF for a selected evaluation type", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationsByType("ANTHROPOMETRIC");
+    });
+
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledTimes(1);
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          beneficiaryName: "Carlos Perez",
+          type: "ANTHROPOMETRIC",
+        }),
+      ]),
+      "evaluaciones_anthropometric",
+      expect.objectContaining({
+        generatedBy: "Director de sede",
+        headquartersName: "Sede Norte",
+      }),
+    );
   });
 
   it("falls back to metadata search when user has no direct headquarter", async () => {
@@ -384,7 +417,7 @@ describe("useSedeEvaluations unit", () => {
           id: "e-fallback",
           created_at: null,
           type: "psychological_emotional",
-          questions_answers: null,
+          emotional_detail: null,
         },
         beneficiary: {
           first_name: null,
@@ -397,7 +430,7 @@ describe("useSedeEvaluations unit", () => {
           id: "e-ignored",
           created_at: "2026-01-01",
           type: "anthropometric",
-          questions_answers: {},
+          anthropometric_detail: {},
         },
         beneficiary: {
           first_name: "X",

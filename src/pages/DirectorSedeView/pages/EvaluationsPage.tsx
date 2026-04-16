@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { ClipboardList, Plus } from "lucide-react";
-import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { getPerformanceColor } from "@/lib/beneficiaryUtils";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
 import { useSedeBeneficiaries } from "@/hooks/useSedeBeneficiaries";
-import EvaluationProgressChart from "@/pages/DirectorSedeView/components/headquartersEvaluation/EvaluationProgressChart";
+import BeneficiaryEvaluationPanel from "@/pages/DirectorSedeView/components/headquartersEvaluation/BeneficiaryEvaluationPanel";
 import {
   EvaluationFilters,
   EvaluationStats,
@@ -25,6 +24,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
 
 const EvaluationsPage = () => {
   const {
@@ -37,6 +37,8 @@ const EvaluationsPage = () => {
     formatDate,
     getEvaluationTypeLabel,
     handleDeleteEvaluation,
+    exportEvaluationById,
+    exportAllEvaluations,
     refresh,
   } = useSedeEvaluations();
 
@@ -50,6 +52,10 @@ const EvaluationsPage = () => {
   const [selectedBeneficiaryId, setSelectedBeneficiaryId] = useState<
     string | null
   >(null);
+  const [exportPeriod, setExportPeriod] = useState<"day" | "week" | "month">(
+    "day",
+  );
+  const [exportDate, setExportDate] = useState<Date | undefined>(new Date());
 
   // default to first beneficiary when available
   useEffect(() => {
@@ -61,14 +67,23 @@ const EvaluationsPage = () => {
   const categoryOptions = useMemo(
     () => [
       { value: "all", label: "Todas las categorias" },
-      ...(
-        ["ANTHROPOMETRIC", "TECHNICAL", "EMOTIONAL"] as EvaluationType[]
-      ).map((type) => ({
-        value: type,
-        label: getEvaluationTypeLabel(type),
-      })),
+      ...(["ANTHROPOMETRIC", "TECHNICAL", "EMOTIONAL"] as EvaluationType[]).map(
+        (type) => ({
+          value: type,
+          label: getEvaluationTypeLabel(type),
+        }),
+      ),
     ],
     [getEvaluationTypeLabel],
+  );
+
+  const periodOptions = useMemo(
+    () => [
+      { value: "day", label: "Día" },
+      { value: "week", label: "Semana" },
+      { value: "month", label: "Mes" },
+    ],
+    [],
   );
 
   const filteredEvaluations = useMemo(() => {
@@ -104,6 +119,10 @@ const EvaluationsPage = () => {
     setShowCreate(true);
   };
 
+  const handleExportEvaluation = async (evaluation: Evaluation) => {
+    await exportEvaluationById(evaluation.id);
+  };
+
   if (loading) {
     return <FullScreenLoader message="Cargando evaluaciones..." />;
   }
@@ -118,18 +137,15 @@ const EvaluationsPage = () => {
             Evaluaciones y Seguimiento
           </h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Button size="sm" onClick={handleCreateEvaluation}>
             <Plus className="w-4 h-4 mr-2" />
-            Agregar
+            Agregar Evaluación
           </Button>
         </div>
       </div>
 
-      <EvaluationStats
-        total={stats.total}
-        avgPerformance={stats.avgPerformance}
-      />
+      <EvaluationStats total={stats.total} />
 
       {/* chart selector */}
       <Card>
@@ -160,7 +176,7 @@ const EvaluationsPage = () => {
             </div>
           </div>
           {selectedBeneficiaryId ? (
-            <EvaluationProgressChart beneficiaryId={selectedBeneficiaryId} />
+            <BeneficiaryEvaluationPanel beneficiaryId={selectedBeneficiaryId} />
           ) : (
             <div className="text-center text-sm text-muted-foreground py-10">
               Seleccione un beneficiario para ver su progreso.
@@ -184,10 +200,49 @@ const EvaluationsPage = () => {
             onCategoryFilterChange={setEvaluationTypeFilter}
             categories={categoryOptions}
           />
+          <div className="flex flex-wrap gap-2 items-center">
+            <div className="w-40">
+              <Select
+                value={exportPeriod}
+                onValueChange={(value) =>
+                  setExportPeriod(value as "day" | "week" | "month")
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Periodo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {periodOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="w-56">
+              <DatePicker
+                date={exportDate}
+                onDateChange={setExportDate}
+                placeholder="Fecha base"
+              />
+            </div>
+
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => exportAllEvaluations(exportPeriod, exportDate)}
+            >
+              Exportar todas las evaluaciones
+            </Button>
+          </div>
+
           <EvaluationTable
             evaluations={filteredEvaluations}
             onView={handleViewEvaluation}
             onEdit={setEditTarget}
+            onExport={handleExportEvaluation}
             onDelete={(evaluation) => handleDeleteEvaluation(evaluation.id)}
             formatDate={formatDate}
             getPerformanceColor={getPerformanceColor}

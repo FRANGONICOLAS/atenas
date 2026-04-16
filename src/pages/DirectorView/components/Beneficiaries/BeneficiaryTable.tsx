@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Download, Edit, Eye, Trash2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -9,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Eye, Trash2 } from "lucide-react";
 import type { Beneficiary } from "@/types/beneficiary.types";
 import type { Headquarter } from "@/types";
 
@@ -19,6 +19,7 @@ interface BeneficiaryTableProps {
   onView: (beneficiary: Beneficiary) => void;
   onEdit: (beneficiary: Beneficiary) => void;
   onDelete: (beneficiary: Beneficiary) => void;
+  onExport?: (beneficiary: Beneficiary) => void;
   calculateAge: (birthDate: string) => number;
   getStatusBadge: (status: string) => React.ReactNode;
   getPerformanceColor: (value: number) => string;
@@ -30,6 +31,7 @@ export const BeneficiaryTable = ({
   onView,
   onEdit,
   onDelete,
+  onExport,
   calculateAge,
   getStatusBadge,
   getPerformanceColor,
@@ -106,6 +108,17 @@ export const BeneficiaryTable = ({
                   >
                     <Edit className="w-4 h-4" />
                   </Button>
+                  {onExport && (
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8"
+                      onClick={() => onExport(b)}
+                      title="Exportar beneficiario"
+                    >
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  )}
                   <Button
                     size="icon"
                     variant="ghost"

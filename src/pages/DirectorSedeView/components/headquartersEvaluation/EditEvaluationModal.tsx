@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { BeneficiaryAntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryAntropometricForm";
+import { AntropometricForm } from "@/pages/DirectorView/components/Beneficiaries/AntropometricForm";
 import { TechnicalTecticalForm } from "@/pages/DirectorView/components/Beneficiaries/TechnicalTecticalForm";
 import { EmotionalForm } from "@/pages/DirectorView/components/Beneficiaries/EmotionalForm";
 import {
@@ -124,7 +124,7 @@ export const EditEvaluationModal = ({
     switch (evaluationType) {
       case "ANTHROPOMETRIC":
         return (
-          <BeneficiaryAntropometricForm
+          <AntropometricForm
             data={detailPayload}
             onChange={(data) => setDetailPayload(data)}
           />

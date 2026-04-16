@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { useSedeProjects } from "@/hooks/useSedeProjects";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,13 @@ import {
 import type { Project, ProjectReport } from "@/types";
 
 const HeadquarterProjectPage = () => {
+  const { user } = useAuth();
+  const currentUserName =
+    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
+  const generatedByLabel = currentUserName
+    ? `Director de sede: ${currentUserName}`
+    : "Director de sede";
+
   const {
     filtered,
     loading,
@@ -117,6 +125,8 @@ const HeadquarterProjectPage = () => {
       id: p.id,
       name: p.name,
       category: p.category,
+      type: p.type,
+      headquarter: getHqName(),
       goal: p.goal,
       raised: p.raised,
       progress: p.progress,
@@ -125,7 +135,10 @@ const HeadquarterProjectPage = () => {
 
   const handleExportExcel = () => {
     const data = mapProjectsToReport(filtered);
-    generateProjectsExcel(data, "proyectos-sede");
+    generateProjectsExcel(data, "proyectos-sede", {
+      generatedBy: generatedByLabel,
+      headquartersName: assignedHeadquarterName || "Sin sede",
+    });
     toast.success("Excel generado", {
       description: `Se exportaron ${data.length} proyectos.`,
     });
@@ -133,7 +146,10 @@ const HeadquarterProjectPage = () => {
 
   const handleExportPDF = () => {
     const data = mapProjectsToReport(filtered);
-    generateProjectsPDF(data, "proyectos-sede");
+    generateProjectsPDF(data, "proyectos-sede", {
+      generatedBy: generatedByLabel,
+      headquartersName: assignedHeadquarterName || "Sin sede",
+    });
     toast.success("PDF generado", {
       description: `Se exportaron ${data.length} proyectos.`,
     });

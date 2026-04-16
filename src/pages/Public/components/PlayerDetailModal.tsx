@@ -179,10 +179,15 @@ const mapTechnicalToPanelItem = (
     "recepcion",
   );
   const remateAvg = averageAspect(detail as Record<string, unknown>, "remate");
+  const conductionAvg = averageAspect(
+    detail as Record<string, unknown>,
+    "conduccion",
+  );
 
   if (paseAvg !== undefined) graphMetrics.pase = paseAvg;
   if (recepcionAvg !== undefined) graphMetrics.recepcion = recepcionAvg;
   if (remateAvg !== undefined) graphMetrics.remate = remateAvg;
+  if (conductionAvg !== undefined) graphMetrics.conduccion = conductionAvg;
 
   return {
     id: evaluation.id,

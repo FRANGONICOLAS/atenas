@@ -2,21 +2,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import type { Json } from "@/api/types";
 import type { AntropometricData } from "@/types/beneficiary.types";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Ruler, AlertCircle } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface ExtendedAntropometricData extends AntropometricData {
@@ -29,11 +17,7 @@ interface AntropometricFormProps {
 }
 
 // Función para validar rangos
-const validateRange = (
-  value: number | undefined,
-  min: number,
-  max: number,
-): "success" | "error" | "default" => {
+const validateRange = (value: number | undefined, min: number, max: number): "success" | "error" | "default" => {
   if (!value) return "default";
   return value >= min && value <= max ? "success" : "error";
 };
@@ -61,21 +45,17 @@ const RangedInput = ({
   step?: string;
 }) => {
   const status = validateRange(value, min, max);
-
+  
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id} className="text-sm">
-          {label}
-        </Label>
+        <Label htmlFor={id} className="text-sm">{label}</Label>
         {value && (
-          <span
-            className={cn(
-              "text-xs font-medium flex items-center gap-1",
-              status === "success" && "text-green-600",
-              status === "error" && "text-red-600",
-            )}
-          >
+          <span className={cn(
+            "text-xs font-medium flex items-center gap-1",
+            status === "success" && "text-green-600",
+            status === "error" && "text-red-600"
+          )}>
             {status === "error" && <AlertCircle className="w-3 h-3" />}
             {min}-{max} {unit}
           </span>
@@ -89,9 +69,8 @@ const RangedInput = ({
         onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
         placeholder={placeholder || `${min}-${max}`}
         className={cn(
-          status === "success" &&
-            "border-green-500 focus-visible:ring-green-500",
-          status === "error" && "border-red-500 focus-visible:ring-red-500",
+          status === "success" && "border-green-500 focus-visible:ring-green-500",
+          status === "error" && "border-red-500 focus-visible:ring-red-500"
         )}
       />
     </div>
@@ -110,25 +89,21 @@ export const AntropometricForm = ({
       ...antropometricData,
       [field]: value,
     };
-
+    
     // Calcular IMC automáticamente
     if (field === "peso" || field === "talla") {
       if (newData.peso && newData.talla) {
-        newData.imc = parseFloat(
-          (newData.peso / Math.pow(newData.talla / 100, 2)).toFixed(2),
-        );
+        newData.imc = parseFloat((newData.peso / Math.pow(newData.talla / 100, 2)).toFixed(2));
       }
     }
-
+    
     // Calcular relación cintura-cadera automáticamente
     if (field === "perimetro_cintura" || field === "perimetro_cadera") {
       if (newData.perimetro_cintura && newData.perimetro_cadera) {
-        newData.relacion_cintura_cadera = parseFloat(
-          (newData.perimetro_cintura / newData.perimetro_cadera).toFixed(2),
-        );
+        newData.relacion_cintura_cadera = parseFloat((newData.perimetro_cintura / newData.perimetro_cadera).toFixed(2));
       }
     }
-
+    
     onChange(newData);
   };
 
@@ -140,8 +115,7 @@ export const AntropometricForm = ({
           Evaluación Antropométrica Completa
         </CardTitle>
         <CardDescription>
-          Completa las mediciones físicas del beneficiario. Los valores fuera de
-          rango se marcarán en rojo.
+          Completa las mediciones físicas del beneficiario. Los valores fuera de rango se marcarán en rojo.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -150,9 +124,7 @@ export const AntropometricForm = ({
           <Label htmlFor="genero">Género del Beneficiario *</Label>
           <Select
             value={genero}
-            onValueChange={(value: "hombre" | "mujer") =>
-              handleChange("genero", value)
-            }
+            onValueChange={(value: "hombre" | "mujer") => handleChange("genero", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Selecciona el género" />
@@ -166,9 +138,7 @@ export const AntropometricForm = ({
 
         {/* MEDIDAS ANTROPOMÉTRICAS */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Medidas Antropométricas
-          </h3>
+          <h3 className="text-lg font-semibold border-b pb-2">Medidas Antropométricas</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="peso">Peso (kg)</Label>
@@ -177,13 +147,11 @@ export const AntropometricForm = ({
                 type="number"
                 step="0.1"
                 value={antropometricData.peso || ""}
-                onChange={(e) =>
-                  handleChange("peso", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => handleChange("peso", parseFloat(e.target.value) || 0)}
                 placeholder="Ej: 45.5"
               />
             </div>
-
+            
             <div className="space-y-2">
               <Label htmlFor="talla">Talla (cm)</Label>
               <Input
@@ -191,13 +159,11 @@ export const AntropometricForm = ({
                 type="number"
                 step="0.1"
                 value={antropometricData.talla || ""}
-                onChange={(e) =>
-                  handleChange("talla", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => handleChange("talla", parseFloat(e.target.value) || 0)}
                 placeholder="Ej: 165"
               />
             </div>
-
+            
             <div className="space-y-2">
               <Label htmlFor="imc">IMC (kg/m²)</Label>
               <Input
@@ -210,7 +176,7 @@ export const AntropometricForm = ({
                 className="bg-muted"
               />
             </div>
-
+            
             <RangedInput
               id="perimetro_cintura"
               label="Perímetro Cintura"
@@ -220,7 +186,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 90 : 80}
               unit="cm"
             />
-
+            
             <RangedInput
               id="perimetro_cadera"
               label="Perímetro Cadera"
@@ -230,11 +196,9 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 105 : 110}
               unit="cm"
             />
-
+            
             <div className="space-y-2">
-              <Label htmlFor="relacion_cintura_cadera">
-                Relación Cintura/Cadera
-              </Label>
+              <Label htmlFor="relacion_cintura_cadera">Relación Cintura/Cadera</Label>
               <Input
                 id="relacion_cintura_cadera"
                 type="number"
@@ -245,7 +209,7 @@ export const AntropometricForm = ({
                 className="bg-muted"
               />
             </div>
-
+            
             <RangedInput
               id="perimetro_brazo"
               label="Perímetro Brazo Relajado"
@@ -255,7 +219,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 35 : 30}
               unit="cm"
             />
-
+            
             <RangedInput
               id="perimetro_muslo"
               label="Perímetro Muslo"
@@ -265,7 +229,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 60 : 55}
               unit="cm"
             />
-
+            
             <RangedInput
               id="perimetro_pantorrilla"
               label="Perímetro Pantorrilla"
@@ -280,9 +244,7 @@ export const AntropometricForm = ({
 
         {/* PLIEGUES CUTÁNEOS */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Pliegues Cutáneos
-          </h3>
+          <h3 className="text-lg font-semibold border-b pb-2">Pliegues Cutáneos</h3>
           <div className="grid grid-cols-2 gap-4">
             <RangedInput
               id="pliegue_tricipital"
@@ -293,7 +255,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 12 : 20}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_bicipital"
               label="Bicipital"
@@ -303,7 +265,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 8 : 12}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_subescapular"
               label="Subescapular"
@@ -313,7 +275,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 18 : 22}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_suprailiaco"
               label="Suprailiaco"
@@ -323,7 +285,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 15 : 20}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_abdominal"
               label="Abdominal"
@@ -333,7 +295,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 25 : 30}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_muslo"
               label="Muslo"
@@ -343,7 +305,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 18 : 25}
               unit="mm"
             />
-
+            
             <RangedInput
               id="pliegue_pantorrilla"
               label="Pantorrilla"
@@ -358,9 +320,7 @@ export const AntropometricForm = ({
 
         {/* DIÁMETROS ÓSEOS */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Diámetros Óseos
-          </h3>
+          <h3 className="text-lg font-semibold border-b pb-2">Diámetros Óseos</h3>
           <div className="grid grid-cols-2 gap-4">
             <RangedInput
               id="biacromial"
@@ -371,7 +331,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 42 : 37}
               unit="cm"
             />
-
+            
             <RangedInput
               id="bicrestal"
               label="Bicrestal"
@@ -381,7 +341,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 32 : 30}
               unit="cm"
             />
-
+            
             <RangedInput
               id="biepicondilar_humero"
               label="Biepicondilar Húmero"
@@ -391,7 +351,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 8 : 7}
               unit="cm"
             />
-
+            
             <RangedInput
               id="biepicondilar_femur"
               label="Biepicondilar Fémur"
@@ -401,7 +361,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 11 : 10}
               unit="cm"
             />
-
+            
             <RangedInput
               id="biestiloideo_muneca"
               label="Biestiloideo Muñeca"
@@ -411,7 +371,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 5 : 5.5}
               unit="cm"
             />
-
+            
             <RangedInput
               id="bitrocantereo"
               label="Bitrocantéreo"
@@ -426,9 +386,7 @@ export const AntropometricForm = ({
 
         {/* COMPOSICIÓN CORPORAL */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Composición Corporal Estimada
-          </h3>
+          <h3 className="text-lg font-semibold border-b pb-2">Composición Corporal Estimada</h3>
           <div className="grid grid-cols-2 gap-4">
             <RangedInput
               id="porcentaje_grasa"
@@ -439,7 +397,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 20 : 30}
               unit="%"
             />
-
+            
             <RangedInput
               id="masa_magra"
               label="Masa Magra"
@@ -449,7 +407,7 @@ export const AntropometricForm = ({
               max={genero === "hombre" ? 82 : 75}
               unit="%"
             />
-
+            
             <RangedInput
               id="masa_osea"
               label="Masa Ósea Estimada"
@@ -464,9 +422,7 @@ export const AntropometricForm = ({
 
         {/* SOMATOTIPO */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Evaluación del Somatotipo
-          </h3>
+          <h3 className="text-lg font-semibold border-b pb-2">Evaluación del Somatotipo</h3>
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="endomorfina">Endomorfina</Label>
@@ -475,13 +431,11 @@ export const AntropometricForm = ({
                 type="number"
                 step="0.1"
                 value={antropometricData.endomorfina || ""}
-                onChange={(e) =>
-                  handleChange("endomorfina", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => handleChange("endomorfina", parseFloat(e.target.value) || 0)}
                 placeholder="0.0 - 10.0"
               />
             </div>
-
+            
             <div className="space-y-2">
               <Label htmlFor="mesomorfina">Mesomorfina</Label>
               <Input
@@ -489,13 +443,11 @@ export const AntropometricForm = ({
                 type="number"
                 step="0.1"
                 value={antropometricData.mesomorfina || ""}
-                onChange={(e) =>
-                  handleChange("mesomorfina", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => handleChange("mesomorfina", parseFloat(e.target.value) || 0)}
                 placeholder="0.0 - 10.0"
               />
             </div>
-
+            
             <div className="space-y-2">
               <Label htmlFor="ectomorfina">Ectomorfina</Label>
               <Input
@@ -503,9 +455,7 @@ export const AntropometricForm = ({
                 type="number"
                 step="0.1"
                 value={antropometricData.ectomorfina || ""}
-                onChange={(e) =>
-                  handleChange("ectomorfina", parseFloat(e.target.value) || 0)
-                }
+                onChange={(e) => handleChange("ectomorfina", parseFloat(e.target.value) || 0)}
                 placeholder="0.0 - 10.0"
               />
             </div>
@@ -514,9 +464,8 @@ export const AntropometricForm = ({
 
         <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
           <p className="text-sm text-blue-800">
-            <strong>💡 Nota:</strong> Los campos con bordes verdes están dentro
-            del rango saludable. Los campos con bordes rojos indican valores
-            fuera del rango esperado para el género seleccionado.
+            <strong>💡 Nota:</strong> Los campos con bordes verdes están dentro del rango saludable. 
+            Los campos con bordes rojos indican valores fuera del rango esperado para el género seleccionado.
           </p>
         </div>
       </CardContent>

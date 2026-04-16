@@ -1,15 +1,18 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { beneficiaryService, headquarterService } from "@/api/services";
+import {
+  beneficiaryService,
+  headquarterService,
+  userService,
+} from "@/api/services";
+import { useAuth } from "@/hooks/useAuth";
 import type { Headquarter } from "@/types";
 import type {
   Beneficiary,
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
-import {
-  mapToReport as mapBeneficiaryToReport,
-} from "@/lib/beneficiaryUtils";
+import { mapToReport as mapBeneficiaryToReport } from "@/lib/beneficiaryUtils";
 import {
   createBeneficiarySchema,
   updateBeneficiarySchema,
@@ -32,6 +35,9 @@ export const useBeneficiaries = () => {
   // Headquarters for filters
   const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
   const [headquartersLoading, setHeadquartersLoading] = useState(true);
+  const [headquarterDirectorNames, setHeadquarterDirectorNames] = useState<
+    Record<string, string>
+  >({});
 
   // Cargar beneficiarios desde Supabase
   const loadBeneficiaries = async () => {
@@ -61,6 +67,45 @@ export const useBeneficiaries = () => {
     }
   };
 
+  useEffect(() => {
+    let canceled = false;
+    const loadDirectorNames = async () => {
+      const userIds = Array.from(
+        new Set(
+          headquarters.map((hq) => hq.user_id).filter(Boolean) as string[],
+        ),
+      );
+
+      if (userIds.length === 0) {
+        setHeadquarterDirectorNames({});
+        return;
+      }
+
+      const results = await Promise.all(
+        userIds.map(async (userId) => {
+          try {
+            const user = await userService.getById(userId);
+            return [
+              userId,
+              user ? `${user.first_name} ${user.last_name}` : "Desconocido",
+            ] as const;
+          } catch (error) {
+            return [userId, "Desconocido"] as const;
+          }
+        }),
+      );
+
+      if (!canceled) {
+        setHeadquarterDirectorNames(Object.fromEntries(results));
+      }
+    };
+
+    void loadDirectorNames();
+    return () => {
+      canceled = true;
+    };
+  }, [headquarters]);
+
   // Cargar datos iniciales
   useEffect(() => {
     loadBeneficiaries();
@@ -73,8 +118,7 @@ export const useBeneficiaries = () => {
       const matchesSearch =
         b.first_name.toLowerCase().includes(search.toLowerCase()) ||
         b.last_name.toLowerCase().includes(search.toLowerCase()) ||
-        (b.guardian &&
-          b.guardian.toLowerCase().includes(search.toLowerCase()));
+        (b.guardian && b.guardian.toLowerCase().includes(search.toLowerCase()));
       const matchesHeadquarter =
         headquarterFilter === "all" || b.headquarters_id === headquarterFilter;
       const matchesCategory =
@@ -84,13 +128,7 @@ export const useBeneficiaries = () => {
         matchesSearch && matchesHeadquarter && matchesCategory && matchesStatus
       );
     });
-  }, [
-    beneficiaries,
-    search,
-    headquarterFilter,
-    categoryFilter,
-    statusFilter,
-  ]);
+  }, [beneficiaries, search, headquarterFilter, categoryFilter, statusFilter]);
 
   // Estadísticas generales
   const stats = useMemo(() => {
@@ -99,7 +137,7 @@ export const useBeneficiaries = () => {
     const avgPerformance = beneficiaries.length
       ? Math.round(
           beneficiaries.reduce((sum, b) => sum + (b.performance || 0), 0) /
-            beneficiaries.length
+            beneficiaries.length,
         )
       : 0;
     return { total, active, avgPerformance };
@@ -109,13 +147,13 @@ export const useBeneficiaries = () => {
   const statsByHeadquarter = useMemo(() => {
     return headquarters.map((hq) => {
       const list = beneficiaries.filter(
-        (b) => b.headquarters_id === hq.headquarters_id
+        (b) => b.headquarters_id === hq.headquarters_id,
       );
       const active = list.filter((b) => b.status === "activo").length;
       const avgPerf = list.length
         ? Math.round(
             list.reduce((sum, b) => sum + (b.performance || 0), 0) /
-              list.length
+              list.length,
           )
         : 0;
       return { name: hq.name, total: list.length, active, avgPerf };
@@ -142,7 +180,7 @@ export const useBeneficiaries = () => {
       if (photoFile) {
         const photoUrl = await beneficiaryService.uploadPhoto(
           newBeneficiary.beneficiary_id,
-          photoFile
+          photoFile,
         );
         await beneficiaryService.update(newBeneficiary.beneficiary_id, {
           photo_url: photoUrl,
@@ -152,7 +190,7 @@ export const useBeneficiaries = () => {
       toast.success("Beneficiario creado", {
         description: `${beneficiaryData.first_name} ${beneficiaryData.last_name} ha sido agregado correctamente`,
       });
-      
+
       await loadBeneficiaries();
       setPhotoFile(null);
       return true;
@@ -168,7 +206,7 @@ export const useBeneficiaries = () => {
   // Handler para actualizar beneficiario
   const handleUpdate = async (
     beneficiaryId: string,
-    beneficiaryData: UpdateBeneficiaryData
+    beneficiaryData: UpdateBeneficiaryData,
   ) => {
     try {
       // Validar
@@ -184,7 +222,10 @@ export const useBeneficiaries = () => {
       // Si hay nueva foto, subirla
       let photoUrl = beneficiaryData.photo_url;
       if (photoFile) {
-        photoUrl = await beneficiaryService.uploadPhoto(beneficiaryId, photoFile);
+        photoUrl = await beneficiaryService.uploadPhoto(
+          beneficiaryId,
+          photoFile,
+        );
       }
 
       // Actualizar beneficiario
@@ -196,7 +237,7 @@ export const useBeneficiaries = () => {
       toast.success("Beneficiario actualizado", {
         description: `${beneficiaryData.first_name || ""} ${beneficiaryData.last_name || ""} ha sido actualizado correctamente`,
       });
-      
+
       await loadBeneficiaries();
       setPhotoFile(null);
       return true;
@@ -213,10 +254,13 @@ export const useBeneficiaries = () => {
   const handleSave = async (
     beneficiaryData: CreateBeneficiaryData | UpdateBeneficiaryData,
     isEditing: boolean,
-    editId?: string
+    editId?: string,
   ) => {
     if (isEditing && editId) {
-      return await handleUpdate(editId, beneficiaryData as UpdateBeneficiaryData);
+      return await handleUpdate(
+        editId,
+        beneficiaryData as UpdateBeneficiaryData,
+      );
     } else {
       return await handleCreate(beneficiaryData as CreateBeneficiaryData);
     }
@@ -225,15 +269,17 @@ export const useBeneficiaries = () => {
   // Handler para eliminar beneficiario
   const handleDelete = async (
     beneficiaryId: string,
-    beneficiaryName: string
+    beneficiaryName: string,
   ) => {
     try {
       // Verificar si el beneficiario tiene evaluaciones
-      const evaluationCount = await beneficiaryService.countEvaluations(beneficiaryId);
-      
+      const evaluationCount =
+        await beneficiaryService.countEvaluations(beneficiaryId);
+
       if (evaluationCount > 0) {
         toast.error("No se puede eliminar", {
-          description: "No puedes eliminar un beneficiario que tiene evaluaciones registradas",
+          description:
+            "No puedes eliminar un beneficiario que tiene evaluaciones registradas",
         });
         return;
       }
@@ -252,10 +298,41 @@ export const useBeneficiaries = () => {
     }
   };
 
+  const headquarterMap = useMemo(
+    () =>
+      headquarters.reduce<Record<string, string>>((acc, hq) => {
+        acc[hq.headquarters_id] = hq.name;
+        return acc;
+      }, {}),
+    [headquarters],
+  );
+
+  const headquarterDirectorMap = useMemo(
+    () =>
+      headquarters.reduce<Record<string, string>>((acc, hq) => {
+        acc[hq.headquarters_id] =
+          headquarterDirectorNames[hq.user_id] || "Desconocido";
+        return acc;
+      }, {}),
+    [headquarters, headquarterDirectorNames],
+  );
+
+  const { user } = useAuth();
+  const currentUserName =
+    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
+  const generatedByLabel = currentUserName
+    ? `Director: ${currentUserName}`
+    : "Director";
+
   // Handler para exportar a Excel
   const handleExportExcel = (beneficiariesToExport?: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered);
-    generateBeneficiariesExcel(data, "beneficiarios");
+    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
+      headquarterMap,
+      headquarterDirectorMap,
+    });
+    generateBeneficiariesExcel(data, "beneficiarios", {
+      generatedBy: generatedByLabel,
+    });
     toast.success("Reporte Excel generado", {
       description: `Se exportaron ${data.length} beneficiarios`,
     });
@@ -263,8 +340,13 @@ export const useBeneficiaries = () => {
 
   // Handler para exportar a PDF
   const handleExportPDF = (beneficiariesToExport?: Beneficiary[]) => {
-    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered);
-    generateBeneficiariesPDF(data, "beneficiarios");
+    const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
+      headquarterMap,
+      headquarterDirectorMap,
+    });
+    generateBeneficiariesPDF(data, "beneficiarios", {
+      generatedBy: generatedByLabel,
+    });
     toast.success("Reporte PDF generado", {
       description: `Se exportaron ${data.length} beneficiarios`,
     });

@@ -5,6 +5,10 @@ import { evaluationService } from "@/api/services";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import EmotionalEvaluationTabs from "@/pages/DirectorSedeView/components/headquartersEvaluation/EmotionalEvaluationTabs";
+import TechnicalEvaluationTabs from "@/pages/DirectorSedeView/components/headquartersEvaluation/TechnicalEvaluationTabs";
+import AnthropometricEvaluationTabs from "@/pages/DirectorSedeView/components/headquartersEvaluation/AnthropometricEvaluationTabs";
+import { Badge } from "@/components/ui/badge";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,11 +17,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import EvaluationProgressChart from "@/pages/DirectorSedeView/components/headquartersEvaluation/EvaluationProgressChart";
 import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
-import { getEvaluationDetailByType, normalizeEvaluationType } from "@/lib/evaluationUtils";
+import {
+  getEvaluationDetailByType,
+  normalizeEvaluationType,
+} from "@/lib/evaluationUtils";
 
-interface EvaluationDetailState {  beneficiaryId: string;  beneficiaryName: string;
+interface EvaluationDetailState {
+  beneficiaryId: string;
+  beneficiaryName: string;
   createdAt: string;
   type: "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL";
   detail?: Record<string, unknown> | null;
@@ -38,7 +46,51 @@ const formatLabel = (value: string) => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
-const renderDetailList = (detail?: Record<string, unknown>) => {
+const isPlainObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+const renderSimpleValue = (value: unknown) => {
+  if (value === null || value === undefined || value === "") {
+    return "N/A";
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "Sí" : "No";
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0 ? "N/A" : value.join(", ");
+  }
+
+  if (isPlainObject(value)) {
+    return JSON.stringify(value, null, 0);
+  }
+
+  return String(value);
+};
+
+const renderAnthropometricDetail = (detail: Record<string, unknown>) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+    {Object.entries(detail).map(([key, value]) => (
+      <div
+        key={key}
+        className="rounded-2xl border border-border bg-background p-4"
+      >
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
+          {formatLabel(key)}
+        </p>
+        <p className="mt-2 font-semibold text-foreground">
+          {renderSimpleValue(value)}
+        </p>
+      </div>
+    ))}
+  </div>
+);
+
+const renderDetailList = (
+  type: "ANTHROPOMETRIC" | "TECHNICAL" | "EMOTIONAL",
+  detail?: Record<string, unknown>,
+) => {
   if (!detail || Object.keys(detail).length === 0) {
     return (
       <div className="text-sm text-muted-foreground">
@@ -47,24 +99,16 @@ const renderDetailList = (detail?: Record<string, unknown>) => {
     );
   }
 
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-      {Object.entries(detail).map(([key, value]) => (
-        <div key={key} className="space-y-1">
-          <div className="text-muted-foreground">{formatLabel(key)}</div>
-          <div className="font-medium">
-            {value === null || value === undefined || value === ""
-              ? "N/A"
-              : typeof value === "boolean"
-                ? value
-                  ? "Si"
-                  : "No"
-                : String(value)}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  switch (type) {
+    case "EMOTIONAL":
+      return <EmotionalEvaluationTabs detail={detail} />;
+    case "TECHNICAL":
+      return <TechnicalEvaluationTabs detail={detail} />;
+    case "ANTHROPOMETRIC":
+      return <AnthropometricEvaluationTabs detail={detail} />;
+    default:
+      return renderAnthropometricDetail(detail);
+  }
 };
 
 const EvaluationDetailPage = () => {
@@ -72,7 +116,6 @@ const EvaluationDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [detail, setDetail] = useState<EvaluationDetailState | null>(null);
   const { getEvaluationTypeLabel } = useSedeEvaluations();
-
 
   useEffect(() => {
     const loadDetail = async () => {
@@ -84,7 +127,8 @@ const EvaluationDetailPage = () => {
         const beneficiaryName = `${data.beneficiary?.first_name ?? ""} ${
           data.beneficiary?.last_name ?? ""
         }`.trim();
-        const type = normalizeEvaluationType(data.evaluation?.type) ?? "EMOTIONAL";
+        const type =
+          normalizeEvaluationType(data.evaluation?.type) ?? "EMOTIONAL";
 
         setDetail({
           beneficiaryId: data.beneficiary_id || "",
@@ -92,7 +136,10 @@ const EvaluationDetailPage = () => {
           createdAt: data.evaluation?.created_at || new Date().toISOString(),
           type,
           detail: data.evaluation
-            ? (getEvaluationDetailByType(data.evaluation) as Record<string, unknown> | null)
+            ? (getEvaluationDetailByType(data.evaluation) as Record<
+                string,
+                unknown
+              > | null)
             : null,
         });
       } catch (error) {
@@ -156,11 +203,11 @@ const EvaluationDetailPage = () => {
           <div className="flex items-center gap-2">
             <BarChart3 className="h-6 w-6 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-900">
-              Detalle de evaluacion
+              Detalle de evaluación
             </h2>
           </div>
           <p className="text-sm text-muted-foreground">
-            {`Evaluacion realizada el ${formatDate(detail.createdAt)}`}
+            {`Evaluación realizada el ${formatDate(detail.createdAt)}`}
           </p>
         </div>
         <Button variant="outline" asChild>
@@ -171,32 +218,49 @@ const EvaluationDetailPage = () => {
         </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Detalle de evaluacion</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4">
-            <span className="font-semibold">Tipo:</span>{" "}
-            <span>{getEvaluationTypeLabel(detail.type)}</span></div>
-          {renderDetailList(detail.detail as Record<string, unknown>)}
-        </CardContent>
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Resumen</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  Beneficiario
+                </div>
+                <div className="text-lg font-semibold">
+                  {detail.beneficiaryName}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  Tipo de evaluación
+                </div>
+                <Badge>{getEvaluationTypeLabel(detail.type)}</Badge>
+              </div>
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">Fecha</div>
+                <div>{formatDate(detail.createdAt)}</div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle>Progreso del beneficiario</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {detail?.beneficiaryId ? (
-            <EvaluationProgressChart beneficiaryId={detail.beneficiaryId} />
-          ) : (
-            <div className="py-10 text-center text-sm text-muted-foreground">
-              No es posible cargar las graficas sin un beneficiario asociado.
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Preguntas y respuestas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {renderDetailList(
+                detail.type,
+                detail.detail as Record<string, unknown>,
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
