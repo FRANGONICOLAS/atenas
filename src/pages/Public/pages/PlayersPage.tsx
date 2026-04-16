@@ -14,7 +14,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CTA from "@/components/CTA";
-import { useBeneficiaries } from "@/hooks/useBeneficiaries";
+import { usePublicBeneficiaries } from "@/hooks/usePublicData";
 import {
   BeneficiaryPublic,
   BeneficiaryPublicWithDetails,
@@ -26,10 +26,13 @@ const PlayersPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPlayer, setSelectedPlayer] =
     useState<BeneficiaryPublicWithDetails | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState("all");
 
-  // Usar el hook para obtener beneficiarios
-  const { beneficiaries, loading, categoryFilter, setCategoryFilter } =
-    useBeneficiaries();
+  const {
+    data: beneficiaries = [],
+    isLoading: loading,
+    error,
+  } = usePublicBeneficiaries();
 
   // Función para calcular edad a partir de fecha de nacimiento
   const calculateAge = (birthDate: string): number => {
@@ -135,6 +138,13 @@ const PlayersPage = () => {
             {loading ? (
               <div className="flex justify-center items-center py-20">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              </div>
+            ) : error ? (
+              <div className="text-center py-20">
+                <p className="text-red-600 text-lg">
+                  Ocurrió un error cargando los jugadores. Por favor intenta de
+                  nuevo.
+                </p>
               </div>
             ) : (
               <>
