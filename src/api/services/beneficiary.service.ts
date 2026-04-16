@@ -35,16 +35,11 @@ const getEvaluationTimestamp = (evaluation: EvaluationRow | null) => {
   return new Date(evaluation.created_at).getTime();
 };
 
-const createEvaluation = async (
-  type: EvaluationType,
-  detail: Json,
-) => {
+const createEvaluation = async (type: EvaluationType, detail: Json) => {
   const payload = buildEvaluationInsertPayload({
     type,
-    anthropometric_detail:
-      type === "ANTHROPOMETRIC" ? detail : null,
-    technical_tactic_detail:
-      type === "TECHNICAL" ? detail : null,
+    anthropometric_detail: type === "ANTHROPOMETRIC" ? detail : null,
+    technical_tactic_detail: type === "TECHNICAL" ? detail : null,
     emotional_detail: type === "EMOTIONAL" ? detail : null,
   });
 
@@ -99,16 +94,14 @@ const stripEvaluationFields = <T extends EvaluationPayload>(payload: T) => {
 
 const linkBeneficiaryEvaluation = async (
   beneficiaryId: string,
-  evaluationId: string
+  evaluationId: string,
 ) => {
-  const { error } = await client
-    .from("beneficiary's_evaluation")
-    .insert([
-      {
-        beneficiary_id: beneficiaryId,
-        evaluation_id: evaluationId,
-      },
-    ]);
+  const { error } = await client.from("beneficiary's_evaluation").insert([
+    {
+      beneficiary_id: beneficiaryId,
+      evaluation_id: evaluationId,
+    },
+  ]);
 
   if (error) throw error;
 };
@@ -121,7 +114,7 @@ const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
   const { data, error } = await client
     .from("beneficiary's_evaluation")
     .select(
-      "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail)"
+      "beneficiary_id, evaluation: evaluation_id (id, created_at, type, anthropometric_detail, technical_tactic_detail, emotional_detail)",
     )
     .in("beneficiary_id", beneficiaryIds);
 
@@ -129,7 +122,7 @@ const loadLatestEvaluations = async (beneficiaryIds: string[]) => {
 
   const latestByBeneficiary = new Map<string, LatestEvaluationBucket>();
 
-  (data as LatestEvaluationLookupRow[] || []).forEach((row) => {
+  ((data as LatestEvaluationLookupRow[]) || []).forEach((row) => {
     if (!row?.evaluation) return;
     const evaluation = row.evaluation;
     const existing = latestByBeneficiary.get(row.beneficiary_id) ?? {
@@ -189,13 +182,15 @@ const mapBeneficiaryRow = (row: BeneficiaryRow): Beneficiary => ({
   created_at: row.created_at ?? undefined,
 });
 
-const attachLatestEvaluation = async (rows: BeneficiaryRow[]): Promise<Beneficiary[]> => {
+const attachLatestEvaluation = async (
+  rows: BeneficiaryRow[],
+): Promise<Beneficiary[]> => {
   if (rows.length === 0) return [];
 
   const beneficiaries: Beneficiary[] = rows.map(mapBeneficiaryRow);
 
   const latestByBeneficiary = await loadLatestEvaluations(
-    beneficiaries.map((b) => b.beneficiary_id)
+    beneficiaries.map((b) => b.beneficiary_id),
   );
 
   return beneficiaries.map((beneficiary) => {
@@ -215,6 +210,17 @@ const attachLatestEvaluation = async (rows: BeneficiaryRow[]): Promise<Beneficia
 };
 
 export const beneficiaryService = {
+  // Obtiene beneficiarios públicos sin datos de evaluación
+  async getPublicAll(): Promise<Beneficiary[]> {
+    const { data, error } = await client
+      .from("beneficiary")
+      .select("*")
+      .order("registry_date", { ascending: false });
+
+    if (error) throw error;
+    return (data || []).map(mapBeneficiaryRow);
+  },
+
   // Obtiene todos los beneficiarios
   async getAll(): Promise<Beneficiary[]> {
     const { data, error } = await client
@@ -452,18 +458,18 @@ export const beneficiaryService = {
 
   // Sube una foto de perfil de beneficiario y retorna la URL
   async uploadPhoto(beneficiaryId: string, file: File): Promise<string> {
-    const fileExt = file.name.split('.').pop();
+    const fileExt = file.name.split(".").pop();
     const fileName = `${beneficiaryId}-${Date.now()}.${fileExt}`;
     const filePath = `beneficiaries/${fileName}`;
 
     // Subir archivo
-    await storageService.uploadFile('images', filePath, file, {
-      cacheControl: '3600',
-      upsert: true
+    await storageService.uploadFile("images", filePath, file, {
+      cacheControl: "3600",
+      upsert: true,
     });
 
     // Obtener URL pública
-    const publicUrl = storageService.getPublicUrl('images', filePath);
+    const publicUrl = storageService.getPublicUrl("images", filePath);
     return publicUrl;
   },
 };

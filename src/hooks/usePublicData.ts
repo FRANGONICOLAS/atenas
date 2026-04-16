@@ -1,20 +1,20 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   beneficiaryService,
   galleryService,
   headquarterService,
   projectService,
-} from '@/api/services';
-import { testimonialService } from '@/api/services/testimonial.services';
-import type { Headquarter } from '@/types/headquarter.types';
-import type { ProjectDB } from '@/types/project.types';
-import type { CreateTestimonialData } from '@/types/testimonial.types';
-import { queryKeys } from '@/lib/queryKeys';
+} from "@/api/services";
+import { testimonialService } from "@/api/services/testimonial.services";
+import type { Headquarter } from "@/types/headquarter.types";
+import type { ProjectDB } from "@/types/project.types";
+import type { CreateTestimonialData } from "@/types/testimonial.types";
+import { queryKeys } from "@/lib/queryKeys";
 
 const PUBLIC_STALE_TIME = Number.POSITIVE_INFINITY;
 const PUBLIC_GC_TIME = 1000 * 60 * 60 * 6; // 6 horas
-const GEO_CACHE_PREFIX = 'atenas:geo:';
+const GEO_CACHE_PREFIX = "atenas:geo:";
 
 export interface PublicProject extends ProjectDB {
   raised: number;
@@ -33,7 +33,7 @@ export interface PublicLocation extends Headquarter {
 
 const buildAddressKey = (address: string, city?: string) => {
   const normalizedAddress = address.trim().toLowerCase();
-  const normalizedCity = city?.trim().toLowerCase() ?? '';
+  const normalizedCity = city?.trim().toLowerCase() ?? "";
   return `${GEO_CACHE_PREFIX}${normalizedAddress}|${normalizedCity}`;
 };
 
@@ -43,7 +43,7 @@ const geocodeAddress = async (
 ): Promise<{ lat: number; lng: number } | null> => {
   const storageKey = buildAddressKey(address, city);
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const cached = sessionStorage.getItem(storageKey);
     if (cached) {
       try {
@@ -70,13 +70,13 @@ const geocodeAddress = async (
       lng: parseFloat(data[0].lon),
     };
 
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       sessionStorage.setItem(storageKey, JSON.stringify(coords));
     }
 
     return coords;
   } catch (error) {
-    console.error('Error geocoding address:', error);
+    console.error("Error geocoding address:", error);
     return null;
   }
 };
@@ -120,7 +120,7 @@ export function usePublicProjects() {
 export function usePublicBeneficiaries() {
   return useQuery({
     queryKey: queryKeys.public.beneficiaries,
-    queryFn: () => beneficiaryService.getAll(),
+    queryFn: () => beneficiaryService.getPublicAll(),
     staleTime: PUBLIC_STALE_TIME,
     gcTime: PUBLIC_GC_TIME,
   });
@@ -145,8 +145,8 @@ export function usePublicLocations(defaultSchedule: string) {
             ...hq,
             beneficiaryCount,
             image: hq.image_url,
-            phone: '+57 300 123 4567',
-            email: `${hq.name.toLowerCase().replace(/\s+/g, '')}@fundaciondeportiva.org`,
+            phone: "+57 300 123 4567",
+            email: `${hq.name.toLowerCase().replace(/\s+/g, "")}@fundaciondeportiva.org`,
             schedule: defaultSchedule,
             lat: coords?.lat || null,
             lng: coords?.lng || null,
@@ -173,17 +173,17 @@ export function usePublicTestimonials() {
     mutationFn: (testimonialData: CreateTestimonialData) =>
       testimonialService.create(testimonialData),
     onSuccess: async () => {
-      toast.success('Testimonio enviado', {
-        description: 'Tu testimonio será revisado por nuestro equipo',
+      toast.success("Testimonio enviado", {
+        description: "Tu testimonio será revisado por nuestro equipo",
       });
       await queryClient.invalidateQueries({
         queryKey: queryKeys.public.testimonialsApproved,
       });
     },
     onError: (error) => {
-      console.error('Error creating testimonial:', error);
-      toast.error('Error al enviar testimonio', {
-        description: 'No se pudo crear el testimonio',
+      console.error("Error creating testimonial:", error);
+      toast.error("Error al enviar testimonio", {
+        description: "No se pudo crear el testimonio",
       });
     },
   });

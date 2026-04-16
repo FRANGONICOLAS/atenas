@@ -255,6 +255,95 @@ REVOKE ALL ON public.user FROM authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.user TO authenticated;
 
 -- ============================================
+-- POLÍTICA PÚBLICA PARA BENEFICIARIOS
+-- Permite a visitantes anonimos ver sólo players activos en la tabla beneficiary.
+GRANT SELECT ON public.beneficiary TO anon;
+
+CREATE POLICY "public_beneficiary_select"
+ON public.beneficiary
+FOR SELECT
+TO anon
+USING (status = 'activo');
+
+-- También permitimos SELECT para usuarios autenticados con la misma lógica pública.
+CREATE POLICY "authenticated_beneficiary_select"
+ON public.beneficiary
+FOR SELECT
+TO authenticated
+USING (status = 'activo');
+
+-- ============================================
+-- POLÍTICAS PARA EVALUACIONES PUBLICAS
+-- Permite a visitantes anonimos y autenticados ver evaluaciones de jugadores activos.
+ALTER TABLE public.evaluation ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public_evaluation_select" ON public.evaluation;
+DROP POLICY IF EXISTS "authenticated_evaluation_select" ON public.evaluation;
+
+GRANT SELECT ON public.evaluation TO anon;
+GRANT SELECT ON public.evaluation TO authenticated;
+
+CREATE POLICY "public_evaluation_select"
+ON public.evaluation
+FOR SELECT
+TO anon
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public."beneficiary's_evaluation" be
+    JOIN public.beneficiary b ON b.beneficiary_id = be.beneficiary_id
+    WHERE be.evaluation_id = evaluation.id
+      AND b.status = 'activo'
+  )
+);
+
+CREATE POLICY "authenticated_evaluation_select"
+ON public.evaluation
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public."beneficiary's_evaluation" be
+    JOIN public.beneficiary b ON b.beneficiary_id = be.beneficiary_id
+    WHERE be.evaluation_id = evaluation.id
+      AND b.status = 'activo'
+  )
+);
+
+ALTER TABLE public."beneficiary's_evaluation" ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "public_beneficiary_evaluation_select" ON public."beneficiary's_evaluation";
+DROP POLICY IF EXISTS "authenticated_beneficiary_evaluation_select" ON public."beneficiary's_evaluation";
+
+GRANT SELECT ON public."beneficiary's_evaluation" TO anon;
+GRANT SELECT ON public."beneficiary's_evaluation" TO authenticated;
+
+CREATE POLICY "public_beneficiary_evaluation_select"
+ON public."beneficiary's_evaluation"
+FOR SELECT
+TO anon
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.beneficiary b
+    WHERE b.beneficiary_id = beneficiary_id
+      AND b.status = 'activo'
+  )
+);
+
+CREATE POLICY "authenticated_beneficiary_evaluation_select"
+ON public."beneficiary's_evaluation"
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.beneficiary b
+    WHERE b.beneficiary_id = beneficiary_id
+      AND b.status = 'activo'
+  )
+);
+
+-- ============================================
 -- FIN DEL SCRIPT
 -- ============================================
 

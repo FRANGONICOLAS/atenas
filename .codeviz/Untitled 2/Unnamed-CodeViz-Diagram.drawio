@@ -1,0 +1,326 @@
+<mxfile host="app.diagrams.net" agent="CodeViz Exporter">
+  <diagram id="codeviz-diagram" name="System Diagram">
+    <mxGraphModel dx="1717" dy="878" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="__uml__src_code_diagram.cv" parent="1" style="html=1;whiteSpace=wrap;container=1;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;fillOpacity=20;strokeWidth=2;containerType=none;recursiveResize=0;movable=1;resizable=1;autosize=0;dropTarget=0" value="" vertex="1">
+          <mxGeometry height="972" width="2237" x="12" y="12" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::main_tsx" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**main.tsx**" vertex="1">
+          <mxGeometry height="72" width="213" x="1366.5" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::app_tsx" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**App.tsx**" vertex="1">
+          <mxGeometry height="72" width="174" x="1386" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::api_services" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**API Services**" vertex="1">
+          <mxGeometry height="72" width="198" x="1203" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::api_types" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**API Types**" vertex="1">
+          <mxGeometry height="72" width="200" x="1202" y="636" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::auth_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Auth Components**" vertex="1">
+          <mxGeometry height="72" width="274" x="550.5" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::common_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Common Components**" vertex="1">
+          <mxGeometry height="72" width="236" x="20" y="758" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::form_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Form Components**" vertex="1">
+          <mxGeometry height="72" width="170" x="602.5" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::layout_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Layout Components**" vertex="1">
+          <mxGeometry height="72" width="157" x="59.5" y="636" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::payment_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Payment Components**" vertex="1">
+          <mxGeometry height="72" width="171" x="1045.5" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::ui_components" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**UI Library Components**" vertex="1">
+          <mxGeometry height="72" width="242" x="730.5" y="636" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::auth_hooks" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Auth Hooks**" vertex="1">
+          <mxGeometry height="72" width="266" x="1891.5" y="636" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::data_hooks" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Data Hooks**" vertex="1">
+          <mxGeometry height="72" width="276" x="1880" y="544" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::ui_hooks" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**UI Hooks**" vertex="1">
+          <mxGeometry height="72" width="181" x="844.5" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::beneficiary_utils" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Beneficiary Utilities**" vertex="1">
+          <mxGeometry height="96" width="297" x="1421" y="428" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::error_handling" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Error Handling**" vertex="1">
+          <mxGeometry height="72" width="259" x="1738" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::report_generation" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Report Generation**" vertex="1">
+          <mxGeometry height="72" width="234" x="109.5" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::general_utils" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**General Utilities**" vertex="1">
+          <mxGeometry height="72" width="219" x="363.5" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::admin_pages" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Admin Pages**" vertex="1">
+          <mxGeometry height="72" width="216" x="1497" y="336" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::auth_pages" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Auth Pages**" vertex="1">
+          <mxGeometry height="72" width="211" x="1152.8304244928638" y="241.8304244928638" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::common_pages" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Common Pages**" vertex="1">
+          <mxGeometry height="72" width="241" x="423.5" y="244" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::public_pages" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Public Pages**" vertex="1">
+          <mxGeometry height="72" width="184" x="1252.75" y="152" as="geometry" />
+        </mxCell>
+        <mxCell id="src_code_diagram.cv::types_module" parent="__uml__src_code_diagram.cv" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5" value="**Types Module**" vertex="1">
+          <mxGeometry height="72" width="180" x="958.25" y="758" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e17" edge="1" parent="1" source="src_code_diagram.cv::auth_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::form_components">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e17_label" connectable="0" parent="edge-src_code_diagram.cv::e17" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e20" edge="1" parent="1" source="src_code_diagram.cv::payment_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e20_label" connectable="0" parent="edge-src_code_diagram.cv::e20" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e21" edge="1" parent="1" source="src_code_diagram.cv::payment_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::api_services">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e21_label" connectable="0" parent="edge-src_code_diagram.cv::e21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Interacts with" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e1" edge="1" parent="1" source="src_code_diagram.cv::main_tsx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::app_tsx">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e1_label" connectable="0" parent="edge-src_code_diagram.cv::e1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Renders" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e2" edge="1" parent="1" source="src_code_diagram.cv::app_tsx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e2_label" connectable="0" parent="edge-src_code_diagram.cv::e2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e3" edge="1" parent="1" source="src_code_diagram.cv::app_tsx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::api_services">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e3_label" connectable="0" parent="edge-src_code_diagram.cv::e3" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Interacts with" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e4" edge="1" parent="1" source="src_code_diagram.cv::app_tsx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e4_label" connectable="0" parent="edge-src_code_diagram.cv::e4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e5" edge="1" parent="1" source="src_code_diagram.cv::app_tsx" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e5_label" connectable="0" parent="edge-src_code_diagram.cv::e5" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Renders" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e6" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e6_label" connectable="0" parent="edge-src_code_diagram.cv::e6" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="May use" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e7" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e7_label" connectable="0" parent="edge-src_code_diagram.cv::e7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="May use" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e8" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e8_label" connectable="0" parent="edge-src_code_diagram.cv::e8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e9" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::api_services">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e9_label" connectable="0" parent="edge-src_code_diagram.cv::e9" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="May call" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e10" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e10_label" connectable="0" parent="edge-src_code_diagram.cv::e10" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e11" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e11_label" connectable="0" parent="edge-src_code_diagram.cv::e11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e12_label" connectable="0" parent="edge-src_code_diagram.cv::e12" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e13" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e13_label" connectable="0" parent="edge-src_code_diagram.cv::e13" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e14" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e14_label" connectable="0" parent="edge-src_code_diagram.cv::e14" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e15" edge="1" parent="1" source="src_code_diagram.cv::api_services" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::api_types">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e15_label" connectable="0" parent="edge-src_code_diagram.cv::e15" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e16" edge="1" parent="1" source="src_code_diagram.cv::auth_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e16_label" connectable="0" parent="edge-src_code_diagram.cv::e16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e18" edge="1" parent="1" source="src_code_diagram.cv::common_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e18_label" connectable="0" parent="edge-src_code_diagram.cv::e18" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e19" edge="1" parent="1" source="src_code_diagram.cv::layout_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::common_components">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e19_label" connectable="0" parent="edge-src_code_diagram.cv::e19" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Integrates" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e22" edge="1" parent="1" source="src_code_diagram.cv::ui_components" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e22_label" connectable="0" parent="edge-src_code_diagram.cv::e22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e23" edge="1" parent="1" source="src_code_diagram.cv::beneficiary_utils" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1582" y="730" />
+              <mxPoint x="1060" y="730" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e23_label" connectable="0" parent="edge-src_code_diagram.cv::e23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e24" edge="1" parent="1" source="src_code_diagram.cv::error_handling" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1880" y="740" />
+              <mxPoint x="1060" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e24_label" connectable="0" parent="edge-src_code_diagram.cv::e24" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e25" edge="1" parent="1" source="src_code_diagram.cv::report_generation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none" target="src_code_diagram.cv::types_module">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="239" y="490" />
+              <mxPoint x="1060" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e25_label" connectable="0" parent="edge-src_code_diagram.cv::e25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e26" edge="1" parent="1" source="src_code_diagram.cv::admin_pages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e26_label" connectable="0" parent="edge-src_code_diagram.cv::e26" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e27" edge="1" parent="1" source="src_code_diagram.cv::auth_pages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e27_label" connectable="0" parent="edge-src_code_diagram.cv::e27" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e28" edge="1" parent="1" source="src_code_diagram.cv::common_pages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e28_label" connectable="0" parent="edge-src_code_diagram.cv::e28" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e29" edge="1" parent="1" source="src_code_diagram.cv::public_pages" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#808080;strokeWidth=2;jumpStyle=arc;jumpSize=10;spacing=15;labelBackgroundColor=white;labelBorderColor=none">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge-src_code_diagram.cv::e29_label" connectable="0" parent="edge-src_code_diagram.cv::e29" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="Uses" vertex="1">
+          <mxGeometry relative="1" x="-0.2" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
