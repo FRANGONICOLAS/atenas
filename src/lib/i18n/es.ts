@@ -646,5 +646,21 @@ export const es = {
       recentContributions: "Últimas contribuciones",
       directBenefits: "Beneficios directos de tus donaciones",
     },
+    cards: {
+      labels: {
+        projectGoal: "Meta del proyecto",
+        projectProgress: "Progreso del proyecto",
+        donatedAt: "Fecha de donacion",
+        paymentMethod: "Metodo de pago",
+        notAvailable: "No disponible",
+      },
+      messages: {
+        everyContribution: "Gracias por donar. Cada aporte suma al cambio real de este proyecto.",
+        goalCompleted: "Tu apoyo fue parte del impulso que llevo este proyecto a su meta.",
+        closeToGoal: "Tu donacion esta ayudando a que este proyecto llegue muy pronto a su meta.",
+        highImpact: "Tu aporte tuvo un impacto destacado en el avance de este proyecto.",
+        growingImpact: "Tu aporte mantiene vivo el progreso y acerca a mas ninos a nuevas oportunidades.",
+      },
+    },
   },
 };

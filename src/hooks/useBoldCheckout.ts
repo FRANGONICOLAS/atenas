@@ -3,8 +3,7 @@ import { initBoldCheckout, generateOrderId, formatBoldAmount } from '@/lib/boldC
 import { boldService } from '@/api/services/bold.service';
 import type { 
   BoldCheckoutConfig, 
-  BoldCheckoutInstance,
-  BoldCheckoutError 
+  BoldCheckoutInstance
 } from '@/types/bold.types';
 import { useAuth } from './useAuth';
 
@@ -48,6 +47,10 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Asegura que el SDK de Bold exista antes de iniciar el flujo.
+      // Si el script es bloqueado por extensiones/políticas, fallamos temprano.
+      await initBoldCheckout();
 
       // Generar order ID único
       const newOrderId = generateOrderId('ATENAS');
@@ -100,7 +103,7 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
 
       // Crear instancia de checkout
       if (!window.BoldCheckout) {
-        throw new Error('BoldCheckout no está disponible. El script no se cargó correctamente.');
+        throw new Error('BoldCheckout no está disponible. Verifica bloqueadores de scripts/extensiones e intenta nuevamente.');
       }
 
       const checkout = new window.BoldCheckout(checkoutConfig);
