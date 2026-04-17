@@ -5,7 +5,7 @@ import {
   getPerformanceColor,
   getStatusBadge,
   mapToReport,
-} from "@/lib/beneficiaryUtils";
+} from "@/lib";
 
 describe("beneficiaryUtils", () => {
   beforeEach(() => {

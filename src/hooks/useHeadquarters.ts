@@ -57,10 +57,8 @@ export const useHeadquarters = () => {
     try {
       setLoading(true);
       const data = await headquarterService.getAll();
-      console.log("Headquarters loaded:", data);
       setHeadquarters(data);
     } catch (error) {
-      console.error("Error loading headquarters:", error);
       toast.error("Error al cargar las sedes");
     } finally {
       setLoading(false);
@@ -72,7 +70,6 @@ export const useHeadquarters = () => {
       const data = await beneficiaryService.getAll();
       setBeneficiaries(data);
     } catch (error) {
-      console.error("Error loading beneficiaries:", error);
     }
   };
 
@@ -103,12 +100,10 @@ export const useHeadquarters = () => {
   // Update markers when headquarters change
   useEffect(() => {
     if (!mapInstanceRef.current) {
-      console.log("Map instance not ready yet");
       return;
     }
 
     const map = mapInstanceRef.current;
-    console.log("Updating markers for headquarters:", headquarters);
 
     // Remove existing markers
     if (markerGroupRef.current) {
@@ -121,12 +116,10 @@ export const useHeadquarters = () => {
       const visibleHeadquarters = headquarters.filter(
         hq => hq.status === "active" || hq.status === "maintenance"
       );
-      console.log("Visible headquarters for markers:", visibleHeadquarters);
       
       const coordinatesPromises = visibleHeadquarters.map(async (hq) => {
         // Requiere dirección para geocoding
         if (!hq.address) {
-          console.log(`Headquarter ${hq.name} has no address`);
           return null;
         }
 
@@ -137,7 +130,6 @@ export const useHeadquarters = () => {
         if (geocodeCacheRef.current.has(cacheKey)) {
           const cached = geocodeCacheRef.current.get(cacheKey);
           if (cached) {
-            console.log(`Headquarter ${hq.name} using cached coords:`, cached);
             return {
               ...cached,
               name: hq.name,
@@ -148,14 +140,12 @@ export const useHeadquarters = () => {
         }
 
         // Geocode address + city
-        console.log(`Geocoding address for ${hq.name}:`, hq.address, hq.city);
         try {
           const result = await geocodeAddress(hq.address, hq.city || undefined);
           if (result) {
             const [lat, lng] = result.coords.split(",").map(s => parseFloat(s.trim()));
             const coordResult = { lat, lng };
             geocodeCacheRef.current.set(cacheKey, coordResult);
-            console.log(`Headquarter ${hq.name} geocoded:`, lat, lng, "Location:", result.displayName);
             return {
               lat,
               lng,
@@ -166,11 +156,9 @@ export const useHeadquarters = () => {
             geocodeCacheRef.current.set(cacheKey, null);
           }
         } catch (error) {
-          console.error(`Error geocoding ${hq.name}:`, error);
           geocodeCacheRef.current.set(cacheKey, null);
         }
 
-        console.log(`Headquarter ${hq.name} could not be geocoded`);
         return null;
       });
 
@@ -179,13 +167,11 @@ export const useHeadquarters = () => {
         (c): c is { lat: number; lng: number; name: string; address: string } => c !== null
       );
 
-      console.log("Valid coordinates found:", coordinates);
 
       // Add new markers
       if (coordinates.length > 0) {
         const markerGroup = L.featureGroup();
         coordinates.forEach((coord) => {
-          console.log("Adding marker at:", coord.lat, coord.lng);
           const hq = visibleHeadquarters.find(h => h.name === coord.name);
           const marker = L.marker([coord.lat, coord.lng], {
             icon: createCustomMarkerIcon(hq?.status),
@@ -208,9 +194,7 @@ export const useHeadquarters = () => {
 
         // Fit bounds to show all markers
         map.fitBounds(markerGroup.getBounds(), { padding: [50, 50] });
-        console.log("Markers added successfully");
       } else {
-        console.log("No valid coordinates to display");
       }
     };
 
@@ -279,7 +263,6 @@ export const useHeadquarters = () => {
     try {
       // Combinar dirección y ciudad para mejor precisión
       const fullAddress = city ? `${address}, ${city}` : address;
-      console.log("Geocoding full address:", fullAddress);
       
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1&addressdetails=1`
@@ -288,7 +271,6 @@ export const useHeadquarters = () => {
       
       if (data && data.length > 0) {
         const result = data[0];
-        console.log("Geocoding result:", result);
         return {
           coords: `${result.lat}, ${result.lon}`,
           displayName: result.display_name
@@ -296,7 +278,6 @@ export const useHeadquarters = () => {
       }
       return null;
     } catch (error) {
-      console.error("Error geocoding address:", error);
       return null;
     }
   };
@@ -324,7 +305,6 @@ export const useHeadquarters = () => {
     }
 
     try {
-      console.log("Saving headquarter with data:", form);
       
       let imageUrl = form.image_url;
 
@@ -367,7 +347,6 @@ export const useHeadquarters = () => {
       setImageFile(null);
       loadHeadquarters();
     } catch (error) {
-      console.error("Error saving headquarter:", error);
       toast.error("Error al guardar la sede");
     }
   };
@@ -381,7 +360,6 @@ export const useHeadquarters = () => {
       });
       loadHeadquarters();
     } catch (error) {
-      console.error("Error deleting headquarter:", error);
       toast.error("Error al eliminar la sede");
     }
   };
@@ -391,7 +369,6 @@ export const useHeadquarters = () => {
       await headquarterService.update(id, { status: nextStatus });
       loadHeadquarters();
     } catch (error) {
-      console.error("Error updating status:", error);
       toast.error("Error al actualizar el estado");
     }
   };

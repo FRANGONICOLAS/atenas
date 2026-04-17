@@ -12,7 +12,7 @@ import type {
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
-import { mapToReport as mapBeneficiaryToReport } from "@/lib/beneficiaryUtils";
+import { mapToReport as mapBeneficiaryToReport } from "@/lib/";
 import {
   createBeneficiarySchema,
   updateBeneficiarySchema,
@@ -46,7 +46,6 @@ export const useBeneficiaries = () => {
       const data = await beneficiaryService.getAll();
       setBeneficiaries(data);
     } catch (error) {
-      console.error("Error loading beneficiaries:", error);
       toast.error("Error al cargar beneficiarios");
     } finally {
       setLoading(false);
@@ -60,7 +59,6 @@ export const useBeneficiaries = () => {
       const data = await headquarterService.getAll();
       setHeadquarters(data);
     } catch (error) {
-      console.error("Error loading headquarters:", error);
       toast.error("Error al cargar sedes");
     } finally {
       setHeadquartersLoading(false);
@@ -195,7 +193,6 @@ export const useBeneficiaries = () => {
       setPhotoFile(null);
       return true;
     } catch (error) {
-      console.error("Error creating beneficiary:", error);
       toast.error("Error al crear", {
         description: "No se pudo crear el beneficiario",
       });
@@ -242,7 +239,6 @@ export const useBeneficiaries = () => {
       setPhotoFile(null);
       return true;
     } catch (error) {
-      console.error("Error updating beneficiary:", error);
       toast.error("Error al actualizar", {
         description: "No se pudo actualizar el beneficiario",
       });
@@ -290,7 +286,6 @@ export const useBeneficiaries = () => {
         description: `${beneficiaryName} ha sido eliminado`,
       });
     } catch (error) {
-      console.error("Error deleting beneficiary:", error);
       toast.error("Error al eliminar", {
         description: "No se pudo eliminar el beneficiario",
       });

@@ -55,7 +55,6 @@ const CompleteProfile = () => {
       toast.success("Sesión cerrada");
       navigate("/login");
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
       toast.error("Error al cerrar sesión");
     }
   };
@@ -108,7 +107,6 @@ const CompleteProfile = () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       window.location.href = "/";
     } catch (error) {
-      console.error("Error al completar perfil:", error);
       handleAuthError(error);
     } finally {
       setIsLoading(false);

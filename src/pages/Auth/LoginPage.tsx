@@ -28,7 +28,6 @@ const LoginPage = () => {
       toast.success(t.auth.welcome);
       navigate('/');
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
       handleAuthError(error);
     } finally {
       setIsLoading(false);
@@ -41,7 +40,6 @@ const LoginPage = () => {
       await authService.signInWithProvider();
       // La redirección es manejada por Supabase
     } catch (error) {
-      console.error('Error al iniciar sesión con Google:', error);
       handleAuthError(error);
       setIsGoogleLoading(false);
     }

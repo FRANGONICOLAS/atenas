@@ -189,7 +189,6 @@ export const DashboardSidebar = () => {
       toast.success('Sesión cerrada exitosamente');
       navigate('/');
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
       toast.error('Error al cerrar sesión');
     }
   };

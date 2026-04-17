@@ -15,7 +15,6 @@ export const useDirectorView = () => {
       const data = await headquarterService.getAll();
       setHeadquarters(data);
     } catch (error) {
-      console.error("Error loading headquarters:", error);
       toast.error("Error al cargar sedes");
     } finally {
       setHeadquartersLoading(false);

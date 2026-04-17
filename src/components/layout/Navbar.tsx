@@ -45,7 +45,6 @@ const Navbar = () => {
       toast.success(t.auth.logoutSuccess);
       navigate('/');
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
       toast.error(t.auth.logoutError);
     }
   };

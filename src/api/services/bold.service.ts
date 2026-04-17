@@ -29,8 +29,6 @@ export const boldService = {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const edgeFunctionUrl = `${supabaseUrl}/functions/v1/bold-signature`;
     
-    console.log('🌐 Calling Edge Function:', edgeFunctionUrl);
-    console.log('📤 Request payload:', request);
     
     try {
       const response = await fetch(edgeFunctionUrl, {
@@ -42,19 +40,15 @@ export const boldService = {
         body: JSON.stringify(request)
       });
 
-      console.log('📥 Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('❌ Edge Function error:', errorData);
         throw new Error(errorData.error || `Edge Function failed with status ${response.status}`);
       }
 
       const data = await response.json();
-      console.log('✅ Edge Function response:', data);
       return data;
     } catch (error) {
-      console.error('❌ Error requesting signature:', error);
       throw error;
     }
   },

@@ -29,7 +29,6 @@ const AuthCallback = () => {
       }
 
     } catch (error) {
-      console.error(error);
       navigate("/login");
     }
   };

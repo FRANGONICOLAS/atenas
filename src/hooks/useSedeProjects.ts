@@ -124,7 +124,6 @@ export const useSedeProjects = () => {
       setAssignedHeadquarterId(assigned.headquarters_id);
       setAssignedHeadquarterName(assigned.name);
     } catch (error) {
-      console.error("Error loading assigned headquarter:", error);
       toast.error("Error al cargar sede", {
         description: "No se pudo obtener la sede asignada.",
       });
@@ -190,7 +189,6 @@ export const useSedeProjects = () => {
       );
       setProjects(mapped);
     } catch (error) {
-      console.error("Error loading sede projects:", error);
       toast.error("Error al cargar proyectos", {
         description: "No se pudieron cargar los proyectos de la sede.",
       });
@@ -250,7 +248,6 @@ export const useSedeProjects = () => {
       });
       return true;
     } catch (error) {
-      console.error("Error creating project:", error);
       toast.error("Error al crear proyecto");
       return false;
     }
@@ -269,7 +266,6 @@ export const useSedeProjects = () => {
       });
       return true;
     } catch (error) {
-      console.error("Error updating project:", error);
       toast.error("Error al actualizar proyecto");
       return false;
     }
@@ -293,7 +289,6 @@ export const useSedeProjects = () => {
         description: `${projectName} ha sido eliminado`,
       });
     } catch (error) {
-      console.error("Error deleting project:", error);
       toast.error("Error al eliminar proyecto");
       throw error;
     }
@@ -336,7 +331,6 @@ export const useSedeProjects = () => {
         assignedHeadquarterId,
       );
     } catch (error) {
-      console.error("Error saving project:", error);
       return false;
     }
   };

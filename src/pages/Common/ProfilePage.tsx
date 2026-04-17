@@ -79,7 +79,6 @@ const ProfilePage = () => {
       toast.success(t.auth.updateProfileSuccess);
       setIsEditing(false);
     } catch (error) {
-      console.error('Error al actualizar perfil:', error);
       toast.error('No se pudo actualizar el perfil');
     }
   };

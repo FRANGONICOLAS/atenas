@@ -33,7 +33,6 @@ const ResetPasswordPage = () => {
       setEmailSent(true);
       toast.success('Email de recuperación enviado');
     } catch (error) {
-      console.error('Error al enviar email de recuperación:', error);
       handleAuthError(error);
     } finally {
       setIsLoading(false);

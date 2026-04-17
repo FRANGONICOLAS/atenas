@@ -66,7 +66,6 @@ const RegisterPage = () => {
       
       navigate('/login');
     } catch (error) {
-      console.error('Error al registrar usuario:', error);
       handleAuthError(error);
     } finally {
       setIsLoading(false);

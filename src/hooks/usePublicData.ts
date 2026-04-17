@@ -76,7 +76,6 @@ const geocodeAddress = async (
 
     return coords;
   } catch (error) {
-    console.error("Error geocoding address:", error);
     return null;
   }
 };
@@ -181,7 +180,6 @@ export function usePublicTestimonials() {
       });
     },
     onError: (error) => {
-      console.error("Error creating testimonial:", error);
       toast.error("Error al enviar testimonio", {
         description: "No se pudo crear el testimonio",
       });

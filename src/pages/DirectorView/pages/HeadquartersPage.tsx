@@ -68,7 +68,6 @@ const HeadquartersPage = () => {
       const projectsData = await headquarterService.getProjects(location?.headquarters_id);
       setLocationProjects(projectsData.map(p => p.project));
     } catch (error) {
-      console.error('Error loading location details:', error);
       toast.error('Error al cargar los detalles');
     } finally {
       setLoadingDetails(false);

@@ -16,7 +16,7 @@ import {
   calculateAge,
   getStatusBadge,
   getPerformanceColor,
-} from "@/lib/beneficiaryUtils";
+} from "@/lib";
 
 const BeneficiariesPage = () => {
   const {

@@ -186,7 +186,6 @@ export const headquarterService = {
           await storageService.deleteFile('atenas-gallery', [oldPath]);
         }
       } catch (error) {
-        console.error('Error deleting old image:', error);
         // Continuar aunque falle el borrado
       }
     }
@@ -205,7 +204,6 @@ export const headquarterService = {
         await storageService.deleteFile('atenas-gallery', [path]);
       }
     } catch (error) {
-      console.error('Error deleting image:', error);
       throw error;
     }
   },

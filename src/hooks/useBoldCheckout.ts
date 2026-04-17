@@ -1,12 +1,16 @@
-import { useState, useCallback, useRef } from 'react';
-import { initBoldCheckout, generateOrderId, formatBoldAmount } from '@/lib/boldCheckout';
-import { boldService } from '@/api/services/bold.service';
-import type { 
-  BoldCheckoutConfig, 
+import { useState, useCallback, useRef } from "react";
+import {
+  initBoldCheckout,
+  generateOrderId,
+  formatBoldAmount,
+} from "@/lib/boldCheckout";
+import { boldService } from "@/api/services/bold.service";
+import type {
+  BoldCheckoutConfig,
   BoldCheckoutInstance,
-  BoldCheckoutError 
-} from '@/types/bold.types';
-import { useAuth } from './useAuth';
+  BoldCheckoutError,
+} from "@/types/bold.types";
+import { useAuth } from "./useAuth";
 
 interface UseBoldCheckoutOptions {
   amount: number;
@@ -29,78 +33,84 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
    */
   const openCheckout = useCallback(async () => {
     if (!user) {
-      setError('Debes iniciar sesión para realizar un pago');
+      setError("Debes iniciar sesión para realizar un pago");
       return;
     }
 
     if (options.amount <= 0) {
-      setError('El monto debe ser mayor a cero');
+      setError("El monto debe ser mayor a cero");
       return;
     }
 
     // Timeout de seguridad para evitar loading infinito
     const timeoutId = setTimeout(() => {
-      console.warn('⏱️ Checkout timeout reached');
+      console.warn("⏱️ Checkout timeout reached");
       setIsLoading(false);
-      setError('El proceso tardó demasiado. Por favor, intenta de nuevo.');
+      setError("El proceso tardó demasiado. Por favor, intenta de nuevo.");
     }, 15000); // 15 segundos
 
     try {
       setIsLoading(true);
       setError(null);
 
+      // Cargar la librería de Bold si aún no está disponible
+      await initBoldCheckout();
+
       // Generar order ID único
-      const newOrderId = generateOrderId('ATENAS');
+      const newOrderId = generateOrderId("ATENAS");
       setOrderId(newOrderId);
 
       // Preparar request para firma de integridad
       const signatureRequest = {
         orderId: newOrderId,
-        currency: options.currency || 'COP',
+        currency: options.currency || "COP",
         amount: formatBoldAmount(options.amount),
-        description: options.description
+        description: options.description,
       };
 
       // Obtener firma de integridad del backend
-      const { integritySignature } = await boldService.requestIntegritySignature(
-        signatureRequest
-      );
+      const { integritySignature } =
+        await boldService.requestIntegritySignature(signatureRequest);
 
       // Obtener configuración de Bold
       const config = boldService.getBoldConfig();
 
       // Crear registro en Supabase
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-      const validProjectId = options.projectId && uuidRegex.test(options.projectId)
-        ? options.projectId
-        : null;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const validProjectId =
+        options.projectId && uuidRegex.test(options.projectId)
+          ? options.projectId
+          : null;
 
       await boldService.createBoldTransaction({
         order_id: newOrderId,
         user_id: user.id,
         project_id: validProjectId,
         amount: options.amount, // Ya es number, no necesita formateo
-        currency: options.currency || 'COP',
-        status: 'PENDING',
+        currency: options.currency || "COP",
+        status: "PENDING",
         description: options.description,
-        integrity_signature: integritySignature
+        integrity_signature: integritySignature,
       });
 
       // Configurar checkout de Bold con Embedded Checkout
       const checkoutConfig: BoldCheckoutConfig = {
         orderId: newOrderId,
-        currency: options.currency || 'COP',
+        currency: options.currency || "COP",
         amount: formatBoldAmount(options.amount),
         apiKey: config.apiKey,
         integritySignature,
         description: options.description,
         redirectionUrl: config.redirectionUrl,
-        renderMode: 'embedded' // Modal sin salir de la página
+        renderMode: "embedded", // Modal sin salir de la página
       };
 
       // Crear instancia de checkout
       if (!window.BoldCheckout) {
-        throw new Error('BoldCheckout no está disponible. El script no se cargó correctamente.');
+        throw new Error(
+          "BoldCheckout no está disponible. El script no se cargó correctamente.",
+        );
       }
 
       const checkout = new window.BoldCheckout(checkoutConfig);
@@ -114,28 +124,18 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
 
       // Callback de éxito
       options.onSuccess?.(newOrderId);
-
     } catch (err) {
       // Limpiar timeout
       clearTimeout(timeoutId);
-      
-      const errorMessage = err instanceof Error 
-        ? err.message 
-        : 'Error al abrir el checkout de Bold';
-      
+
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Error al abrir el checkout de Bold";
+
       setError(errorMessage);
-      
-      // Mostrar detalles del error
-      if (err instanceof Error) {
-        console.error('Error details:', {
-          message: err.message,
-          stack: err.stack
-        });
-      }
-      
       options.onError?.(err as Error);
     } finally {
-      console.log('🏁 Checkout process finished, setting isLoading to false');
       setIsLoading(false);
     }
   }, [user, options]);
@@ -145,7 +145,10 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
    */
   const updateAmount = useCallback((newAmount: number) => {
     if (checkoutInstanceRef.current) {
-      checkoutInstanceRef.current.updateConfig('amount', formatBoldAmount(newAmount));
+      checkoutInstanceRef.current.updateConfig(
+        "amount",
+        formatBoldAmount(newAmount),
+      );
     }
   }, []);
 
@@ -154,10 +157,10 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
    */
   const checkTransactionStatus = useCallback(async (orderIdToCheck: string) => {
     try {
-      const transaction = await boldService.getBoldTransactionByOrderId(orderIdToCheck);
+      const transaction =
+        await boldService.getBoldTransactionByOrderId(orderIdToCheck);
       return transaction;
     } catch (err) {
-      console.error('Error checking transaction status:', err);
       return null;
     }
   }, []);
@@ -169,6 +172,6 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
     isLoading,
     error,
     orderId,
-    checkoutInstance: checkoutInstanceRef.current
+    checkoutInstance: checkoutInstanceRef.current,
   };
 }

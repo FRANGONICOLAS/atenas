@@ -129,7 +129,6 @@ export const CreateEvaluationModal = ({
       onSaved();
       handleClose();
     } catch (error) {
-      console.error("Error saving evaluation:", error);
       toast.error("Error al guardar la evaluación", {
         description: "No se pudo guardar la evaluación. Intente nuevamente.",
       });

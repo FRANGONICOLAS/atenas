@@ -3,7 +3,7 @@ import { ClipboardList, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { getPerformanceColor } from "@/lib/beneficiaryUtils";
+import { getPerformanceColor } from "@/lib";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
 import { useSedeBeneficiaries } from "@/hooks/useSedeBeneficiaries";

@@ -126,7 +126,6 @@ export const useAdminDashboard = () => {
           hqData.map((hq) => ({ headquarters_id: hq.headquarters_id, name: hq.name }))
         );
       } catch (error) {
-        console.error("Error loading data:", error);
         toast.error("Error al cargar datos", {
           description: "No se pudieron cargar los datos de la base de datos",
         });
@@ -203,7 +202,6 @@ export const useAdminDashboard = () => {
       const roles = await userService.getUserRoles(user.id);
       setSelectedRoles(roles);
     } catch (error) {
-      console.error("Error loading user roles:", error);
       setSelectedRoles([]);
     }
 
@@ -219,7 +217,6 @@ export const useAdminDashboard = () => {
           "El usuario ha sido eliminado correctamente de la base de datos y del sistema de autenticación",
       });
     } catch (error: unknown) {
-      console.error("Error deleting user:", error);
       const errorMessage =
         error instanceof Error
           ? error.message
@@ -379,7 +376,6 @@ export const useAdminDashboard = () => {
       setEditingUser(null);
       setSelectedRoles([]);
     } catch (error) {
-      console.error("Error saving user:", error);
 
       // Manejo de errores específicos
       const err = error as { message?: string; code?: string };

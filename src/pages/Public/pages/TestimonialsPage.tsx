@@ -32,10 +32,8 @@ const TestimonialsPage = () => {
 
   // Handler para abrir modal (verificar autenticación)
   const handleOpenCreateModal = () => {
-    console.log('Botón clickeado, usuario:', user);
     if (!user) {
       // Si no está loggeado, redirigir a registro
-      console.log('Navegando a /registro');
       navigate('/registro');
       return;
     }

@@ -143,7 +143,6 @@ const EvaluationDetailPage = () => {
             : null,
         });
       } catch (error) {
-        console.error("Error loading evaluation detail:", error);
         setDetail(null);
       } finally {
         setLoading(false);

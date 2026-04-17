@@ -57,7 +57,6 @@ export const useProjects = () => {
       
       setProjects(projectsWithRaised);
     } catch (error) {
-      console.error("Error loading projects:", error);
       toast.error("Error al cargar proyectos");
     } finally {
       setProjectsLoading(false);
@@ -100,7 +99,6 @@ export const useProjects = () => {
       });
       return true;
     } catch (error) {
-      console.error("Error creating project:", error);
       toast.error("Error al crear proyecto");
       return false;
     }
@@ -115,7 +113,6 @@ export const useProjects = () => {
       });
       return true;
     } catch (error) {
-      console.error("Error updating project:", error);
       toast.error("Error al actualizar proyecto");
       return false;
     }
@@ -139,7 +136,6 @@ export const useProjects = () => {
         description: `${projectName} ha sido eliminado`,
       });
     } catch (error) {
-      console.error("Error deleting project:", error);
       toast.error("Error al eliminar proyecto");
       throw error;
     }
@@ -170,7 +166,6 @@ export const useProjects = () => {
         return await handleCreateProject(projectData as CreateProjectData, headquarterId);
       }
     } catch (error) {
-      console.error("Error saving project:", error);
       return false;
     }
   };

@@ -146,7 +146,6 @@ export const useSedeMainDashboard = () => {
       }
       setEvaluations(mapped);
     } catch (error) {
-      console.error("Error loading sede dashboard data:", error);
       toast.error("Error al cargar datos", {
         description: "No se pudieron cargar los datos del panel.",
       });

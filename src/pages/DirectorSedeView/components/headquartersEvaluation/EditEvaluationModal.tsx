@@ -55,7 +55,6 @@ export const EditEvaluationModal = ({
         setEvaluationType(normalizeEvaluationType(data.type));
         setDetailPayload(getEvaluationDetailByType(data) ?? undefined);
       } catch (error) {
-        console.error("Error loading evaluation:", error);
         toast.error("Error al cargar la evaluación", {
           description: "No se pudo cargar la evaluación",
         });
@@ -103,7 +102,6 @@ export const EditEvaluationModal = ({
       onSaved();
       onClose();
     } catch (error) {
-      console.error("Error updating evaluation:", error);
       toast.error("Error al actualizar la evaluación", {
         description: "No se pudo actualizar la evaluación. Intente nuevamente.",
       });

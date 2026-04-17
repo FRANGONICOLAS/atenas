@@ -85,7 +85,6 @@ const ContentPage = () => {
       const data = await galleryService.getStats();
       setStats(data);
     } catch (error) {
-      console.error('Error loading stats:', error);
     }
   };
 

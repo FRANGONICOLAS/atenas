@@ -12,7 +12,7 @@ import type {
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
-import { mapToReport as mapBeneficiaryToReport } from "@/lib/beneficiaryUtils";
+import { mapToReport as mapBeneficiaryToReport } from "@/lib";
 import {
   createBeneficiarySchema,
   updateBeneficiarySchema,
@@ -174,7 +174,6 @@ export const useSedeBeneficiaries = () => {
       setHeadquarters(directorHeadquarters);
       setHeadquarterFilter(assigned.headquarters_id);
     } catch (error) {
-      console.error("Error loading assigned headquarter:", error);
       toast.error("Error al cargar sede", {
         description: "No se pudo obtener la sede asignada.",
       });
@@ -197,7 +196,6 @@ export const useSedeBeneficiaries = () => {
       const data = await beneficiaryService.getByHeadquarterId(headquarterId);
       setBeneficiaries(data);
     } catch (error) {
-      console.error("Error loading beneficiaries:", error);
       toast.error("Error al cargar beneficiarios", {
         description: "No se pudieron cargar los beneficiarios de la sede.",
       });
@@ -327,7 +325,6 @@ export const useSedeBeneficiaries = () => {
       setPhotoFile(null);
       return true;
     } catch (error) {
-      console.error("Error creating beneficiary:", error);
       toast.error("Error al crear", {
         description: "No se pudo crear el beneficiario",
       });
@@ -383,7 +380,6 @@ export const useSedeBeneficiaries = () => {
       setPhotoFile(null);
       return true;
     } catch (error) {
-      console.error("Error updating beneficiary:", error);
       toast.error("Error al actualizar", {
         description: "No se pudo actualizar el beneficiario",
       });
@@ -428,7 +424,6 @@ export const useSedeBeneficiaries = () => {
         description: `${beneficiaryName} ha sido eliminado`,
       });
     } catch (error) {
-      console.error("Error deleting beneficiary:", error);
       toast.error("Error al eliminar", {
         description: "No se pudo eliminar el beneficiario",
       });

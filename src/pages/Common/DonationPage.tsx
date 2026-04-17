@@ -55,7 +55,6 @@ const DonationPage = () => {
       setIsComplete(true);
     },
     onError: (err) => {
-      console.error('Error en checkout Bold:', err);
     }
   });
 

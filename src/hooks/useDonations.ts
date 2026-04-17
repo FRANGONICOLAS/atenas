@@ -21,7 +21,6 @@ export const useDonations = () => {
       const data = await donationService.getUserDonationStats(user.id);
       setStats(data);
     } catch (err) {
-      console.error('Error fetching donation stats:', err);
       setError(err instanceof Error ? err.message : 'Error al cargar las estadísticas');
     } finally {
       setLoading(false);

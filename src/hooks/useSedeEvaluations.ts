@@ -488,7 +488,6 @@ export const useSedeEvaluations = () => {
       setAssignedHeadquarterId(assigned.headquarters_id);
       setAssignedHeadquarterName(assigned.name);
     } catch (error) {
-      console.error("Error loading assigned headquarter:", error);
       toast.error("Error al cargar sede", {
         description: "No se pudo obtener la sede asignada.",
       });
@@ -512,7 +511,6 @@ export const useSedeEvaluations = () => {
       const ordered = mapped.sort((a, b) => b.date.localeCompare(a.date));
       setEvaluations(ordered);
     } catch (error) {
-      console.error("Error loading evaluations:", error);
       toast.error("Error al cargar evaluaciones", {
         description: "No se pudieron cargar las evaluaciones de la sede.",
       });
@@ -594,7 +592,6 @@ export const useSedeEvaluations = () => {
         description: `Se descargó el reporte de evaluaciones ${type} para ${period}.`,
       });
     } catch (error) {
-      console.error("Error generando reporte de evaluaciones:", error);
       toast.error("Error al generar reporte", {
         description:
           "No se pudo generar el reporte de evaluaciones. Intente de nuevo.",
@@ -644,7 +641,6 @@ export const useSedeEvaluations = () => {
         description: "Se descargó el reporte de evaluaciones del beneficiario.",
       });
     } catch (error) {
-      console.error("Error generando reporte de beneficiario:", error);
       toast.error("Error al generar reporte", {
         description:
           "No se pudo generar el reporte del beneficiario. Intente de nuevo.",
@@ -684,7 +680,6 @@ export const useSedeEvaluations = () => {
         description: "Se descargó el reporte de la evaluación seleccionada.",
       });
     } catch (error) {
-      console.error("Error generando reporte de evaluación:", error);
       toast.error("Error al generar reporte", {
         description:
           "No se pudo generar el reporte de la evaluación. Intente de nuevo.",
@@ -735,7 +730,6 @@ export const useSedeEvaluations = () => {
           "Se descargó el reporte de evaluaciones de todos los beneficiarios.",
       });
     } catch (error) {
-      console.error("Error generando reporte de evaluaciones:", error);
       toast.error("Error al generar reporte", {
         description:
           "No se pudo generar el reporte de evaluaciones. Intente de nuevo.",
@@ -749,7 +743,6 @@ export const useSedeEvaluations = () => {
       await loadEvaluations(assignedHeadquarterId);
       toast.success("Evaluacion eliminada");
     } catch (error) {
-      console.error("Error deleting evaluation:", error);
       toast.error("Error al eliminar evaluacion");
     }
   };

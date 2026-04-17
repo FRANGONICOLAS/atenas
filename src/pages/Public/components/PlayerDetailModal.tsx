@@ -239,7 +239,6 @@ const PlayerDetailModal = ({
 
         setEvaluations(items);
       } catch (error) {
-        console.error("Error loading player evaluations:", error);
         setEvaluationError(
           "No se pudieron cargar las evaluaciones del jugador.",
         );

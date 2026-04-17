@@ -55,7 +55,6 @@ export const useSiteContentManagement = () => {
       const data = await contentService.getStats();
       setStats(data);
     } catch (error) {
-      console.error('Error loading stats:', error);
     }
   };
 

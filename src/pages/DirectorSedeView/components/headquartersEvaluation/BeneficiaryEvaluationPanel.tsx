@@ -246,7 +246,6 @@ export default function BeneficiaryEvaluationPanel({
 
         setEvaluationItems(items);
       } catch (error) {
-        console.error("Error loading beneficiary evaluations", error);
         setEvaluationItems([]);
       } finally {
         setLoading(false);
