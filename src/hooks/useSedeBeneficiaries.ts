@@ -21,6 +21,7 @@ import {
   generateBeneficiariesExcel,
   generateBeneficiariesPDF,
 } from "@/lib/reportGenerator";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
 
 export const applySedeBeneficiaryFilters = (
   beneficiaries: Beneficiary[],
@@ -128,7 +129,7 @@ export const useSedeBeneficiaries = () => {
     return [];
   };
 
-  const loadAssignedHeadquarter = async () => {
+  const loadAssignedHeadquarter = async (forceRefresh = false) => {
     if (!user?.id) {
       setAssignedHeadquarterId(null);
       setAssignedHeadquarterName(null);
@@ -138,6 +139,23 @@ export const useSedeBeneficiaries = () => {
         description: "No se pudo identificar al usuario autenticado.",
       });
       return;
+    }
+
+    const cacheKey = `sede:beneficiaries:assigned-headquarter:${user.id}`;
+    if (!forceRefresh) {
+      const cached = getTimedCache<{
+        assignedHeadquarterId: string;
+        assignedHeadquarterName: string;
+        headquarters: Headquarter[];
+      }>(cacheKey);
+      if (cached) {
+        setAssignedHeadquarterId(cached.assignedHeadquarterId);
+        setAssignedHeadquarterName(cached.assignedHeadquarterName);
+        setHeadquarters(cached.headquarters);
+        setHeadquarterFilter(cached.assignedHeadquarterId);
+        setHeadquartersLoading(false);
+        return;
+      }
     }
 
     try {
@@ -173,6 +191,15 @@ export const useSedeBeneficiaries = () => {
       setAssignedHeadquarterName(assigned.name);
       setHeadquarters(directorHeadquarters);
       setHeadquarterFilter(assigned.headquarters_id);
+      setTimedCache(
+        cacheKey,
+        {
+          assignedHeadquarterId: assigned.headquarters_id,
+          assignedHeadquarterName: assigned.name,
+          headquarters: directorHeadquarters,
+        },
+        FIVE_MINUTES_MS,
+      );
     } catch (error) {
       toast.error("Error al cargar sede", {
         description: "No se pudo obtener la sede asignada.",
@@ -182,11 +209,24 @@ export const useSedeBeneficiaries = () => {
     }
   };
 
-  const loadBeneficiaries = async (headquarterId: string | null) => {
+  const loadBeneficiaries = async (
+    headquarterId: string | null,
+    forceRefresh = false,
+  ) => {
     if (!headquarterId) {
       setBeneficiaries([]);
       setLoading(false);
       return;
+    }
+
+    const cacheKey = `sede:beneficiaries:list:${headquarterId}`;
+    if (!forceRefresh) {
+      const cached = getTimedCache<Beneficiary[]>(cacheKey);
+      if (cached) {
+        setBeneficiaries(cached);
+        setLoading(false);
+        return;
+      }
     }
 
     try {
@@ -195,6 +235,7 @@ export const useSedeBeneficiaries = () => {
       // Relacion principal: beneficiary.headquarters_id -> headquarters.headquarters_id
       const data = await beneficiaryService.getByHeadquarterId(headquarterId);
       setBeneficiaries(data);
+      setTimedCache(cacheKey, data, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar beneficiarios", {
         description: "No se pudieron cargar los beneficiarios de la sede.",
@@ -321,7 +362,7 @@ export const useSedeBeneficiaries = () => {
         description: `${payload.first_name} ${payload.last_name} ha sido agregado correctamente`,
       });
 
-      await loadBeneficiaries(assignedHeadquarterId);
+      await loadBeneficiaries(assignedHeadquarterId, true);
       setPhotoFile(null);
       return true;
     } catch (error) {
@@ -376,7 +417,7 @@ export const useSedeBeneficiaries = () => {
         description: `${payload.first_name || ""} ${payload.last_name || ""} ha sido actualizado correctamente`,
       });
 
-      await loadBeneficiaries(assignedHeadquarterId);
+      await loadBeneficiaries(assignedHeadquarterId, true);
       setPhotoFile(null);
       return true;
     } catch (error) {
@@ -419,7 +460,7 @@ export const useSedeBeneficiaries = () => {
       }
 
       await beneficiaryService.delete(beneficiaryId);
-      await loadBeneficiaries(assignedHeadquarterId);
+      await loadBeneficiaries(assignedHeadquarterId, true);
       toast.success("Beneficiario eliminado", {
         description: `${beneficiaryName} ha sido eliminado`,
       });

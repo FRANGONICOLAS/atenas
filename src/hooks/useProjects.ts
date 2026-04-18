@@ -3,23 +3,37 @@ import { toast } from "sonner";
 import { projectService } from "@/api/services";
 import type { Project } from "@/types";
 import type { CreateProjectData, UpdateProjectData } from "@/api/services/project.service";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
 import {
   createProjectSchema,
   updateProjectSchema,
 } from "@/lib/schemas/project.schema";
 
+const PROJECTS_CACHE_KEY = "projects:all";
+
 export const useProjects = () => {
+  const cachedProjects = getTimedCache<Project[]>(PROJECTS_CACHE_KEY);
+
   // Projects state
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projects, setProjects] = useState<Project[]>(cachedProjects ?? []);
+  const [projectsLoading, setProjectsLoading] = useState(!cachedProjects);
   const [projectSearch, setProjectSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
 
   // Cargar proyectos desde Supabase
-  const loadProjects = async () => {
+  const loadProjects = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Project[]>(PROJECTS_CACHE_KEY);
+        if (cached) {
+          setProjects(cached);
+          setProjectsLoading(false);
+          return;
+        }
+      }
+
       setProjectsLoading(true);
       const data = await projectService.getAll();
       
@@ -56,6 +70,7 @@ export const useProjects = () => {
       );
       
       setProjects(projectsWithRaised);
+      setTimedCache(PROJECTS_CACHE_KEY, projectsWithRaised, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar proyectos");
     } finally {
@@ -65,7 +80,7 @@ export const useProjects = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    loadProjects();
+    void loadProjects();
   }, []);
 
   // Estadísticas de proyectos
@@ -93,7 +108,7 @@ export const useProjects = () => {
   const handleCreateProject = async (projectData: CreateProjectData, headquarterId?: string) => {
     try {
       await projectService.create(projectData, headquarterId);
-      await loadProjects();
+      await loadProjects(true);
       toast.success("Proyecto creado", {
         description: `${projectData.name} ha sido creado correctamente`,
       });
@@ -107,7 +122,7 @@ export const useProjects = () => {
   const handleEditProject = async (projectId: string, projectData: UpdateProjectData, headquarterId?: string) => {
     try {
       await projectService.update(projectId, projectData, headquarterId);
-      await loadProjects();
+      await loadProjects(true);
       toast.success("Proyecto actualizado", {
         description: `${projectData.name || "El proyecto"} ha sido actualizado correctamente`,
       });
@@ -131,7 +146,7 @@ export const useProjects = () => {
       }
 
       await projectService.delete(projectId);
-      await loadProjects();
+      await loadProjects(true);
       toast.success("Proyecto eliminado", {
         description: `${projectName} ha sido eliminado`,
       });

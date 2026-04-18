@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { DollarSign, RefreshCw } from 'lucide-react';
+import { DollarSign, Heart, RefreshCw, Target, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useProjects } from '@/hooks/useProjects';
 import { boldService } from '@/api/services/bold.service';
 import type { BoldTransactionWithProject } from '@/types/bold.types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-// import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -14,26 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 
 const MAX_RETRIES = 2;
 const RETRY_DELAYS_MS = [800, 1600];
 
 type SortOption = 'date_desc' | 'date_asc' | 'amount_desc' | 'amount_asc';
-
-const parseAmount = (value: string | number | null | undefined) => {
-  if (typeof value === 'number') return value;
-  if (!value) return 0;
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
-};
 
 const formatCurrency = (amount: number, currency?: string) => {
   const finalCurrency = currency || 'COP';
@@ -76,9 +63,55 @@ const getPaymentMethodLabel = (value?: string | null) => {
   return map[value.toUpperCase()] ?? value.replace(/_/g, ' ').toLowerCase().replace(/^\w/, c => c.toUpperCase());
 };
 
+type DonationImpact = {
+  goal: number;
+  raised: number;
+  progress: number;
+};
+
+const getDonationImpact = (
+  tx: BoldTransactionWithProject,
+  projectMap: Map<string, { goal: number; raised: number; progress: number }>
+): DonationImpact | null => {
+  if (!tx.project_id) return null;
+  const projectInfo = projectMap.get(tx.project_id);
+  if (!projectInfo) return null;
+
+  return {
+    goal: projectInfo.goal,
+    raised: projectInfo.raised,
+    progress: Math.min(Math.max(projectInfo.progress, 0), 100),
+  };
+};
+
+const getMotivationalMessage = (
+  impact: DonationImpact | null,
+  donationAmount: number,
+  t: ReturnType<typeof useLanguage>['t']
+) => {
+  if (!impact || impact.goal <= 0) {
+    return t.donatorDashboard.cards.messages.everyContribution;
+  }
+
+  if (impact.progress >= 100) {
+    return t.donatorDashboard.cards.messages.goalCompleted;
+  }
+
+  if (impact.progress >= 80) {
+    return t.donatorDashboard.cards.messages.closeToGoal;
+  }
+
+  if (donationAmount >= impact.goal * 0.2) {
+    return t.donatorDashboard.cards.messages.highImpact;
+  }
+
+  return t.donatorDashboard.cards.messages.growingImpact;
+};
+
 export const DonationsHistory = () => {
   const { t } = useLanguage();
   const { user, isLoading: isAuthLoading } = useAuth();
+  const { projects } = useProjects();
   const [transactions, setTransactions] = useState<BoldTransactionWithProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -152,6 +185,21 @@ export const DonationsHistory = () => {
 
     return items;
   }, [transactions, sortBy]);
+
+  const projectMap = useMemo(() => {
+    return new Map(
+      projects
+        .filter((project) => Boolean(project.project_id))
+        .map((project) => [
+          project.project_id as string,
+          {
+            goal: project.goal ?? 0,
+            raised: project.raised ?? 0,
+            progress: project.progress ?? 0,
+          },
+        ])
+    );
+  }, [projects]);
 
   const handleRetry = () => {
     if (!user?.id) return;
@@ -237,70 +285,92 @@ export const DonationsHistory = () => {
         )}
 
         {!loading && !error && sortedTransactions.length > 0 && (
-          <>
-            {/* Desktop table */}
-            <div className="hidden md:block">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t.donatorDashboard.table.project}</TableHead>
-                    <TableHead>{t.donatorDashboard.table.amount}</TableHead>
-                    <TableHead>{t.donatorDashboard.table.date}</TableHead>
-                    <TableHead>{t.donatorDashboard.table.method}</TableHead>
-                    {/* <TableHead>{t.donatorDashboard.table.status}</TableHead> */}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedTransactions.map((tx) => (
-                    <TableRow key={tx.bold_transaction_id}>
-                      <TableCell className="font-medium">{getProjectName(tx)}</TableCell>
-                      <TableCell>{formatCurrency(tx.amount, tx.currency)}</TableCell>
-                      <TableCell>{formatDate(tx.created_at)}</TableCell>
-                      <TableCell>{getPaymentMethodLabel(tx.payment_method)}</TableCell>
-                      {/* <TableCell>{getStatusBadge(tx.status)}</TableCell> */}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            {sortedTransactions.map((tx) => {
+              const impact = getDonationImpact(tx, projectMap);
+              const motivationalMessage = getMotivationalMessage(impact, tx.amount ?? 0, t);
 
-            {/* Mobile cards */}
-            <div className="space-y-4 md:hidden">
-              {sortedTransactions.map((tx) => (
-                <div
+              return (
+                <Card
                   key={tx.bold_transaction_id}
-                  className="rounded-lg border border-border p-4 shadow-sm"
+                  className="border border-border/60 bg-gradient-to-br from-background to-muted/20"
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.project}</p>
-                      <p className="font-semibold text-foreground">{getProjectName(tx)}</p>
+                  <CardContent className="p-5 space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-1 min-w-0">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                          {t.donatorDashboard.table.project}
+                        </p>
+                        <h3 className="font-semibold text-foreground leading-tight truncate">
+                          {getProjectName(tx)}
+                        </h3>
+                        {tx.project?.category && (
+                          <Badge variant="outline" className="text-xs">
+                            {tx.project.category}
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                          {t.donatorDashboard.table.amount}
+                        </p>
+                        <p className="text-lg font-bold text-foreground">
+                          {formatCurrency(tx.amount, tx.currency)}
+                        </p>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground">{t.donatorDashboard.table.amount}</p>
-                      <p className="font-semibold text-foreground">
-                        {formatCurrency(tx.amount, tx.currency)}
+
+                    <div className="space-y-2 rounded-md border border-border/50 p-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <Target className="h-4 w-4 text-blue-600" />
+                          {t.donatorDashboard.cards.labels.projectGoal}
+                        </span>
+                        <span className="font-semibold">
+                          {impact ? formatCurrency(impact.goal, tx.currency) : t.donatorDashboard.cards.labels.notAvailable}
+                        </span>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="flex items-center gap-1 text-muted-foreground">
+                            <TrendingUp className="h-4 w-4 text-emerald-600" />
+                            {t.donatorDashboard.cards.labels.projectProgress}
+                          </span>
+                          <span className="font-semibold">{impact ? `${impact.progress}%` : '0%'}</span>
+                        </div>
+                        <Progress value={impact?.progress ?? 0} className="h-2" />
+                        {impact && (
+                          <p className="text-xs text-muted-foreground">
+                            {formatCurrency(impact.raised, tx.currency)} / {formatCurrency(impact.goal, tx.currency)}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <p className="text-muted-foreground">{t.donatorDashboard.cards.labels.donatedAt}</p>
+                        <p className="font-medium">{formatDate(tx.created_at)}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">{t.donatorDashboard.cards.labels.paymentMethod}</p>
+                        <p className="font-medium">{getPaymentMethodLabel(tx.payment_method)}</p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
+                      <p className="flex items-start gap-2 text-sm text-emerald-900">
+                        <Heart className="h-4 w-4 mt-0.5 text-emerald-700 shrink-0" />
+                        <span>{motivationalMessage}</span>
                       </p>
                     </div>
-                  </div>
-                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">{t.donatorDashboard.table.date}</p>
-                      <p className="font-medium">{formatDate(tx.created_at)}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">{t.donatorDashboard.table.method}</p>
-                      <p className="font-medium">{getPaymentMethodLabel(tx.payment_method)}</p>
-                    </div>
-                    {/* <div>
-                      <p className="text-muted-foreground">{t.donatorDashboard.table.status}</p>
-                      <div className="mt-1">{getStatusBadge(tx.status)}</div>
-                    </div> */}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         )}
       </CardContent>
     </Card>

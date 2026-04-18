@@ -48,6 +48,9 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       gcTime: 1000 * 60 * 60,
+      staleTime: 1000 * 60 * 5,
+      refetchInterval: 1000 * 60 * 5,
+      refetchIntervalInBackground: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
@@ -87,7 +90,12 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          <BrowserRouter>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
             <ProfileGuard>
               <ScrollToTop />
               <ConditionalLayout>

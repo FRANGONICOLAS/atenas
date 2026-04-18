@@ -12,7 +12,8 @@ import type {
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
-import { mapToReport as mapBeneficiaryToReport } from "@/lib/";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+import { mapToReport as mapBeneficiaryToReport } from "@/lib";
 import {
   createBeneficiarySchema,
   updateBeneficiarySchema,
@@ -22,10 +23,18 @@ import {
   generateBeneficiariesPDF,
 } from "@/lib/reportGenerator";
 
+const BENEFICIARIES_CACHE_KEY = "beneficiaries:all";
+const HEADQUARTERS_CACHE_KEY = "headquarters:all";
+
 export const useBeneficiaries = () => {
+  const cachedBeneficiaries = getTimedCache<Beneficiary[]>(BENEFICIARIES_CACHE_KEY);
+  const cachedHeadquarters = getTimedCache<Headquarter[]>(HEADQUARTERS_CACHE_KEY);
+
   // Beneficiaries state
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
+    cachedBeneficiaries ?? [],
+  );
+  const [loading, setLoading] = useState(!cachedBeneficiaries);
   const [search, setSearch] = useState("");
   const [headquarterFilter, setHeadquarterFilter] = useState("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
@@ -33,18 +42,32 @@ export const useBeneficiaries = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
 
   // Headquarters for filters
-  const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
-  const [headquartersLoading, setHeadquartersLoading] = useState(true);
+  const [headquarters, setHeadquarters] = useState<Headquarter[]>(
+    cachedHeadquarters ?? [],
+  );
+  const [headquartersLoading, setHeadquartersLoading] = useState(
+    !cachedHeadquarters,
+  );
   const [headquarterDirectorNames, setHeadquarterDirectorNames] = useState<
     Record<string, string>
   >({});
 
   // Cargar beneficiarios desde Supabase
-  const loadBeneficiaries = async () => {
+  const loadBeneficiaries = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Beneficiary[]>(BENEFICIARIES_CACHE_KEY);
+        if (cached) {
+          setBeneficiaries(cached);
+          setLoading(false);
+          return;
+        }
+      }
+
       setLoading(true);
       const data = await beneficiaryService.getAll();
       setBeneficiaries(data);
+      setTimedCache(BENEFICIARIES_CACHE_KEY, data, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar beneficiarios");
     } finally {
@@ -53,11 +76,21 @@ export const useBeneficiaries = () => {
   };
 
   // Cargar sedes para filtros
-  const loadHeadquarters = async () => {
+  const loadHeadquarters = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Headquarter[]>(HEADQUARTERS_CACHE_KEY);
+        if (cached) {
+          setHeadquarters(cached);
+          setHeadquartersLoading(false);
+          return;
+        }
+      }
+
       setHeadquartersLoading(true);
       const data = await headquarterService.getAll();
       setHeadquarters(data);
+      setTimedCache(HEADQUARTERS_CACHE_KEY, data, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar sedes");
     } finally {
@@ -106,8 +139,8 @@ export const useBeneficiaries = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    loadBeneficiaries();
-    loadHeadquarters();
+    void loadBeneficiaries();
+    void loadHeadquarters();
   }, []);
 
   // Filtrado de beneficiarios
@@ -189,7 +222,7 @@ export const useBeneficiaries = () => {
         description: `${beneficiaryData.first_name} ${beneficiaryData.last_name} ha sido agregado correctamente`,
       });
 
-      await loadBeneficiaries();
+      await loadBeneficiaries(true);
       setPhotoFile(null);
       return true;
     } catch (error) {
@@ -235,7 +268,7 @@ export const useBeneficiaries = () => {
         description: `${beneficiaryData.first_name || ""} ${beneficiaryData.last_name || ""} ha sido actualizado correctamente`,
       });
 
-      await loadBeneficiaries();
+      await loadBeneficiaries(true);
       setPhotoFile(null);
       return true;
     } catch (error) {
@@ -281,7 +314,7 @@ export const useBeneficiaries = () => {
       }
 
       await beneficiaryService.delete(beneficiaryId);
-      await loadBeneficiaries();
+      await loadBeneficiaries(true);
       toast.success("Beneficiario eliminado", {
         description: `${beneficiaryName} ha sido eliminado`,
       });

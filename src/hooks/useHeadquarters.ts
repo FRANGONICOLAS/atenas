@@ -5,6 +5,10 @@ import L from "leaflet";
 import { toast } from "sonner";
 import type { Headquarter } from "@/types";
 import type { Beneficiary } from "@/types/beneficiary.types";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+
+const HEADQUARTERS_CACHE_KEY = "headquarters:all";
+const BENEFICIARIES_CACHE_KEY = "beneficiaries:all";
 
 const defaultForm = {
   name: "",
@@ -31,9 +35,12 @@ const createCustomMarkerIcon = (status: string = "active") => {
 
 export const useHeadquarters = () => {
   const { user } = useAuth();
-  const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
-  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedHeadquarters = getTimedCache<Headquarter[]>(HEADQUARTERS_CACHE_KEY);
+  const cachedBeneficiaries = getTimedCache<Beneficiary[]>(BENEFICIARIES_CACHE_KEY);
+
+  const [headquarters, setHeadquarters] = useState<Headquarter[]>(cachedHeadquarters ?? []);
+  const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(cachedBeneficiaries ?? []);
+  const [loading, setLoading] = useState(!cachedHeadquarters);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [showDialog, setShowDialog] = useState(false);
@@ -49,15 +56,25 @@ export const useHeadquarters = () => {
 
   // Load headquarters
   useEffect(() => {
-    loadHeadquarters();
-    loadBeneficiaries();
+    void loadHeadquarters();
+    void loadBeneficiaries();
   }, []);
 
-  const loadHeadquarters = async () => {
+  const loadHeadquarters = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Headquarter[]>(HEADQUARTERS_CACHE_KEY);
+        if (cached) {
+          setHeadquarters(cached);
+          setLoading(false);
+          return;
+        }
+      }
+
       setLoading(true);
       const data = await headquarterService.getAll();
       setHeadquarters(data);
+      setTimedCache(HEADQUARTERS_CACHE_KEY, data, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar las sedes");
     } finally {
@@ -65,10 +82,19 @@ export const useHeadquarters = () => {
     }
   };
 
-  const loadBeneficiaries = async () => {
+  const loadBeneficiaries = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Beneficiary[]>(BENEFICIARIES_CACHE_KEY);
+        if (cached) {
+          setBeneficiaries(cached);
+          return;
+        }
+      }
+
       const data = await beneficiaryService.getAll();
       setBeneficiaries(data);
+      setTimedCache(BENEFICIARIES_CACHE_KEY, data, FIVE_MINUTES_MS);
     } catch (error) {
     }
   };
@@ -345,7 +371,7 @@ export const useHeadquarters = () => {
       setShowDialog(false);
       setEditing(null);
       setImageFile(null);
-      loadHeadquarters();
+      void loadHeadquarters(true);
     } catch (error) {
       toast.error("Error al guardar la sede");
     }
@@ -358,7 +384,7 @@ export const useHeadquarters = () => {
       toast.success("Sede eliminada", {
         description: "Se ha eliminado la sede",
       });
-      loadHeadquarters();
+      void loadHeadquarters(true);
     } catch (error) {
       toast.error("Error al eliminar la sede");
     }
@@ -367,7 +393,7 @@ export const useHeadquarters = () => {
   const toggleStatus = async (id: string, nextStatus: string) => {
     try {
       await headquarterService.update(id, { status: nextStatus });
-      loadHeadquarters();
+      void loadHeadquarters(true);
     } catch (error) {
       toast.error("Error al actualizar el estado");
     }

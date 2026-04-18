@@ -8,7 +8,6 @@ import { boldService } from "@/api/services/bold.service";
 import type {
   BoldCheckoutConfig,
   BoldCheckoutInstance,
-  BoldCheckoutError,
 } from "@/types/bold.types";
 import { useAuth } from "./useAuth";
 
@@ -53,7 +52,8 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
       setIsLoading(true);
       setError(null);
 
-      // Cargar la librería de Bold si aún no está disponible
+      // Asegura que el SDK de Bold exista antes de iniciar el flujo.
+      // Si el script es bloqueado por extensiones/políticas, fallamos temprano.
       await initBoldCheckout();
 
       // Generar order ID único

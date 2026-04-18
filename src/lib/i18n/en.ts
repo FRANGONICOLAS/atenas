@@ -642,5 +642,21 @@ export const en = {
       recentContributions: "Latest contributions",
       directBenefits: "Direct benefits of your donations",
     },
+    cards: {
+      labels: {
+        projectGoal: "Project goal",
+        projectProgress: "Project progress",
+        donatedAt: "Donation date",
+        paymentMethod: "Payment method",
+        notAvailable: "Not available",
+      },
+      messages: {
+        everyContribution: "Thank you for donating. Every contribution adds real momentum to this project.",
+        goalCompleted: "Your support was part of the push that brought this project to its goal.",
+        closeToGoal: "Your donation is helping this project get very close to its goal.",
+        highImpact: "Your contribution had a strong impact on this project's progress.",
+        growingImpact: "Your support keeps progress alive and opens new opportunities for more children.",
+      },
+    },
   },
 };

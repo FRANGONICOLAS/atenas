@@ -8,6 +8,7 @@ import {
   createProjectSchema,
   updateProjectSchema,
 } from "@/lib/schemas/project.schema";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
 
 export const applySedeProjectFilters = (
   projects: Project[],
@@ -87,7 +88,7 @@ export const useSedeProjects = () => {
     return [];
   };
 
-  const loadAssignedHeadquarter = async () => {
+  const loadAssignedHeadquarter = async (forceRefresh = false) => {
     if (!user?.id) {
       setAssignedHeadquarterId(null);
       setAssignedHeadquarterName(null);
@@ -96,6 +97,17 @@ export const useSedeProjects = () => {
         description: "No se pudo identificar al usuario autenticado.",
       });
       return;
+    }
+
+    const cacheKey = `sede:assigned-headquarter:${user.id}`;
+    if (!forceRefresh) {
+      const cached = getTimedCache<{ id: string; name: string }>(cacheKey);
+      if (cached) {
+        setAssignedHeadquarterId(cached.id);
+        setAssignedHeadquarterName(cached.name);
+        setHeadquartersLoading(false);
+        return;
+      }
     }
 
     try {
@@ -123,6 +135,11 @@ export const useSedeProjects = () => {
       const assigned = directorHeadquarters[0];
       setAssignedHeadquarterId(assigned.headquarters_id);
       setAssignedHeadquarterName(assigned.name);
+      setTimedCache(
+        cacheKey,
+        { id: assigned.headquarters_id, name: assigned.name },
+        FIVE_MINUTES_MS,
+      );
     } catch (error) {
       toast.error("Error al cargar sede", {
         description: "No se pudo obtener la sede asignada.",
@@ -170,11 +187,21 @@ export const useSedeProjects = () => {
     } as Project;
   };
 
-  const loadProjects = async (headquarterId: string | null) => {
+  const loadProjects = async (headquarterId: string | null, forceRefresh = false) => {
     if (!headquarterId) {
       setProjects([]);
       setLoading(false);
       return;
+    }
+
+    const cacheKey = `sede:projects:${headquarterId}`;
+    if (!forceRefresh) {
+      const cached = getTimedCache<Project[]>(cacheKey);
+      if (cached) {
+        setProjects(cached);
+        setLoading(false);
+        return;
+      }
     }
 
     try {
@@ -188,6 +215,7 @@ export const useSedeProjects = () => {
         }, headquarterId)),
       );
       setProjects(mapped);
+      setTimedCache(cacheKey, mapped, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar proyectos", {
         description: "No se pudieron cargar los proyectos de la sede.",
@@ -242,7 +270,7 @@ export const useSedeProjects = () => {
   ) => {
     try {
       await projectService.create(projectData, headquarterId);
-      await loadProjects(headquarterId);
+      await loadProjects(headquarterId, true);
       toast.success("Proyecto creado", {
         description: `${projectData.name} ha sido creado correctamente`,
       });
@@ -260,7 +288,7 @@ export const useSedeProjects = () => {
   ) => {
     try {
       await projectService.update(projectId, projectData, headquarterId);
-      await loadProjects(headquarterId);
+      await loadProjects(headquarterId, true);
       toast.success("Proyecto actualizado", {
         description: `${projectData.name || "El proyecto"} ha sido actualizado correctamente`,
       });
@@ -284,7 +312,7 @@ export const useSedeProjects = () => {
       }
 
       await projectService.delete(projectId);
-      await loadProjects(assignedHeadquarterId);
+      await loadProjects(assignedHeadquarterId, true);
       toast.success("Proyecto eliminado", {
         description: `${projectName} ha sido eliminado`,
       });

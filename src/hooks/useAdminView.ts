@@ -16,8 +16,12 @@ import {
   type DonationReport,
 } from "@/lib/reportGenerator";
 import { useBeneficiaries } from "./useBeneficiaries";
-import { ProjectStats } from "@/pages/DirectorView/components/Projects/ProjectStats";
 import { useProjects } from "./useProjects";
+import {
+  FIVE_MINUTES_MS,
+  getTimedCache,
+  setTimedCache,
+} from "@/lib/timedCache";
 
 interface ContentForm {
   type: "image" | "video" | "text";
@@ -36,23 +40,38 @@ interface UserForm {
   phone: string;
 }
 
+const ADMIN_USERS_CACHE_KEY = "admin:users";
+const ADMIN_ROLES_CACHE_KEY = "admin:roles";
+const ADMIN_HEADQUARTERS_CACHE_KEY = "admin:headquarters";
+
 export const useAdminDashboard = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const cachedUsers = getTimedCache<DBUser[]>(ADMIN_USERS_CACHE_KEY);
+  const cachedRoles = getTimedCache<
+    Array<{ role_id: string; role_name: string }>
+  >(ADMIN_ROLES_CACHE_KEY);
+  const cachedHeadquarters = getTimedCache<
+    Array<{ headquarters_id: string; name: string }>
+  >(ADMIN_HEADQUARTERS_CACHE_KEY);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [showUserDialog, setShowUserDialog] = useState(false);
   const [showContentDialog, setShowContentDialog] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [users, setUsers] = useState<DBUser[]>([]);
-  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [users, setUsers] = useState<DBUser[]>(cachedUsers ?? []);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(
+    !(cachedUsers && cachedRoles && cachedHeadquarters),
+  );
   const [editingUser, setEditingUser] = useState<DBUser | null>(null);
   const [availableRoles, setAvailableRoles] = useState<
     Array<{ role_id: string; role_name: string }>
-  >([]);
+  >(cachedRoles ?? []);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const [selectedHeadquarterId, setSelectedHeadquarterId] = useState<string>("");
+  const [selectedHeadquarterId, setSelectedHeadquarterId] =
+    useState<string>("");
   const [availableHeadquarters, setAvailableHeadquarters] = useState<
     Array<{ headquarters_id: string; name: string }>
-  >([]);
+  >(cachedHeadquarters ?? []);
   const [userForm, setUserForm] = useState<UserForm>({
     first_name: "",
     last_name: "",
@@ -107,34 +126,55 @@ export const useAdminDashboard = () => {
     },
   ];
 
+  const loadData = async (forceRefresh = false) => {
+    if (!forceRefresh && cachedUsers && cachedRoles && cachedHeadquarters) {
+      setUsers(cachedUsers);
+      setAvailableRoles(cachedRoles);
+      setAvailableHeadquarters(cachedHeadquarters);
+      setIsLoadingUsers(false);
+      return;
+    }
+
+    try {
+      setIsLoadingUsers(true);
+      const [usersData, rolesData, hqData] = await Promise.all([
+        userService.getAll(),
+        client.from("role").select("role_id, role_name"),
+        headquarterService.getAll(),
+      ]);
+
+      const mappedHeadquarters = hqData.map((hq) => ({
+        headquarters_id: hq.headquarters_id,
+        name: hq.name,
+      }));
+
+      setUsers(usersData);
+      setTimedCache(ADMIN_USERS_CACHE_KEY, usersData, FIVE_MINUTES_MS);
+
+      if (rolesData.data) {
+        setAvailableRoles(rolesData.data);
+        setTimedCache(ADMIN_ROLES_CACHE_KEY, rolesData.data, FIVE_MINUTES_MS);
+      }
+
+      setAvailableHeadquarters(mappedHeadquarters);
+      setTimedCache(
+        ADMIN_HEADQUARTERS_CACHE_KEY,
+        mappedHeadquarters,
+        FIVE_MINUTES_MS,
+      );
+    } catch (error) {
+      console.error("Error loading data:", error);
+      toast.error("Error al cargar datos", {
+        description: "No se pudieron cargar los datos de la base de datos",
+      });
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
   // Load users and roles from Supabase
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoadingUsers(true);
-        const [usersData, rolesData, hqData] = await Promise.all([
-          userService.getAll(),
-          client.from("role").select("role_id, role_name"),
-          headquarterService.getAll(),
-        ]);
-
-        setUsers(usersData);
-        if (rolesData.data) {
-          setAvailableRoles(rolesData.data);
-        }
-        setAvailableHeadquarters(
-          hqData.map((hq) => ({ headquarters_id: hq.headquarters_id, name: hq.name }))
-        );
-      } catch (error) {
-        toast.error("Error al cargar datos", {
-          description: "No se pudieron cargar los datos de la base de datos",
-        });
-      } finally {
-        setIsLoadingUsers(false);
-      }
-    };
-
-    loadData();
+    void loadData();
   }, []);
 
   // Calculate stats from real data
@@ -279,11 +319,12 @@ export const useAdminDashboard = () => {
             user_id: editingUser.id,
             role_id: role_id,
           }));
-          await client.from("user_role").insert(roleInserts);
+          await client.from("user_role").insert(roleInserts as never[]);
         }
 
         const refreshedUsers = await userService.getAll();
         setUsers(refreshedUsers);
+        setTimedCache(ADMIN_USERS_CACHE_KEY, refreshedUsers, FIVE_MINUTES_MS);
 
         toast.success("Usuario actualizado", {
           description: `${userForm.first_name} ${userForm.last_name} ha sido actualizado correctamente`,
@@ -355,6 +396,7 @@ export const useAdminDashboard = () => {
         // Recargar lista de usuarios
         const refreshedUsers = await userService.getAll();
         setUsers(refreshedUsers);
+        setTimedCache(ADMIN_USERS_CACHE_KEY, refreshedUsers, FIVE_MINUTES_MS);
 
         toast.success("Usuario creado exitosamente", {
           description: `${userForm.first_name} ${userForm.last_name} - Contraseña: ${tempPassword}`,
@@ -376,7 +418,6 @@ export const useAdminDashboard = () => {
       setEditingUser(null);
       setSelectedRoles([]);
     } catch (error) {
-
       // Manejo de errores específicos
       const err = error as { message?: string; code?: string };
       if (err.message?.includes("duplicate") || err.code === "23505") {

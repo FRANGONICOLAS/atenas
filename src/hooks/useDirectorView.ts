@@ -2,18 +2,39 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { headquarterService } from "@/api/services";
 import type { Headquarter } from "@/types";
+import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+
+const DIRECTOR_HEADQUARTERS_CACHE_KEY = "director:headquarters";
 
 export const useDirectorView = () => {
+  const cachedHeadquarters = getTimedCache<Headquarter[]>(
+    DIRECTOR_HEADQUARTERS_CACHE_KEY,
+  );
+
   // Headquarters state (solo para listado)
-  const [headquarters, setHeadquarters] = useState<Headquarter[]>([]);
-  const [headquartersLoading, setHeadquartersLoading] = useState(true);
+  const [headquarters, setHeadquarters] = useState<Headquarter[]>(
+    cachedHeadquarters ?? [],
+  );
+  const [headquartersLoading, setHeadquartersLoading] = useState(
+    !cachedHeadquarters,
+  );
 
   // Cargar sedes desde Supabase
-  const loadHeadquarters = async () => {
+  const loadHeadquarters = async (forceRefresh = false) => {
     try {
+      if (!forceRefresh) {
+        const cached = getTimedCache<Headquarter[]>(DIRECTOR_HEADQUARTERS_CACHE_KEY);
+        if (cached) {
+          setHeadquarters(cached);
+          setHeadquartersLoading(false);
+          return;
+        }
+      }
+
       setHeadquartersLoading(true);
       const data = await headquarterService.getAll();
       setHeadquarters(data);
+      setTimedCache(DIRECTOR_HEADQUARTERS_CACHE_KEY, data, FIVE_MINUTES_MS);
     } catch (error) {
       toast.error("Error al cargar sedes");
     } finally {
@@ -23,7 +44,7 @@ export const useDirectorView = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    loadHeadquarters();
+    void loadHeadquarters();
   }, []);
 
   // Utilities
