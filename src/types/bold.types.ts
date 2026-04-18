@@ -5,9 +5,10 @@ export interface BoldCheckoutConfig {
   amount: string; // Bold espera string
   apiKey: string;
   integritySignature: string;
+  merchantId?: string;
   description?: string;
   redirectionUrl?: string;
-  renderMode?: 'embedded' | 'redirect';
+  renderMode?: "embedded" | "redirect";
   // Campos opcionales adicionales según documentación Bold
   tax?: string;
   taxBase?: string;
@@ -33,20 +34,20 @@ declare global {
 }
 
 // Estados de transacción Bold (según webhook)
-export type BoldTransactionStatus = 
-  | 'APPROVED'
-  | 'DECLINED'
-  | 'PENDING'
-  | 'ERROR';
+export type BoldTransactionStatus =
+  | "APPROVED"
+  | "DECLINED"
+  | "PENDING"
+  | "ERROR";
 
 // Método de pago Bold
-export type BoldPaymentMethod = 
-  | 'CARD'
-  | 'PSE'
-  | 'NEQUI'
-  | 'DAVIPLATA'
-  | 'BANCOLOMBIA_TRANSFER'
-  | 'BANCOLOMBIA_QR';
+export type BoldPaymentMethod =
+  | "CARD"
+  | "PSE"
+  | "NEQUI"
+  | "DAVIPLATA"
+  | "BANCOLOMBIA_TRANSFER"
+  | "BANCOLOMBIA_QR";
 
 // Payload del webhook de Bold
 export interface BoldWebhookPayload {
@@ -115,6 +116,7 @@ export interface BoldSignatureResponse {
 // Configuración de entorno Bold
 export interface BoldConfig {
   apiKey: string;
+  merchantId?: string;
   isProduction: boolean;
   redirectionUrl: string;
 }
@@ -124,10 +126,10 @@ export class BoldCheckoutError extends Error {
   constructor(
     message: string,
     public code?: string,
-    public details?: unknown
+    public details?: unknown,
   ) {
     super(message);
-    this.name = 'BoldCheckoutError';
+    this.name = "BoldCheckoutError";
   }
 }
 

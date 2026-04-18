@@ -100,6 +100,7 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
         currency: options.currency || "COP",
         amount: formatBoldAmount(options.amount),
         apiKey: config.apiKey,
+        merchantId: config.merchantId,
         integritySignature,
         description: options.description,
         redirectionUrl: config.redirectionUrl,
@@ -122,8 +123,8 @@ export function useBoldCheckout(options: UseBoldCheckoutOptions) {
       // Limpiar timeout
       clearTimeout(timeoutId);
 
-      // Callback de éxito
-      options.onSuccess?.(newOrderId);
+      // Nota: el checkout se abrió correctamente, pero todavía no hay pago aprobado.
+      // El estado real se actualizará cuando Bold envíe el webhook o redireccione con el resultado.
     } catch (err) {
       // Limpiar timeout
       clearTimeout(timeoutId);
