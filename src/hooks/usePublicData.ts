@@ -101,11 +101,13 @@ export function usePublicProjects() {
       return projects.map((project) => {
         const raised = raisedTotals[project.project_id] || 0;
         const goal = project.finance_goal || 0;
-        const percentage =
-          goal > 0 ? Math.min(Math.round((raised / goal) * 100), 100) : 0;
+        const rawPercentage = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+        const percentage = Math.min(Math.max(rawPercentage, 0), 100);
+        const status = rawPercentage >= 100 ? "completed" : project.status;
 
         return {
           ...project,
+          status,
           raised,
           percentage,
         };

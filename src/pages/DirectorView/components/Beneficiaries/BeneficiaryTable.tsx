@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Download, Edit, Eye, Trash2 } from "lucide-react";
 import {
   Table,
@@ -22,7 +21,6 @@ interface BeneficiaryTableProps {
   onExport?: (beneficiary: Beneficiary) => void;
   calculateAge: (birthDate: string) => number;
   getStatusBadge: (status: string) => React.ReactNode;
-  getPerformanceColor: (value: number) => string;
 }
 
 export const BeneficiaryTable = ({
@@ -34,7 +32,6 @@ export const BeneficiaryTable = ({
   onExport,
   calculateAge,
   getStatusBadge,
-  getPerformanceColor,
 }: BeneficiaryTableProps) => {
   if (beneficiaries.length === 0) {
     return (
@@ -53,7 +50,6 @@ export const BeneficiaryTable = ({
             <TableHead>Edad</TableHead>
             <TableHead>Categoría</TableHead>
             <TableHead>Sede</TableHead>
-            <TableHead>Rendimiento</TableHead>
             <TableHead>Estado</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
           </TableRow>
@@ -75,18 +71,6 @@ export const BeneficiaryTable = ({
                 </TableCell>
                 <TableCell className="text-muted-foreground">
                   {hq?.name || "N/A"}
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Progress value={b.performance || 0} className="w-16" />
-                    <span
-                      className={`text-sm font-medium ${getPerformanceColor(
-                        b.performance || 0,
-                      )}`}
-                    >
-                      {b.performance || 0}%
-                    </span>
-                  </div>
                 </TableCell>
                 <TableCell>{getStatusBadge(b.status || "inactivo")}</TableCell>
                 <TableCell className="text-right space-x-2">

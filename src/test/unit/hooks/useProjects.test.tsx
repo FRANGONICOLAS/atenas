@@ -80,6 +80,20 @@ describe("useProjects unit", () => {
     expect(result.current.stats.totalRaised).toBe(400);
   });
 
+  it("caps project progress at 100 and marks completed when over goal", async () => {
+    getTotalRaisedMock.mockResolvedValueOnce(1300);
+
+    const { result } = renderHook(() => useProjects());
+
+    await waitFor(() => {
+      expect(result.current.projectsLoading).toBe(false);
+    });
+
+    expect(result.current.projects[0].progress).toBe(100);
+    expect(result.current.projects[0].status).toBe("completed");
+    expect(result.current.stats.completedCount).toBe(1);
+  });
+
   it("handles project mapping when goal is zero and no headquarters are linked", async () => {
     getAllProjectsMock.mockResolvedValueOnce([
       {

@@ -21,7 +21,11 @@ import {
   generateBeneficiariesExcel,
   generateBeneficiariesPDF,
 } from "@/lib/reportGenerator";
-import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+import {
+  FIVE_MINUTES_MS,
+  getTimedCache,
+  setTimedCache,
+} from "@/lib/timedCache";
 
 export const applySedeBeneficiaryFilters = (
   beneficiaries: Beneficiary[],
@@ -311,17 +315,27 @@ export const useSedeBeneficiaries = () => {
     statusFilter,
   ]);
 
+  const newPlayersThisMonth = useMemo(() => {
+    const today = new Date();
+    const monthStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1,
+    ).getTime();
+
+    return beneficiaries.filter((b) => {
+      const createdAt = b.created_at || b.registry_date;
+      if (!createdAt) return false;
+      const date = new Date(createdAt).getTime();
+      return !Number.isNaN(date) && date >= monthStart;
+    }).length;
+  }, [beneficiaries]);
+
   const stats = useMemo(() => {
     const total = beneficiaries.length;
     const active = beneficiaries.filter((b) => b.status === "activo").length;
-    const avgPerformance = beneficiaries.length
-      ? Math.round(
-          beneficiaries.reduce((sum, b) => sum + (b.performance || 0), 0) /
-            beneficiaries.length,
-        )
-      : 0;
-    return { total, active, avgPerformance };
-  }, [beneficiaries]);
+    return { total, active, newPlayersThisMonth };
+  }, [beneficiaries, newPlayersThisMonth]);
 
   const handleCreate = async (beneficiaryData: CreateBeneficiaryData) => {
     try {

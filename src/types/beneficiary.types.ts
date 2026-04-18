@@ -231,7 +231,6 @@ export interface SedeStats {
   name: string;
   total: number;
   active: number;
-  avgPerf: number;
 }
 
 import type { EvaluationPanelItem } from "@/types/evaluation.types";

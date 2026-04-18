@@ -69,7 +69,10 @@ const MainDashboard = ({ user }: { user: User }) => {
       <div className="w-full">
         <DashboardHeader
           title={t.donatorDashboard.titles.overview}
-          welcomeMessage={t.donatorDashboard.welcome.replace('{{name}}', `${user?.first_name} ${user?.last_name}`)}
+          welcomeMessage={t.donatorDashboard.welcome.replace(
+            "{{name}}",
+            `${user?.first_name} ${user?.last_name}`,
+          )}
           firstName={user?.first_name}
           lastName={user?.last_name}
           role={user?.roles[0]}
@@ -98,12 +101,6 @@ const MainDashboard = ({ user }: { user: User }) => {
       value: stats?.projectsSupported || 0,
       color: "bg-blue-500",
     },
-    {
-      icon: Heart,
-      title: t.donatorDashboard.stats.beneficiariesImpacted,
-      value: stats?.beneficiariesImpacted || 0,
-      color: "bg-red-500",
-    },
   ];
 
   return (
@@ -120,7 +117,10 @@ const MainDashboard = ({ user }: { user: User }) => {
       {/* Header */}
       <DashboardHeader
         title={t.donatorDashboard.titles.overview}
-        welcomeMessage={t.donatorDashboard.welcome.replace('{{name}}', `${user?.first_name} ${user?.last_name}`)}
+        welcomeMessage={t.donatorDashboard.welcome.replace(
+          "{{name}}",
+          `${user?.first_name} ${user?.last_name}`,
+        )}
         firstName={user?.first_name}
         lastName={user?.last_name}
         role={user?.roles[0]}
@@ -129,7 +129,7 @@ const MainDashboard = ({ user }: { user: User }) => {
       />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {statsCards.map((stat, index) => (
           <DonatorStatCard
             key={index}
@@ -253,15 +253,7 @@ const MainDashboard = ({ user }: { user: User }) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
-              <p className="text-3xl font-bold text-primary">
-                {stats?.beneficiariesImpacted || 0}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {t.donatorDashboard.stats.beneficiariesImpacted}
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="text-center space-y-2 p-4 rounded-lg bg-muted/50">
               <p className="text-3xl font-bold text-primary">
                 {stats?.projectsSupported || 0}

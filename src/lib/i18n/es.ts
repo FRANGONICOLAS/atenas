@@ -312,7 +312,7 @@ export const es = {
     raised: "Recaudado",
     support: "Apoyar Proyecto",
     active: "Activo",
-    completed: "Completado",
+    completed: "Meta Alcanzada",
     pending: "Pendiente",
     loading: "Cargando proyectos...",
     totalProjects: "Proyectos Totales",
@@ -526,8 +526,7 @@ export const es = {
     updateError: "Error al actualizar evaluación",
     updateErrorDesc: "No se pudo actualizar la evaluación",
     addTitle: "Agregar evaluación",
-    addDesc:
-      "Selecciona el jugador y completa las evaluaciones necesarias.",
+    addDesc: "Selecciona el jugador y completa las evaluaciones necesarias.",
     editTitle: "Editar evaluación",
     editDesc: "Actualiza los formularios de evaluación del jugador.",
     beneficiaryLabel: "Jugador",
@@ -655,11 +654,16 @@ export const es = {
         notAvailable: "No disponible",
       },
       messages: {
-        everyContribution: "Gracias por donar. Cada aporte suma al cambio real de este proyecto.",
-        goalCompleted: "Tu apoyo fue parte del impulso que llevo este proyecto a su meta.",
-        closeToGoal: "Tu donacion esta ayudando a que este proyecto llegue muy pronto a su meta.",
-        highImpact: "Tu aporte tuvo un impacto destacado en el avance de este proyecto.",
-        growingImpact: "Tu aporte mantiene vivo el progreso y acerca a mas ninos a nuevas oportunidades.",
+        everyContribution:
+          "Gracias por donar. Cada aporte suma al cambio real de este proyecto.",
+        goalCompleted:
+          "Tu apoyo fue parte del impulso que llevo este proyecto a su meta.",
+        closeToGoal:
+          "Tu donacion esta ayudando a que este proyecto llegue muy pronto a su meta.",
+        highImpact:
+          "Tu aporte tuvo un impacto destacado en el avance de este proyecto.",
+        growingImpact:
+          "Tu aporte mantiene vivo el progreso y acerca a mas ninos a nuevas oportunidades.",
       },
     },
   },

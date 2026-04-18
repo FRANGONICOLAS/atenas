@@ -74,6 +74,14 @@ describe("useBeneficiaries unit", () => {
       refreshUser: jest.fn(),
     });
 
+    const currentMonth = new Date();
+    const thisMonthDate = `${currentMonth.getFullYear()}-${String(
+      currentMonth.getMonth() + 1,
+    ).padStart(2, "0")}-${String(Math.min(currentMonth.getDate(), 28)).padStart(
+      2,
+      "0",
+    )}`;
+
     getAllBeneficiariesMock.mockResolvedValue([
       {
         beneficiary_id: "b-1",
@@ -83,7 +91,7 @@ describe("useBeneficiaries unit", () => {
         birth_date: "2012-01-01",
         category: "Categoría 1",
         phone: "123",
-        registry_date: "2026-01-01",
+        registry_date: thisMonthDate,
         status: "activo",
         performance: 80,
       },
@@ -95,7 +103,7 @@ describe("useBeneficiaries unit", () => {
         birth_date: "2011-01-01",
         category: "Categoría 2",
         phone: "456",
-        registry_date: "2026-01-02",
+        registry_date: thisMonthDate,
         status: "inactivo",
         performance: 60,
       },
@@ -127,7 +135,7 @@ describe("useBeneficiaries unit", () => {
     expect(result.current.stats).toEqual({
       total: 2,
       active: 1,
-      avgPerformance: 70,
+      newPlayersThisMonth: 0,
     });
     expect(result.current.statsByHeadquarter).toHaveLength(2);
   });

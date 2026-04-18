@@ -310,7 +310,7 @@ export const en = {
     raised: "Raised",
     support: "Support Project",
     active: "Active",
-    completed: "Completed",
+    completed: "Goal Achieved",
     pending: "Pending",
     loading: "Loading projects...",
     totalProjects: "Total Projects",

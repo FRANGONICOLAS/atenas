@@ -42,7 +42,11 @@ export const useProjects = () => {
         data.map(async (p) => {
           const raised = await projectService.getTotalRaised(p.project_id);
           const goal = p.finance_goal || 0;
-          const progress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+          const rawProgress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+          const progress = Math.min(Math.max(rawProgress, 0), 100);
+          const status = rawProgress >= 100
+            ? "completed"
+            : (p.status as "active" | "completed" | "pending") || "active";
           
           // Obtener las sedes del proyecto
           const headquarterIds = await projectService.getHeadquartersForProject(p.project_id);
@@ -60,7 +64,7 @@ export const useProjects = () => {
             priority: "medium" as const,
             deadline: p.end_date || "",
             description: p.description || "",
-            status: p.status as "active" | "completed" | "pending",
+            status,
             start_date: p.start_date,
             end_date: p.end_date,
             finance_goal: p.finance_goal,

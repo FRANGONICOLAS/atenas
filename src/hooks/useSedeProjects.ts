@@ -165,7 +165,11 @@ export const useSedeProjects = () => {
   ) => {
     const raised = await projectService.getTotalRaised(projectRow.project_id);
     const goal = projectRow.finance_goal || 0;
-    const progress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+    const rawProgress = goal > 0 ? Math.round((raised / goal) * 100) : 0;
+    const progress = Math.min(Math.max(rawProgress, 0), 100);
+    const status = rawProgress >= 100
+      ? "completed"
+      : (projectRow.status as "active" | "completed" | "pending") || "active";
 
     return {
       id: parseInt(projectRow.project_id?.split("_")[1] || "0"),
@@ -179,7 +183,7 @@ export const useSedeProjects = () => {
       priority: "medium" as const,
       deadline: projectRow.end_date || "",
       description: projectRow.description || "",
-      status: projectRow.status as "active" | "completed" | "pending",
+      status,
       start_date: projectRow.start_date,
       end_date: projectRow.end_date,
       finance_goal: projectRow.finance_goal,

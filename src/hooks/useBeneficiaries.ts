@@ -168,19 +168,6 @@ export const useBeneficiaries = () => {
     });
   }, [beneficiaries, search, headquarterFilter, categoryFilter, statusFilter]);
 
-  // Estadísticas generales
-  const stats = useMemo(() => {
-    const total = beneficiaries.length;
-    const active = beneficiaries.filter((b) => b.status === "activo").length;
-    const avgPerformance = beneficiaries.length
-      ? Math.round(
-          beneficiaries.reduce((sum, b) => sum + (b.performance || 0), 0) /
-            beneficiaries.length,
-        )
-      : 0;
-    return { total, active, avgPerformance };
-  }, [beneficiaries]);
-
   const newPlayersThisMonth = useMemo(() => {
     const today = new Date();
     const monthStart = new Date(
@@ -197,6 +184,13 @@ export const useBeneficiaries = () => {
     }).length;
   }, [beneficiaries]);
 
+  // Estadísticas generales
+  const stats = useMemo(() => {
+    const total = beneficiaries.length;
+    const active = beneficiaries.filter((b) => b.status === "activo").length;
+    return { total, active, newPlayersThisMonth };
+  }, [beneficiaries, newPlayersThisMonth]);
+
   // Estadísticas por sede
   const statsByHeadquarter = useMemo(() => {
     return headquarters.map((hq) => {
@@ -204,13 +198,7 @@ export const useBeneficiaries = () => {
         (b) => b.headquarters_id === hq.headquarters_id,
       );
       const active = list.filter((b) => b.status === "activo").length;
-      const avgPerf = list.length
-        ? Math.round(
-            list.reduce((sum, b) => sum + (b.performance || 0), 0) /
-              list.length,
-          )
-        : 0;
-      return { name: hq.name, total: list.length, active, avgPerf };
+      return { name: hq.name, total: list.length, active };
     });
   }, [beneficiaries, headquarters]);
 

@@ -12,11 +12,7 @@ import { BeneficiaryFilters } from "@/pages/DirectorView/components/Beneficiarie
 import { BeneficiaryTable } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryTable";
 import { BeneficiaryForm } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryForm";
 import { BeneficiaryDetail } from "@/pages/DirectorView/components/Beneficiaries/BeneficiaryDetail";
-import {
-  calculateAge,
-  getStatusBadge,
-  getPerformanceColor,
-} from "@/lib";
+import { calculateAge, getStatusBadge } from "@/lib";
 
 const BeneficiariesPage = () => {
   const {
@@ -171,7 +167,7 @@ const BeneficiariesPage = () => {
       <BeneficiaryStats
         total={stats.total}
         active={stats.active}
-        avgPerformance={stats.avgPerformance}
+        newPlayersThisMonth={stats.newPlayersThisMonth}
       />
 
       {/* Controls and Table */}
@@ -234,7 +230,6 @@ const BeneficiariesPage = () => {
                 onExport={handleExportSingleBeneficiary}
                 calculateAge={calculateAge}
                 getStatusBadge={getStatusBadge}
-                getPerformanceColor={getPerformanceColor}
               />
             </TabsContent>
           </Tabs>
@@ -260,7 +255,6 @@ const BeneficiariesPage = () => {
         headquarters={headquarters}
         calculateAge={calculateAge}
         getStatusBadge={getStatusBadge}
-        getPerformanceColor={getPerformanceColor}
       />
 
       {/* Delete Confirmation */}

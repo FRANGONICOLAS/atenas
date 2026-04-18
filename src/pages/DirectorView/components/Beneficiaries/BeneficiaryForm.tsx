@@ -185,6 +185,22 @@ export const BeneficiaryForm = ({
               </Select>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="gender">Género</Label>
+              <Select
+                value={form.gender || ""}
+                onValueChange={(value) => setForm({ ...form, gender: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona género" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hombre">Hombre</SelectItem>
+                  <SelectItem value="mujer">Mujer</SelectItem>
+                  <SelectItem value="otro">Otro</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="headquarters_id">Sede *</Label>
               <Select
                 value={form.headquarters_id}
