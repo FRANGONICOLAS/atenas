@@ -576,9 +576,9 @@ export const es = {
   footer: {
     description:
       "Fundación deportiva sin ánimo de lucro dedicada al desarrollo integral de niños y jóvenes a través del fútbol.",
-    address: "Calle 14 # 85-30, Cali, Colombia",
-    phone: "+57 315 267 9250",
-    email: "info@fundacionatenas.org",
+    address: "Carrera 57 #13-38, Cali, Colombia",
+    phone: "+57 317 6828721",
+    email: "fundacionatenas2017@gmail.com",
     terms: "Términos y Condiciones",
     privacy: "Política de Privacidad",
     rights: "Todos los derechos reservados",
