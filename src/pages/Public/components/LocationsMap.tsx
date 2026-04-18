@@ -87,7 +87,7 @@ export const LocationsMap = ({ locations }: LocationsMapProps) => {
                       )}
                       <br/>
                       <span style={{ color: '#3b82f6', fontWeight: '500' }}>
-                        {location.beneficiaryCount} {location.beneficiaryCount === 1 ? 'beneficiario' : 'beneficiarios'}
+                        {location.beneficiaryCount} {location.beneficiaryCount === 1 ? 'jugador' : 'jugadores'}
                       </span>
                     </div>
                   </Popup>

@@ -3,7 +3,7 @@ export const es = {
     home: "Inicio",
     about: "Acerca de Atenas",
     whatWeDo: "Qué Hacemos",
-    beneficiaries: "Nuestros Beneficiarios",
+    beneficiaries: "Nuestro Equipo",
     categories: "Categorías",
     players: "Jugadores",
     projects: "Proyectos",
@@ -22,7 +22,7 @@ export const es = {
     donateNow: "Donar Ahora",
     learnMore: "Conoce Más",
     impactTitle: "Nuestro Impacto",
-    beneficiaries: "Beneficiarios",
+    beneficiaries: "Jugadores",
     projects: "Proyectos Activos",
     donations: "Donaciones Recibidas",
     years: "Años de Experiencia",
@@ -149,7 +149,7 @@ export const es = {
         },
         y2020: {
           title: "Expansión",
-          desc: "Llegamos a 200 beneficiarios en 3 sedes",
+          desc: "Llegamos a 200 jugadores en 3 sedes",
         },
         y2023: {
           title: "Reconocimiento",
@@ -180,7 +180,7 @@ export const es = {
     nutrition: {
       title: "Programa de Nutrición",
       description:
-        "Proporcionamos alimentación balanceada y educación nutricional para el desarrollo integral de nuestros beneficiarios.",
+        "Proporcionamos alimentación balanceada y educación nutricional para el desarrollo integral de nuestros jugadores.",
     },
     tournaments: {
       title: "Participación en Torneos",
@@ -403,7 +403,7 @@ export const es = {
     generalFund: {
       title: "Libre Inversión",
       description:
-        "Tu donación se utilizará donde más se necesite para apoyar a los proyectos y beneficiarios de la fundación",
+        "Tu donación se utilizará donde más se necesite para apoyar a los proyectos y jugadores de la fundación",
     },
     specificProject: {
       title: "Proyecto Específico",
@@ -511,7 +511,7 @@ export const es = {
     fileDescription: "El archivo se descargará en breve",
   },
   evaluations: {
-    selectBeneficiary: "Selecciona un beneficiario",
+    selectBeneficiary: "Selecciona un jugador",
     complete: "Completa la evaluación",
     createSuccess: "Evaluación registrada",
     savedFor: "Evaluación guardada para {{name}}",
@@ -527,15 +527,15 @@ export const es = {
     updateErrorDesc: "No se pudo actualizar la evaluación",
     addTitle: "Agregar evaluación",
     addDesc:
-      "Selecciona el beneficiario y completa las evaluaciones necesarias.",
+      "Selecciona el jugador y completa las evaluaciones necesarias.",
     editTitle: "Editar evaluación",
-    editDesc: "Actualiza los formularios de evaluación del beneficiario.",
-    beneficiaryLabel: "Beneficiario",
-    loadingBeneficiaries: "Cargando beneficiarios...",
-    selectPlaceholder: "Selecciona beneficiario",
-    noBeneficiaries: "Sin beneficiarios disponibles",
+    editDesc: "Actualiza los formularios de evaluación del jugador.",
+    beneficiaryLabel: "Jugador",
+    loadingBeneficiaries: "Cargando jugadores...",
+    selectPlaceholder: "Selecciona jugador",
+    noBeneficiaries: "Sin jugadores disponibles",
     selectPrompt:
-      "Selecciona un beneficiario para habilitar los formularios de evaluación.",
+      "Selecciona un jugador para habilitar los formularios de evaluación.",
     tabs: {
       anthropometric: "Antropométrico",
       technical: "Técnico-Táctico",

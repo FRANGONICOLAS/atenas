@@ -39,7 +39,7 @@ export const BeneficiaryTable = ({
   if (beneficiaries.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        No hay beneficiarios que coincidan con los filtros
+        No hay jugadores que coincidan con los filtros
       </div>
     );
   }
@@ -114,7 +114,7 @@ export const BeneficiaryTable = ({
                       variant="ghost"
                       className="h-8 w-8"
                       onClick={() => onExport(b)}
-                      title="Exportar beneficiario"
+                      title="Exportar jugador"
                     >
                       <Download className="w-4 h-4" />
                     </Button>

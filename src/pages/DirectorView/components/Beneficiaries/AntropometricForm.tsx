@@ -115,13 +115,13 @@ export const AntropometricForm = ({
           Evaluación Antropométrica Completa
         </CardTitle>
         <CardDescription>
-          Completa las mediciones físicas del beneficiario. Los valores fuera de rango se marcarán en rojo.
+          Completa las mediciones físicas del jugador. Los valores fuera de rango se marcarán en rojo.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Género */}
         <div className="space-y-2">
-          <Label htmlFor="genero">Género del Beneficiario *</Label>
+          <Label htmlFor="genero">Género del Jugador *</Label>
           <Select
             value={genero}
             onValueChange={(value: "hombre" | "mujer") => handleChange("genero", value)}

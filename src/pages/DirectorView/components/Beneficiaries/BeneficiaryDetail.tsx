@@ -43,10 +43,10 @@ export const BeneficiaryDetail = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Eye className="w-5 h-5" />
-            Ficha del Beneficiario
+            Ficha del Jugador
           </DialogTitle>
           <DialogDescription>
-            Información detallada y trayectoria del beneficiario
+            Información detallada y trayectoria del jugador
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6 py-2">

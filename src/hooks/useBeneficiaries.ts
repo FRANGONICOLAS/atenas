@@ -12,7 +12,11 @@ import type {
   CreateBeneficiaryData,
   UpdateBeneficiaryData,
 } from "@/types/beneficiary.types";
-import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+import {
+  FIVE_MINUTES_MS,
+  getTimedCache,
+  setTimedCache,
+} from "@/lib/timedCache";
 import { mapToReport as mapBeneficiaryToReport } from "@/lib";
 import {
   createBeneficiarySchema,
@@ -27,8 +31,12 @@ const BENEFICIARIES_CACHE_KEY = "beneficiaries:all";
 const HEADQUARTERS_CACHE_KEY = "headquarters:all";
 
 export const useBeneficiaries = () => {
-  const cachedBeneficiaries = getTimedCache<Beneficiary[]>(BENEFICIARIES_CACHE_KEY);
-  const cachedHeadquarters = getTimedCache<Headquarter[]>(HEADQUARTERS_CACHE_KEY);
+  const cachedBeneficiaries = getTimedCache<Beneficiary[]>(
+    BENEFICIARIES_CACHE_KEY,
+  );
+  const cachedHeadquarters = getTimedCache<Headquarter[]>(
+    HEADQUARTERS_CACHE_KEY,
+  );
 
   // Beneficiaries state
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>(
@@ -45,9 +53,8 @@ export const useBeneficiaries = () => {
   const [headquarters, setHeadquarters] = useState<Headquarter[]>(
     cachedHeadquarters ?? [],
   );
-  const [headquartersLoading, setHeadquartersLoading] = useState(
-    !cachedHeadquarters,
-  );
+  const [headquartersLoading, setHeadquartersLoading] =
+    useState(!cachedHeadquarters);
   const [headquarterDirectorNames, setHeadquarterDirectorNames] = useState<
     Record<string, string>
   >({});
@@ -172,6 +179,22 @@ export const useBeneficiaries = () => {
         )
       : 0;
     return { total, active, avgPerformance };
+  }, [beneficiaries]);
+
+  const newPlayersThisMonth = useMemo(() => {
+    const today = new Date();
+    const monthStart = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      1,
+    ).getTime();
+
+    return beneficiaries.filter((b) => {
+      const createdAt = b.created_at || b.registry_date;
+      if (!createdAt) return false;
+      const date = new Date(createdAt).getTime();
+      return !Number.isNaN(date) && date >= monthStart;
+    }).length;
   }, [beneficiaries]);
 
   // Estadísticas por sede
@@ -392,6 +415,7 @@ export const useBeneficiaries = () => {
     headquartersLoading,
     filtered,
     stats,
+    newPlayersThisMonth,
     statsByHeadquarter,
 
     // Setters

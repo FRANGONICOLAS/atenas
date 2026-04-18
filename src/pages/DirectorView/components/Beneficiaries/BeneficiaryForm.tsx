@@ -80,12 +80,12 @@ export const BeneficiaryForm = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserCheck className="w-5 h-5" />
-            {isEditing ? "Editar Beneficiario" : "Agregar Beneficiario"}
+            {isEditing ? "Editar Jugador" : "Agregar Jugador"}
           </DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Actualiza la información del beneficiario"
-              : "Completa los datos para registrar un beneficiario"}
+              ? "Actualiza la información del jugador"
+              : "Completa los datos para registrar un jugador"}
           </DialogDescription>
         </DialogHeader>
 
@@ -99,7 +99,7 @@ export const BeneficiaryForm = ({
                   setForm({ ...form, photo_url: previewUrl });
                 }}
                 label="Foto de perfil"
-                description="Foto del beneficiario (máximo 5MB)"
+                description="Foto del jugador (máximo 5MB)"
                 aspectRatio="square"
               />
             </div>
@@ -265,7 +265,7 @@ export const BeneficiaryForm = ({
                 id="address"
                 value={form.address}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                placeholder="Dirección del beneficiario"
+                placeholder="Dirección del jugador"
               />
             </div>
             <div className="space-y-2">

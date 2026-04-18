@@ -45,7 +45,7 @@ export const EvaluationTable = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Beneficiario</TableHead>
+            <TableHead>Jugador</TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Fecha</TableHead>
             <TableHead className="text-right">Acciones</TableHead>
@@ -87,7 +87,7 @@ export const EvaluationTable = ({
                       variant="ghost"
                       className="h-8 w-8"
                       onClick={() => onExport(evaluation)}
-                      title="Exportar beneficiario"
+                      title="Exportar jugador"
                     >
                       <Download className="h-4 w-4" />
                     </Button>

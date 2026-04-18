@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
 import { userService } from "@/api/services/user.service";
-import { headquarterService } from "@/api/services";
+import { headquarterService, donationService } from "@/api/services";
 import type { User as DBUser } from "@/api/types";
 import { client } from "@/api/supabase/client";
 import {
@@ -38,6 +38,15 @@ interface UserForm {
   email: string;
   birthdate: string;
   phone: string;
+}
+
+interface AdminDonation {
+  id: number;
+  donor: string;
+  project: string;
+  amount: number;
+  date: string;
+  currency: string;
 }
 
 const ADMIN_USERS_CACHE_KEY = "admin:users";
@@ -87,11 +96,16 @@ export const useAdminDashboard = () => {
     url: "",
     section: "gallery",
   });
+  const [donationsThisMonth, setDonationsThisMonth] = useState<number>(0);
+  const [donationsProcessedThisMonth, setDonationsProcessedThisMonth] =
+    useState<number>(0);
+  const [recentDonations, setRecentDonations] = useState<AdminDonation[]>([]);
 
-  const { stats: beneficiariesStats } = useBeneficiaries();
+  const { stats: beneficiariesStats, newPlayersThisMonth } = useBeneficiaries();
   const { stats: projectsStats } = useProjects();
   const beneficiaries = beneficiariesStats.active || 0;
   const projects = projectsStats.inProgress || 0;
+  const completedProjects = projectsStats.completedCount || 0;
 
   // Update active tab from URL params
   useEffect(() => {
@@ -100,31 +114,6 @@ export const useAdminDashboard = () => {
       setActiveTab(tab);
     }
   }, [searchParams]);
-
-  // Mock data for donations
-  const recentDonations = [
-    {
-      id: 1,
-      donor: "Pedro Silva",
-      amount: 500000,
-      project: "Cancha Sintética",
-      date: "2024-12-08",
-    },
-    {
-      id: 2,
-      donor: "Laura Torres",
-      amount: 250000,
-      project: "Becas Académicas",
-      date: "2024-12-07",
-    },
-    {
-      id: 3,
-      donor: "Diego Ramírez",
-      amount: 1000000,
-      project: "Inversión Libre",
-      date: "2024-12-06",
-    },
-  ];
 
   const loadData = async (forceRefresh = false) => {
     if (!forceRefresh && cachedUsers && cachedRoles && cachedHeadquarters) {
@@ -172,9 +161,38 @@ export const useAdminDashboard = () => {
     }
   };
 
+  const loadDonationStats = async () => {
+    try {
+      const {
+        totalDonatedThisMonth,
+        donationsProcessedThisMonth: processedCount,
+        recentDonations: donations,
+      } = await donationService.getAdminDonationStats();
+
+      setDonationsThisMonth(totalDonatedThisMonth);
+      setDonationsProcessedThisMonth(processedCount);
+      setRecentDonations(donations);
+    } catch (error) {
+      console.error("Error loading donation stats:", error);
+      toast.error("Error al cargar estadísticas de donaciones", {
+        description:
+          "No se pudieron cargar los datos de donaciones del panel de administración",
+      });
+    }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
+
   // Load users and roles from Supabase
   useEffect(() => {
     void loadData();
+    void loadDonationStats();
   }, []);
 
   // Calculate stats from real data
@@ -196,7 +214,7 @@ export const useAdminDashboard = () => {
     {
       icon: "DollarSign",
       title: "Donaciones Este Mes",
-      value: "$0",
+      value: formatCurrency(donationsThisMonth),
       change: "+0%",
       color: "bg-yellow-500",
     },
@@ -540,14 +558,6 @@ export const useAdminDashboard = () => {
     });
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
-
   return {
     // State
     searchTerm,
@@ -573,6 +583,10 @@ export const useAdminDashboard = () => {
     setContentForm,
     stats,
     recentDonations,
+    newPlayersThisMonth,
+    donationsProcessedThisMonth,
+    completedProjects,
+    totalDonatedThisMonth: donationsThisMonth,
 
     // Handlers
     handleCreateUser,

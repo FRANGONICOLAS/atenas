@@ -1,32 +1,35 @@
-import { Users, Trophy, DollarSign, BarChart3, Box, Shield } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAuth } from '@/hooks/useAuth';
-import { useAdminDashboard } from '@/hooks/useAdminView';
-import { useSearchParams } from 'react-router-dom';
-import { DashboardHeader } from '@/components/common/DashboardHeader';
 import {
-  StatCard,
-  DonationsView,
-  AnalyticsView,
-} from './components';
-import { UsersPage, ContentPage, SiteContentPage } from './pages';
-import { User } from '@/types';
+  Users,
+  Trophy,
+  DollarSign,
+  BarChart3,
+  Box,
+  Shield,
+} from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useAuth } from "@/hooks/useAuth";
+import { useAdminDashboard } from "@/hooks/useAdminView";
+import { useSearchParams } from "react-router-dom";
+import { DashboardHeader } from "@/components/common/DashboardHeader";
+import { StatCard, DonationsView, AnalyticsView } from "./components";
+import { UsersPage, ContentPage, SiteContentPage } from "./pages";
+import { User } from "@/types";
 
 const AdminView = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab');
+  const tab = searchParams.get("tab");
 
   // Si hay un tab específico, renderizar la página correspondiente
-  if (tab === 'users') {
+  if (tab === "users") {
     return <UsersPage />;
   }
-  
-  if (tab === 'content') {
+
+  if (tab === "content") {
     return <ContentPage />;
   }
-  
-  if (tab === 'site-content') {
+
+  if (tab === "site-content") {
     return <SiteContentPage />;
   }
 
@@ -41,6 +44,10 @@ const MainDashboard = ({ user }: { user: User }) => {
     stats,
     recentDonations,
     formatCurrency,
+    newPlayersThisMonth,
+    donationsProcessedThisMonth,
+    completedProjects,
+    totalDonatedThisMonth,
   } = useAdminDashboard();
 
   const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -79,7 +86,11 @@ const MainDashboard = ({ user }: { user: User }) => {
         })}
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
         <TabsList>
           <TabsTrigger value="overview">Resumen</TabsTrigger>
           <TabsTrigger value="donations">Donaciones</TabsTrigger>
@@ -90,10 +101,13 @@ const MainDashboard = ({ user }: { user: User }) => {
         <TabsContent value="overview">
           <div className="grid grid-cols-1 gap-6">
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold mb-2">Bienvenido al Panel de Administración</h3>
+              <h3 className="text-lg font-semibold mb-2">
+                Bienvenido al Panel de Administración
+              </h3>
               <p className="text-muted-foreground">
-                Desde aquí puedes gestionar usuarios, contenido, configuración y ver estadísticas del sistema.
-                Utiliza el menú lateral para navegar entre las diferentes secciones.
+                Desde aquí puedes gestionar usuarios, contenido, configuración y
+                ver estadísticas del sistema. Utiliza el menú lateral para
+                navegar entre las diferentes secciones.
               </p>
             </div>
           </div>
@@ -109,7 +123,13 @@ const MainDashboard = ({ user }: { user: User }) => {
 
         {/* Analytics Tab */}
         <TabsContent value="analytics">
-          <AnalyticsView />
+          <AnalyticsView
+            newPlayersThisMonth={newPlayersThisMonth}
+            donationsProcessedThisMonth={donationsProcessedThisMonth}
+            completedProjects={completedProjects}
+            totalDonatedThisMonth={totalDonatedThisMonth}
+            formatCurrency={formatCurrency}
+          />
         </TabsContent>
       </Tabs>
     </div>

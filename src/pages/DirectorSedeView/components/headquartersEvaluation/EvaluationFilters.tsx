@@ -25,7 +25,7 @@ export const EvaluationFilters = ({
   return (
     <div className="flex flex-wrap gap-2">
       <Input
-        placeholder="Buscar por beneficiario..."
+        placeholder="Buscar por jugador..."
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
         className="w-[250px]"

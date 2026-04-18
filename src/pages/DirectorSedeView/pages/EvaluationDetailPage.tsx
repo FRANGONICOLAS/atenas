@@ -132,7 +132,7 @@ const EvaluationDetailPage = () => {
 
         setDetail({
           beneficiaryId: data.beneficiary_id || "",
-          beneficiaryName: beneficiaryName || "Beneficiario",
+          beneficiaryName: beneficiaryName || "Jugador",
           createdAt: data.evaluation?.created_at || new Date().toISOString(),
           type,
           detail: data.evaluation
@@ -226,7 +226,7 @@ const EvaluationDetailPage = () => {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <div className="text-sm text-muted-foreground">
-                  Beneficiario
+                  Jugador
                 </div>
                 <div className="text-lg font-semibold">
                   {detail.beneficiaryName}

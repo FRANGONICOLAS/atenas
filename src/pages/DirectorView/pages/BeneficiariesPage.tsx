@@ -146,7 +146,7 @@ const BeneficiariesPage = () => {
   };
 
   if (loading) {
-    return <FullScreenLoader message="Cargando beneficiarios..." />;
+    return <FullScreenLoader message="Cargando jugadores..." />;
   }
 
   return (
@@ -155,7 +155,7 @@ const BeneficiariesPage = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Beneficiarios</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Jugadores</h2>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleExportExcelClick}>
@@ -168,7 +168,7 @@ const BeneficiariesPage = () => {
           </Button>
           <Button size="sm" onClick={openCreate}>
             <Plus className="w-4 h-4 mr-2" />
-            Nuevo Beneficiario
+            Nuevo Jugador
           </Button>
         </div>
       </div>
@@ -198,7 +198,7 @@ const BeneficiariesPage = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <UserCheck className="w-5 h-5" />
-            Beneficiarios
+            Jugadores
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -269,7 +269,7 @@ const BeneficiariesPage = () => {
           setShowDelete(false);
           setDeleteTarget(null);
         }}
-        title="¿Eliminar beneficiario?"
+        title="¿Eliminar jugador?"
         description={
           deleteTarget
             ? `Estás a punto de eliminar "${deleteTarget.first_name} ${deleteTarget.last_name}". Esta acción no se puede deshacer.`

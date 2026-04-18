@@ -79,7 +79,7 @@ export const CreateEvaluationModal = ({
 
   const handleSave = async () => {
     if (!beneficiaryId) {
-      toast.error("Debe seleccionar un beneficiario.");
+      toast.error("Debe seleccionar un jugador.");
       return;
     }
 
@@ -145,14 +145,13 @@ export const CreateEvaluationModal = ({
             <DialogHeader>
               <DialogTitle>Agregar evaluación</DialogTitle>
               <DialogDescription>
-                Seleccione el beneficiario y complete las evaluaciones
+                Seleccione el jugador y complete las evaluaciones
                 necesarias.
               </DialogDescription>
             </DialogHeader>
-
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label>Beneficiario</Label>
+                <Label>Jugador</Label>
                 <Select
                   value={beneficiaryId}
                   onValueChange={(value) => setBeneficiaryId(value)}
@@ -162,15 +161,15 @@ export const CreateEvaluationModal = ({
                     <SelectValue
                       placeholder={
                         loading
-                          ? "Cargando beneficiarios..."
-                          : "Selecciona un beneficiario"
+                          ? "Cargando jugadores..."
+                          : "Selecciona un jugador"
                       }
                     />
                   </SelectTrigger>
                   <SelectContent>
                     {beneficiaryOptions.length === 0 ? (
                       <SelectItem value="empty" disabled>
-                        No hay beneficiarios disponibles
+                        No hay jugadores disponibles
                       </SelectItem>
                     ) : (
                       beneficiaryOptions.map((option) => (
@@ -185,7 +184,7 @@ export const CreateEvaluationModal = ({
 
               {!beneficiaryId ? (
                 <div className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
-                  Seleccione un beneficiario para comenzar.
+                  Seleccione un jugador para comenzar.
                 </div>
               ) : (
                 <Tabs

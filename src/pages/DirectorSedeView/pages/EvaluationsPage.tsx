@@ -150,7 +150,7 @@ const EvaluationsPage = () => {
       {/* chart selector */}
       <Card>
         <CardHeader>
-          <CardTitle>Progreso del beneficiario</CardTitle>
+          <CardTitle>Progreso del jugador</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-4 items-center mb-4">
@@ -163,7 +163,7 @@ const EvaluationsPage = () => {
                 }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Beneficiario" />
+                  <SelectValue placeholder="Jugador" />
                 </SelectTrigger>
                 <SelectContent>
                   {filteredBeneficiaries.map((b) => (
@@ -179,7 +179,7 @@ const EvaluationsPage = () => {
             <BeneficiaryEvaluationPanel beneficiaryId={selectedBeneficiaryId} />
           ) : (
             <div className="text-center text-sm text-muted-foreground py-10">
-              Seleccione un beneficiario para ver su progreso.
+              Seleccione un jugador para ver su progreso.
             </div>
           )}
         </CardContent>

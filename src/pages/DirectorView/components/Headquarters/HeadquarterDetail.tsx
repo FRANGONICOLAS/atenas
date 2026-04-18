@@ -84,7 +84,7 @@ export const HeadquarterDetail = ({
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">
-                          Total Beneficiarios
+                          Total Jugadores
                         </p>
                         <p className="text-2xl font-bold">
                           {beneficiariesStats.total}

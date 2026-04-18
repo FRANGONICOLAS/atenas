@@ -1,31 +1,56 @@
-import { Trophy, TrendingUp, Calendar, Star, Box, UserCheck, Users, Activity } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
-import { useSearchParams } from 'react-router-dom';
-import { DashboardHeader } from '@/components/common/DashboardHeader';
-import { BeneficiariesPage, EvaluationsPage, HeadquarterProjectPage } from './pages';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import { User } from '@/types';
-import { useSedeMainDashboard } from '@/hooks/useSedeMainDashboard';
+import {
+  Trophy,
+  TrendingUp,
+  Calendar,
+  Star,
+  Box,
+  UserCheck,
+  Users,
+  Activity,
+} from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useSearchParams } from "react-router-dom";
+import { DashboardHeader } from "@/components/common/DashboardHeader";
+import {
+  BeneficiariesPage,
+  EvaluationsPage,
+  HeadquarterProjectPage,
+} from "./pages";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { User } from "@/types";
+import { useSedeMainDashboard } from "@/hooks/useSedeMainDashboard";
 
 const DirectorSedeView = () => {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const tab = searchParams.get('tab');
+  const tab = searchParams.get("tab");
 
   // Si hay un tab específico, renderizar la página correspondiente
-  if (tab === 'beneficiaries') {
+  if (tab === "beneficiaries") {
     return <BeneficiariesPage />;
   }
 
-  if (tab === 'evaluations') {
+  if (tab === "evaluations") {
     return <EvaluationsPage />;
   }
 
-  if (tab === 'projects') {
+  if (tab === "projects") {
     return <HeadquarterProjectPage />;
   }
 
@@ -57,7 +82,7 @@ const MainDashboard = ({ user }: { user: User }) => {
         role={user?.role}
         icon={Box}
         roleIcon={UserCheck}
-        subtitle={assignedHeadquarterName ?? 'Cargando sede...'}
+        subtitle={assignedHeadquarterName ?? "Cargando sede..."}
       />
 
       {/* Main Content */}
@@ -69,7 +94,9 @@ const MainDashboard = ({ user }: { user: User }) => {
               <Trophy className="h-5 w-5" />
               Estado por Categoría
             </CardTitle>
-            <CardDescription>Distribución de jugadores en la sede</CardDescription>
+            <CardDescription>
+              Distribución de jugadores en la sede
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? (
@@ -81,7 +108,7 @@ const MainDashboard = ({ user }: { user: User }) => {
               ))
             ) : categorySummary.every((c) => c.jugadores === 0) ? (
               <p className="text-sm text-muted-foreground text-center py-4">
-                No hay beneficiarios registrados en esta sede.
+                No hay jugadores registrados en esta sede.
               </p>
             ) : (
               categorySummary.map((cat) => (
@@ -89,11 +116,15 @@ const MainDashboard = ({ user }: { user: User }) => {
                   <div className="flex items-center justify-between">
                     <span className="font-medium text-sm">{cat.categoria}</span>
                     <span className="text-sm text-muted-foreground">
-                      {cat.jugadores} jugador{cat.jugadores !== 1 ? 'es' : ''}
+                      {cat.jugadores} jugador{cat.jugadores !== 1 ? "es" : ""}
                     </span>
                   </div>
                   <Progress
-                    value={cat.jugadores === 0 ? 0 : (cat.jugadores / maxJugadores) * 100}
+                    value={
+                      cat.jugadores === 0
+                        ? 0
+                        : (cat.jugadores / maxJugadores) * 100
+                    }
                     className="h-2"
                   />
                 </div>
@@ -129,7 +160,9 @@ const MainDashboard = ({ user }: { user: User }) => {
                       <Activity className="h-4 w-4" />
                       Rendimiento Deportivo
                     </span>
-                    <span className="text-sm font-bold">{indicadores.avgDeportivo}%</span>
+                    <span className="text-sm font-bold">
+                      {indicadores.avgDeportivo}%
+                    </span>
                   </div>
                   <Progress value={indicadores.avgDeportivo} className="h-2" />
                 </div>
@@ -137,10 +170,11 @@ const MainDashboard = ({ user }: { user: User }) => {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium flex items-center gap-1">
                       <Users className="h-4 w-4" />
-                      Beneficiarios Activos
+                      Jugadores Activos
                     </span>
                     <span className="text-sm font-bold">
-                      {indicadores.activeBenef}/{indicadores.totalBenef} ({indicadores.pctActivos}%)
+                      {indicadores.activeBenef}/{indicadores.totalBenef} (
+                      {indicadores.pctActivos}%)
                     </span>
                   </div>
                   <Progress value={indicadores.pctActivos} className="h-2" />
@@ -152,14 +186,17 @@ const MainDashboard = ({ user }: { user: User }) => {
                       Cobertura de Evaluaciones
                     </span>
                     <span className="text-sm font-bold">
-                      {indicadores.uniqueEvaluated}/{indicadores.totalBenef} ({indicadores.pctEvaluados}%)
+                      {indicadores.uniqueEvaluated}/{indicadores.totalBenef} (
+                      {indicadores.pctEvaluados}%)
                     </span>
                   </div>
                   <Progress value={indicadores.pctEvaluados} className="h-2" />
                 </div>
                 <div className="pt-2 border-t">
                   <p className="text-xs text-muted-foreground text-right">
-                    {indicadores.totalEvaluaciones} evaluación{indicadores.totalEvaluaciones !== 1 ? 'es' : ''} registrada{indicadores.totalEvaluaciones !== 1 ? 's' : ''}
+                    {indicadores.totalEvaluaciones} evaluación
+                    {indicadores.totalEvaluaciones !== 1 ? "es" : ""} registrada
+                    {indicadores.totalEvaluaciones !== 1 ? "s" : ""}
                   </p>
                 </div>
               </div>
@@ -178,9 +215,14 @@ const MainDashboard = ({ user }: { user: User }) => {
                   <Star className="h-5 w-5" />
                   Top Jugadores
                 </CardTitle>
-                <CardDescription>Mejor rendimiento técnico por evaluación</CardDescription>
+                <CardDescription>
+                  Mejor rendimiento técnico por evaluación
+                </CardDescription>
               </div>
-              <Select value={topCategoryFilter} onValueChange={setTopCategoryFilter}>
+              <Select
+                value={topCategoryFilter}
+                onValueChange={setTopCategoryFilter}
+              >
                 <SelectTrigger className="w-48">
                   <SelectValue placeholder="Todas las categorías" />
                 </SelectTrigger>
@@ -204,8 +246,8 @@ const MainDashboard = ({ user }: { user: User }) => {
               </div>
             ) : topJugadores.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-6">
-                {topCategoryFilter === 'all'
-                  ? 'No hay evaluaciones técnicas registradas para esta sede.'
+                {topCategoryFilter === "all"
+                  ? "No hay evaluaciones técnicas registradas para esta sede."
                   : `No hay evaluaciones técnicas para ${topCategoryFilter}.`}
               </p>
             ) : (
@@ -219,8 +261,12 @@ const MainDashboard = ({ user }: { user: User }) => {
                       #{index + 1}
                     </div>
                     <div className="flex-1 space-y-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{jugador.name}</p>
-                      <p className="text-xs text-muted-foreground">{jugador.category}</p>
+                      <p className="font-medium text-sm truncate">
+                        {jugador.name}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {jugador.category}
+                      </p>
                     </div>
                     <Badge
                       variant="outline"

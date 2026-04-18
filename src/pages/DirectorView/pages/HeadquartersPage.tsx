@@ -246,7 +246,7 @@ const HeadquartersPage = () => {
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-4 bg-blue-50 rounded-lg">
-                        <p className="text-sm text-muted-foreground">Beneficiarios</p>
+                        <p className="text-sm text-muted-foreground">Jugadores</p>
                         <p className="text-2xl font-bold text-blue-600">{beneficiaryCount}</p>
                       </div>
                       <div className="p-4 bg-green-50 rounded-lg">

@@ -87,10 +87,10 @@ const navSections: NavSection[] = [
         description: 'Gestión de proyectos'
       },
       {
-        title: 'Beneficiarios',
+        title: 'Jugadores',
         href: '/director?tab=beneficiaries',
         icon: UserCheck,
-        description: 'Gestión de beneficiarios'
+        description: 'Gestión de jugadores'
       },
       {
         title: 'Sedes',
@@ -111,10 +111,10 @@ const navSections: NavSection[] = [
         description: 'Gestión de mi sede'
       },
       {
-        title: 'Beneficiarios',
+        title: 'Jugadores',
         href: '/director-sede?tab=beneficiaries',
         icon: Users,
-        description: 'Beneficiarios de la sede'
+        description: 'Jugadores de la sede'
       },
       {
         title: 'Proyectos',

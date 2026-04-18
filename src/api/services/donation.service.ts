@@ -57,24 +57,30 @@ export const donationService = {
     // Obtener información detallada de proyectos apoyados con progreso
     const supportedProjects = await Promise.all(
       Array.from(uniqueProjects.entries()).map(
-        async ([projectId, projectDonations]) => {
+        async ([projectId, projectDonations]: [
+          string,
+          DonationWithProject[],
+        ]) => {
           const totalDonatedToProject = projectDonations.reduce(
-            (sum, d) => sum + parseFloat(d.amount),
+            (sum, d) => sum + parseFloat(d.amount ?? "0"),
             0,
           );
 
           const project = projectDonations[0].project;
 
           // Obtener total recaudado del proyecto (todas las donaciones)
-          const { data: allProjectDonations } = await client
+          const allProjectDonationsQuery = await client
             .from("donation")
             .select("amount")
             .eq("project_id", projectId)
             .eq("status", "approved");
+          const allProjectDonations = allProjectDonationsQuery.data as Array<{
+            amount?: string;
+          }> | null;
 
           const totalProjectRaised =
             allProjectDonations?.reduce(
-              (sum, d) => sum + parseFloat(d.amount),
+              (sum, d) => sum + parseFloat(d.amount ?? "0"),
               0,
             ) || 0;
 
@@ -105,20 +111,26 @@ export const donationService = {
 
     if (projectIds.length > 0) {
       // Beneficiaries belong to headquarters; get HQ linked to these projects first
-      const { data: hqProjects } = await client
+      const hqProjectsQuery = await client
         .from("headquarters_project")
         .select("headquarters_id")
         .in("project_id", projectIds);
+      const hqProjects = hqProjectsQuery.data as Array<{
+        headquarters_id: string;
+      }> | null;
 
       const hqIds = [
         ...new Set(hqProjects?.map((h) => h.headquarters_id) || []),
       ];
 
       if (hqIds.length > 0) {
-        const { data: beneficiaries } = await client
+        const beneficiariesQuery = await client
           .from("beneficiary")
           .select("beneficiary_id")
           .in("headquarters_id", hqIds);
+        const beneficiaries = beneficiariesQuery.data as Array<{
+          beneficiary_id: string;
+        }> | null;
 
         const uniqueBeneficiaries = new Set(
           beneficiaries?.map((b) => b.beneficiary_id) || [],
@@ -138,6 +150,86 @@ export const donationService = {
       supportedProjects: supportedProjects.sort(
         (a, b) => b.totalDonated - a.totalDonated,
       ),
+    };
+  },
+
+  async getAdminDonationStats(): Promise<{
+    totalDonatedThisMonth: number;
+    donationsProcessedThisMonth: number;
+    recentDonations: Array<{
+      id: number;
+      donor: string;
+      project: string;
+      amount: number;
+      date: string;
+      currency: string;
+    }>;
+  }> {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+      .toISOString()
+      .split("T")[0];
+    const startOfNextMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      1,
+    )
+      .toISOString()
+      .split("T")[0];
+
+    const monthQuery = await client
+      .from("donation")
+      .select("amount")
+      .eq("status", "approved")
+      .gte("date", startOfMonth)
+      .lt("date", startOfNextMonth);
+
+    if (monthQuery.error) throw monthQuery.error;
+
+    const monthData = monthQuery.data as Array<{ amount?: string }> | null;
+    const totalDonatedThisMonth =
+      monthData?.reduce(
+        (sum, donation) => sum + parseFloat(donation.amount ?? "0"),
+        0,
+      ) || 0;
+    const donationsProcessedThisMonth = monthData?.length || 0;
+
+    const recentQuery = await client
+      .from("donation")
+      .select(
+        `donation_id, amount, currency, date, status, user:user_id(first_name,last_name), project:project_id(name)`,
+      )
+      .eq("status", "approved")
+      .order("date", { ascending: false })
+      .limit(3);
+
+    if (recentQuery.error) throw recentQuery.error;
+
+    const recentData = recentQuery.data as Array<{
+      donation_id: string;
+      amount?: string;
+      currency: string;
+      date: string;
+      status: string;
+      user?: { first_name: string | null; last_name: string | null };
+      project?: { name: string | null };
+    }> | null;
+
+    const formattedDonations = (recentData || []).map((donation) => ({
+      id: Number(donation.donation_id) || 0,
+      donor:
+        `${donation.user?.first_name ?? ""} ${donation.user?.last_name ?? ""}`.trim() ||
+        "Donante",
+      project: donation.project?.name || "Proyecto",
+      amount: parseFloat(donation.amount ?? "0"),
+      date: donation.date,
+      currency: donation.currency || "COP",
+    }));
+
+    return {
+      totalDonatedThisMonth,
+      donationsProcessedThisMonth,
+      recentDonations: formattedDonations,
     };
   },
 

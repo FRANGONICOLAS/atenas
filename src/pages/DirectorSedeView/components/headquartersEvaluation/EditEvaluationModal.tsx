@@ -164,8 +164,8 @@ export const EditEvaluationModal = ({
 
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label>Beneficiario</Label>
-                <Input value={beneficiaryName || "Beneficiario"} disabled />
+                <Label>Jugador</Label>
+                <Input value={beneficiaryName || "Jugador"} disabled />
               </div>
 
               <div className="space-y-2">

@@ -125,7 +125,7 @@ export const LocationCard = ({ location, index }: LocationCardProps) => {
             <div className="flex items-center gap-3 pt-2">
               <Users className="w-5 h-5 text-secondary" />
               <span className="font-medium text-foreground">
-                {location.beneficiaryCount} {location.beneficiaryCount === 1 ? 'beneficiario' : 'beneficiarios'} activos
+                {location.beneficiaryCount} {location.beneficiaryCount === 1 ? 'jugador' : 'jugadores'} activos
               </span>
             </div>
 
