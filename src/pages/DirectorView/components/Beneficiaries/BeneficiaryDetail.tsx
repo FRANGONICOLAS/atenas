@@ -61,7 +61,7 @@ export const BeneficiaryDetail = ({
 
   return (
     <Dialog open={!!beneficiary} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-5xl max-h-[100vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Eye className="w-5 h-5" />
