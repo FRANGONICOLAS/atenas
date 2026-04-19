@@ -102,9 +102,10 @@ describe("beneficiaryService unit", () => {
           evaluation: {
             id: "e-1",
             created_at: "2026-02-01",
+            type: "ANTHROPOMETRIC",
             anthropometric_detail: { peso: 35 },
-            technical_tactic_detail: { pase: 7 },
-            emotional_detail: { apoyo_social: "si" },
+            technical_tactic_detail: null,
+            emotional_detail: null,
           },
         },
       ]),
@@ -152,19 +153,38 @@ describe("beneficiaryService unit", () => {
       supabaseOk({
         id: "e-10",
         created_at: "2026-01-11",
+        type: "ANTHROPOMETRIC",
         anthropometric_detail: { peso: 40 },
-        technical_tactic_detail: { pase: 8 },
-        emotional_detail: { apoyo_social: "si" },
+        technical_tactic_detail: null,
+        emotional_detail: null,
       }),
     );
 
     const linkBuilder = createBuilder();
     linkBuilder.insert.mockResolvedValueOnce({ error: null });
 
+    const evalLookupBuilder = createBuilder();
+    evalLookupBuilder.in.mockResolvedValueOnce(
+      supabaseOk([
+        {
+          beneficiary_id: "b-10",
+          evaluation: {
+            id: "e-10",
+            created_at: "2026-01-11",
+            type: "ANTHROPOMETRIC",
+            anthropometric_detail: { peso: 40 },
+            technical_tactic_detail: null,
+            emotional_detail: null,
+          },
+        },
+      ]),
+    );
+
     clientMock.from
       .mockImplementationOnce(() => beneficiaryInsertBuilder)
       .mockImplementationOnce(() => evaluationBuilder)
-      .mockImplementationOnce(() => linkBuilder);
+      .mockImplementationOnce(() => linkBuilder)
+      .mockImplementationOnce(() => evalLookupBuilder);
 
     const created = await beneficiaryService.create({
       headquarters_id: "hq-1",
@@ -174,8 +194,6 @@ describe("beneficiaryService unit", () => {
       category: "Categoría 2",
       phone: "555",
       anthropometric_detail: { peso: 40 },
-      technical_tactic_detail: { pase: 8 },
-      emotional_detail: { apoyo_social: "si" },
     });
 
     expect(created.beneficiary_id).toBe("b-10");
@@ -519,6 +537,7 @@ describe("beneficiaryService unit", () => {
           evaluation: {
             id: "e-old",
             created_at: "2026-01-01",
+            type: "ANTHROPOMETRIC",
             anthropometric_detail: { peso: 30 },
             technical_tactic_detail: null,
             emotional_detail: null,
@@ -529,6 +548,7 @@ describe("beneficiaryService unit", () => {
           evaluation: {
             id: "e-new",
             created_at: "2026-02-01",
+            type: "ANTHROPOMETRIC",
             anthropometric_detail: { peso: 32 },
             technical_tactic_detail: null,
             emotional_detail: null,
@@ -780,10 +800,28 @@ describe("beneficiaryService unit", () => {
     const linkBuilder = createBuilder();
     linkBuilder.insert.mockResolvedValueOnce({ error: null });
 
+    const evalLookupBuilder = createBuilder();
+    evalLookupBuilder.in.mockResolvedValueOnce(
+      supabaseOk([
+        {
+          beneficiary_id: "b-null-details",
+          evaluation: {
+            id: "e-null-details",
+            created_at: "2026-01-11",
+            type: "ANTHROPOMETRIC",
+            anthropometric_detail: null,
+            technical_tactic_detail: null,
+            emotional_detail: null,
+          },
+        },
+      ]),
+    );
+
     clientMock.from
       .mockImplementationOnce(() => createBuilderLocal)
       .mockImplementationOnce(() => evaluationBuilder)
-      .mockImplementationOnce(() => linkBuilder);
+      .mockImplementationOnce(() => linkBuilder)
+      .mockImplementationOnce(() => evalLookupBuilder);
 
     const created = await beneficiaryService.create({
       headquarters_id: "hq-1",
@@ -965,10 +1003,28 @@ describe("beneficiaryService unit", () => {
     const linkBuilder = createBuilder();
     linkBuilder.insert.mockResolvedValueOnce({ error: null });
 
+    const evalLookupBuilder = createBuilder();
+    evalLookupBuilder.in.mockResolvedValueOnce(
+      supabaseOk([
+        {
+          beneficiary_id: "b-update-null-details",
+          evaluation: {
+            id: "e-update-null-details",
+            created_at: "2026-01-11",
+            type: "ANTHROPOMETRIC",
+            anthropometric_detail: null,
+            technical_tactic_detail: null,
+            emotional_detail: null,
+          },
+        },
+      ]),
+    );
+
     clientMock.from
       .mockImplementationOnce(() => updateBuilder)
       .mockImplementationOnce(() => evaluationBuilder)
-      .mockImplementationOnce(() => linkBuilder);
+      .mockImplementationOnce(() => linkBuilder)
+      .mockImplementationOnce(() => evalLookupBuilder);
 
     const updated = await beneficiaryService.update("b-update-null-details", {
       first_name: "Edit",

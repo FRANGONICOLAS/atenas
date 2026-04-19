@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { useHeadquarters } from "@/hooks/useHeadquarters";
+import { invalidateTimedCacheByPrefix } from "@/lib/timedCache";
 
 const toastSuccessMock = jest.fn();
 const toastErrorMock = jest.fn();
@@ -76,6 +77,8 @@ jest.mock("leaflet", () => {
 describe("useHeadquarters unit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    invalidateTimedCacheByPrefix("headquarters:");
+    invalidateTimedCacheByPrefix("beneficiaries:");
     markerClickHandler = undefined;
 
     useAuthMock.mockReturnValue({
@@ -387,6 +390,7 @@ describe("useHeadquarters unit", () => {
       await result.current.toggleStatus("hq-2", "inactive");
     });
 
+    invalidateTimedCacheByPrefix("headquarters:");
     getAllHeadquartersMock.mockRejectedValueOnce(new Error("load failed"));
     const { result: loadErrorResult } = renderHook(() => useHeadquarters());
     await waitFor(() => {
@@ -409,10 +413,8 @@ describe("useHeadquarters unit", () => {
     const { result } = renderHook(() => useHeadquarters());
 
     await waitFor(() => {
-      expect(result.current.loading).toBe(false);
+      expect(result.current.headquarters).toHaveLength(2);
     });
-
-    expect(result.current.headquarters).toHaveLength(2);
   });
 
   it("initializes map and processes geocoding/marker branches", async () => {

@@ -11,7 +11,10 @@ type QueryBuilder = {
   select: jest.Mock;
   eq: jest.Mock;
   in: jest.Mock;
+  gte: jest.Mock;
+  lt: jest.Mock;
   order: jest.Mock;
+  limit: jest.Mock;
   single: jest.Mock;
 };
 
@@ -20,13 +23,20 @@ function createBuilder(): QueryBuilder {
     select: jest.fn(),
     eq: jest.fn(),
     in: jest.fn(),
+    gte: jest.fn(),
+    lt: jest.fn(),
     order: jest.fn(),
+    limit: jest.fn(),
     single: jest.fn(),
   } as unknown as QueryBuilder;
 
   builder.select.mockReturnValue(builder);
   builder.eq.mockReturnValue(builder);
   builder.in.mockReturnValue(builder);
+  builder.gte.mockReturnValue(builder);
+  builder.lt.mockReturnValue(builder);
+  builder.order.mockReturnValue(builder);
+  builder.limit.mockReturnValue(builder);
 
   return builder;
 }
@@ -429,5 +439,94 @@ describe("donationService unit", () => {
       message: "Not found",
       code: "404",
     });
+  });
+
+  it("returns admin donation stats with formatted recent donations", async () => {
+    const monthBuilder = createBuilder();
+    monthBuilder.lt.mockResolvedValueOnce(
+      supabaseOk([{ amount: "100.5" }, { amount: "49.5" }]),
+    );
+
+    const recentBuilder = createBuilder();
+    recentBuilder.limit.mockResolvedValueOnce(
+      supabaseOk([
+        {
+          donation_id: "10",
+          amount: "200",
+          currency: "USD",
+          date: "2026-04-05",
+          status: "approved",
+          user: { first_name: "Ana", last_name: "Lopez" },
+          project: { name: "Proyecto A" },
+        },
+        {
+          donation_id: "bad-id",
+          amount: undefined,
+          currency: null,
+          date: "2026-04-04",
+          status: "approved",
+          user: { first_name: null, last_name: null },
+          project: { name: null },
+        },
+      ]),
+    );
+
+    clientMock.from
+      .mockImplementationOnce(() => monthBuilder)
+      .mockImplementationOnce(() => recentBuilder);
+
+    const stats = await donationService.getAdminDonationStats();
+
+    expect(stats.totalDonatedThisMonth).toBe(150);
+    expect(stats.donationsProcessedThisMonth).toBe(2);
+    expect(stats.recentDonations).toEqual([
+      {
+        id: 10,
+        donor: "Ana Lopez",
+        project: "Proyecto A",
+        amount: 200,
+        date: "2026-04-05",
+        currency: "USD",
+      },
+      {
+        id: 0,
+        donor: "Donante",
+        project: "Proyecto",
+        amount: 0,
+        date: "2026-04-04",
+        currency: "COP",
+      },
+    ]);
+  });
+
+  it("throws when month stats query fails", async () => {
+    const monthBuilder = createBuilder();
+    monthBuilder.lt.mockResolvedValueOnce(supabaseError("month failed"));
+
+    clientMock.from.mockImplementationOnce(() => monthBuilder);
+
+    await expect(donationService.getAdminDonationStats()).rejects.toMatchObject(
+      {
+        message: "month failed",
+      },
+    );
+  });
+
+  it("throws when recent donations query fails", async () => {
+    const monthBuilder = createBuilder();
+    monthBuilder.lt.mockResolvedValueOnce(supabaseOk([{ amount: "10" }]));
+
+    const recentBuilder = createBuilder();
+    recentBuilder.limit.mockResolvedValueOnce(supabaseError("recent failed"));
+
+    clientMock.from
+      .mockImplementationOnce(() => monthBuilder)
+      .mockImplementationOnce(() => recentBuilder);
+
+    await expect(donationService.getAdminDonationStats()).rejects.toMatchObject(
+      {
+        message: "recent failed",
+      },
+    );
   });
 });

@@ -1,5 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { useDonations } from "@/hooks/useDonations";
+import { invalidateTimedCacheByPrefix } from "@/lib/timedCache";
 
 const useAuthMock = jest.fn();
 const getUserDonationStatsMock = jest.fn();
@@ -18,6 +19,7 @@ jest.mock("@/api/services/donation.service", () => ({
 describe("useDonations unit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    invalidateTimedCacheByPrefix("donations:stats:");
   });
 
   it("keeps empty state when user is not authenticated", async () => {

@@ -1,5 +1,10 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { useSedeEvaluations } from "@/hooks/useSedeEvaluations";
+import {
+  getAnthropometricEvaluationTabs,
+  getFantasticLetterTabs,
+  getTechnicalEvaluationTabs,
+  useSedeEvaluations,
+} from "@/hooks/useSedeEvaluations";
 
 const toastSuccessMock = jest.fn();
 const toastErrorMock = jest.fn();
@@ -11,6 +16,7 @@ const searchByNameHeadquarterMock = jest.fn();
 const getByIdUserMock = jest.fn();
 
 const getByHeadquarterIdEvaluationMock = jest.fn();
+const getDetailEvaluationMock = jest.fn();
 const deleteEvaluationMock = jest.fn();
 const generateEvaluationsPDFMock = jest.fn();
 
@@ -36,6 +42,7 @@ jest.mock("@/api/services", () => ({
   evaluationService: {
     getByHeadquarterId: (...args: unknown[]) =>
       getByHeadquarterIdEvaluationMock(...args),
+    getDetail: (...args: unknown[]) => getDetailEvaluationMock(...args),
     deleteEvaluation: (...args: unknown[]) => deleteEvaluationMock(...args),
   },
   headquarterService: {
@@ -76,7 +83,7 @@ describe("useSedeEvaluations unit", () => {
         beneficiary_id: "b-1",
         evaluation: {
           id: "e-2",
-          created_at: "2026-02-02",
+          created_at: "2026-02-02T12:00:00.000Z",
           type: "technical_tactic",
           technical_tactic_detail: { pase: 5 },
         },
@@ -89,7 +96,7 @@ describe("useSedeEvaluations unit", () => {
         beneficiary_id: "b-2",
         evaluation: {
           id: "e-1",
-          created_at: "2026-01-01",
+          created_at: "2026-01-15T12:00:00.000Z",
           type: "anthropometric",
           anthropometric_detail: { peso: 40, talla: 140 },
         },
@@ -101,6 +108,19 @@ describe("useSedeEvaluations unit", () => {
     ]);
 
     deleteEvaluationMock.mockResolvedValue(undefined);
+    getDetailEvaluationMock.mockResolvedValue({
+      beneficiary_id: "b-2",
+      evaluation: {
+        id: "e-1",
+        created_at: "2026-01-15T12:00:00.000Z",
+        type: "anthropometric",
+        anthropometric_detail: { peso: 40, talla: 140 },
+      },
+      beneficiary: {
+        first_name: "Carlos",
+        last_name: "Perez",
+      },
+    });
   });
 
   it("loads assigned headquarter and mapped evaluations", async () => {
@@ -122,11 +142,16 @@ describe("useSedeEvaluations unit", () => {
     const { result } = renderHook(() => useSedeEvaluations());
 
     await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
       expect(result.current.loading).toBe(false);
     });
 
     await act(async () => {
-      await result.current.exportEvaluationsByType("ANTHROPOMETRIC");
+      await result.current.exportEvaluationsByType(
+        "ANTHROPOMETRIC",
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
     });
 
     expect(generateEvaluationsPDFMock).toHaveBeenCalledTimes(1);
@@ -137,7 +162,7 @@ describe("useSedeEvaluations unit", () => {
           type: "ANTHROPOMETRIC",
         }),
       ]),
-      "evaluaciones_anthropometric",
+      "evaluaciones_anthropometric_month",
       expect.objectContaining({
         generatedBy: "Director de sede",
         headquartersName: "Sede Norte",
@@ -453,5 +478,416 @@ describe("useSedeEvaluations unit", () => {
     expect(result.current.evaluations[0].beneficiaryName).toBe("Beneficiario");
     expect(result.current.evaluations[0].comments).toBe("");
     expect(typeof result.current.evaluations[0].date).toBe("string");
+  });
+
+  it("exports evaluations by beneficiary", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationsByBeneficiary(
+        "b-2",
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+    });
+
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          beneficiaryId: "b-2",
+        }),
+      ]),
+      "evaluaciones_beneficiario_b-2",
+      expect.any(Object),
+    );
+  });
+
+  it("shows no-data toast when exporting by beneficiary with no rows", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationsByBeneficiary(
+        "missing",
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No hay evaluaciones para el beneficiario",
+      expect.any(Object),
+    );
+  });
+
+  it("exports one evaluation by id", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationById("e-1");
+    });
+
+    expect(getDetailEvaluationMock).toHaveBeenCalledWith("e-1");
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          beneficiaryName: "Carlos Perez",
+        }),
+      ]),
+      "evaluacion_e-1",
+      expect.any(Object),
+    );
+  });
+
+  it("shows no-data toast when exporting by id if report is invalid", async () => {
+    getDetailEvaluationMock.mockResolvedValueOnce({
+      beneficiary_id: null,
+      evaluation: {
+        id: "e-missing",
+        created_at: "2026-01-15T12:00:00.000Z",
+        type: "anthropometric",
+        anthropometric_detail: { peso: 40 },
+      },
+      beneficiary: { first_name: "X", last_name: "Y" },
+    });
+
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationById("e-missing");
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No hay evaluaciones para el identificador",
+      expect.any(Object),
+    );
+  });
+
+  it("exports all evaluations for selected period", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportAllEvaluations(
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+    });
+
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledWith(
+      expect.any(Array),
+      "evaluaciones_todas_month",
+      expect.any(Object),
+    );
+  });
+
+  it("shows no-data toast when exporting all evaluations with no matches", async () => {
+    getByHeadquarterIdEvaluationMock.mockResolvedValueOnce([
+      {
+        beneficiary_id: "b-old",
+        evaluation: {
+          id: "e-old",
+          created_at: "2025-01-15T12:00:00.000Z",
+          type: "anthropometric",
+          anthropometric_detail: { peso: 20 },
+        },
+        beneficiary: { first_name: "Old", last_name: "Row" },
+      },
+    ]);
+
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportAllEvaluations(
+        "day",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No hay evaluaciones",
+      expect.any(Object),
+    );
+  });
+
+  it("shows export error when assigned headquarter is missing", async () => {
+    useAuthMock.mockReturnValue({
+      user: null,
+      isLoading: false,
+    });
+
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBeNull();
+    });
+
+    toastErrorMock.mockClear();
+
+    await act(async () => {
+      await result.current.exportEvaluationsByType(
+        "TECHNICAL",
+        "day",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+      await result.current.exportEvaluationsByBeneficiary(
+        "b-1",
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+      await result.current.exportEvaluationById("e-1");
+      await result.current.exportAllEvaluations(
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No se pudo exportar",
+      expect.any(Object),
+    );
+  });
+
+  it("shows no-data toast when exporting by type with beneficiary filter mismatch", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationsByType(
+        "ANTHROPOMETRIC",
+        "month",
+        new Date("2026-01-15T00:00:00.000Z"),
+        "beneficiary-not-found",
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No hay evaluaciones para este tipo",
+      expect.any(Object),
+    );
+  });
+
+  it("returns tabs for anthropometric and technical helpers", () => {
+    const anthropometricTabs = getAnthropometricEvaluationTabs({
+      peso: 70,
+      talla: 175,
+      imc: 22.86,
+      endomorfina: 2,
+    });
+    expect(anthropometricTabs.length).toBeGreaterThan(0);
+
+    const technicalTabs = getTechnicalEvaluationTabs({
+      pase: {
+        precision_pase_corto: 4,
+      },
+      recepcion: {
+        pase_en_movimiento: true,
+      },
+    });
+    expect(technicalTabs.length).toBe(2);
+
+    expect(getAnthropometricEvaluationTabs(undefined)).toEqual([]);
+    expect(getTechnicalEvaluationTabs(undefined)).toEqual([]);
+    expect(
+      getTechnicalEvaluationTabs([] as unknown as Record<string, unknown>),
+    ).toEqual([]);
+  });
+
+  it("covers fantastic letter helper and value formatting branches", () => {
+    const tabs = getFantasticLetterTabs({
+      fantastic_1: { question: "Q1", answer: "A1", value: 2 },
+      fantastic_2: { pregunta: "Q2", respuesta: "A2", value: true },
+      fantastic_6: { question: "Q6", value: ["x", "y"] },
+      fantastic_7: { question: "Q7", value: [] },
+      fantastic_8: { question: "Q8", value: { nested: true } },
+      something_else: "ignored",
+    });
+
+    expect(tabs.length).toBeGreaterThan(0);
+    expect(tabs[0].questions[0]).toMatchObject({
+      question: "Q1",
+      answer: "A1",
+      score: "2",
+    });
+    expect(tabs.flatMap((t) => t.questions)).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ answer: "A2", score: "Sí" }),
+        expect.objectContaining({ score: "x, y" }),
+        expect.objectContaining({ score: "N/A" }),
+      ]),
+    );
+
+    expect(getFantasticLetterTabs(undefined)).toEqual([]);
+    expect(getFantasticLetterTabs([] as unknown as Record<string, unknown>)).toEqual([]);
+  });
+
+  it("exports by type with week period and beneficiary filter", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationsByType(
+        "ANTHROPOMETRIC",
+        "week",
+        new Date("2026-01-15T00:00:00.000Z"),
+        "b-2",
+      );
+    });
+
+    expect(generateEvaluationsPDFMock).toHaveBeenCalledWith(
+      expect.arrayContaining([
+        expect.objectContaining({
+          beneficiaryId: "b-2",
+          type: "ANTHROPOMETRIC",
+        }),
+      ]),
+      "evaluaciones_anthropometric_week",
+      expect.any(Object),
+    );
+  });
+
+  it("shows export error toast when export by type fails", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    toastErrorMock.mockClear();
+    getByHeadquarterIdEvaluationMock.mockRejectedValueOnce(
+      new Error("type export failed"),
+    );
+
+    await act(async () => {
+      await result.current.exportEvaluationsByType(
+        "TECHNICAL",
+        "day",
+        new Date("2026-02-02T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "Error al generar reporte",
+      expect.any(Object),
+    );
+  });
+
+  it("shows export error toast when export by beneficiary fails", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    toastErrorMock.mockClear();
+    getByHeadquarterIdEvaluationMock.mockRejectedValueOnce(
+      new Error("beneficiary export failed"),
+    );
+
+    await act(async () => {
+      await result.current.exportEvaluationsByBeneficiary(
+        "b-1",
+        "month",
+        new Date("2026-02-02T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "Error al generar reporte",
+      expect.any(Object),
+    );
+  });
+
+  it("shows export error toast when export by id fails", async () => {
+    getDetailEvaluationMock.mockRejectedValueOnce(new Error("detail failed"));
+
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+    });
+
+    await act(async () => {
+      await result.current.exportEvaluationById("e-fail");
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "Error al generar reporte",
+      expect.any(Object),
+    );
+  });
+
+  it("shows export error toast when export all fails", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.assignedHeadquarterId).toBe("hq-1");
+      expect(result.current.loading).toBe(false);
+    });
+
+    toastErrorMock.mockClear();
+    getByHeadquarterIdEvaluationMock.mockRejectedValueOnce(
+      new Error("all export failed"),
+    );
+
+    await act(async () => {
+      await result.current.exportAllEvaluations(
+        "week",
+        new Date("2026-02-02T00:00:00.000Z"),
+      );
+    });
+
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "Error al generar reporte",
+      expect.any(Object),
+    );
+  });
+
+  it("returns fallback evaluation type label for unknown type", async () => {
+    const { result } = renderHook(() => useSedeEvaluations());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    expect(result.current.getEvaluationTypeLabel("custom_type")).toBe(
+      "custom_type",
+    );
   });
 });

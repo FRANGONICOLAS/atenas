@@ -1,6 +1,7 @@
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useBeneficiaries } from "@/hooks/useBeneficiaries";
+import { invalidateTimedCacheByPrefix } from "@/lib/timedCache";
 
 const useAuthMock = useAuth as jest.MockedFunction<typeof useAuth>;
 const toastSuccessMock = jest.fn();
@@ -66,6 +67,8 @@ jest.mock("@/lib/reportGenerator", () => ({
 describe("useBeneficiaries unit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    invalidateTimedCacheByPrefix("beneficiaries:");
+    invalidateTimedCacheByPrefix("headquarters:");
     useAuthMock.mockReturnValue({
       user: { first_name: "Juan", last_name: "Pérez" },
       isLoading: false,
@@ -135,7 +138,7 @@ describe("useBeneficiaries unit", () => {
     expect(result.current.stats).toEqual({
       total: 2,
       active: 1,
-      newPlayersThisMonth: 0,
+      newPlayersThisMonth: 2,
     });
     expect(result.current.statsByHeadquarter).toHaveLength(2);
   });

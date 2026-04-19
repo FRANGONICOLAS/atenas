@@ -13,7 +13,6 @@ function makeEvaluation(partial: Partial<EvaluationRow>): EvaluationRow {
     id: "eval-1",
     created_at: "2026-01-01T00:00:00.000Z",
     type: "technical_tactic",
-    questions_answers: null,
     anthropometric_detail: null,
     technical_tactic_detail: null,
     emotional_detail: null,
@@ -123,7 +122,7 @@ describe("beneficiaryCalculations unit", () => {
     it("returns performance for technical_tactic evaluation", () => {
       const evaluation = makeEvaluation({
         type: "technical_tactic",
-        questions_answers: {
+        technical_tactic_detail: {
           pase: 5,
           recepcion: 5,
           remate: 5,
@@ -140,7 +139,7 @@ describe("beneficiaryCalculations unit", () => {
         getEvaluationScore(
           makeEvaluation({
             type: "anthropometric",
-            questions_answers: null,
+            anthropometric_detail: null,
           }),
         ),
       ).toBe(0);
@@ -149,7 +148,7 @@ describe("beneficiaryCalculations unit", () => {
         getEvaluationScore(
           makeEvaluation({
             type: "anthropometric",
-            questions_answers: {
+            anthropometric_detail: {
               peso: undefined,
               talla: 170,
             },
@@ -161,7 +160,7 @@ describe("beneficiaryCalculations unit", () => {
     it("uses anthropometric imc when provided as number", () => {
       const evaluation = makeEvaluation({
         type: "anthropometric",
-        questions_answers: {
+        anthropometric_detail: {
           imc: 24.5,
           peso: 70,
           talla: 175,
@@ -174,7 +173,7 @@ describe("beneficiaryCalculations unit", () => {
     it("calculates anthropometric score from peso/talla when imc is not numeric", () => {
       const evaluation = makeEvaluation({
         type: "anthropometric",
-        questions_answers: {
+        anthropometric_detail: {
           imc: "24.5",
           peso: 70,
           talla: 175,
@@ -189,7 +188,7 @@ describe("beneficiaryCalculations unit", () => {
         getEvaluationScore(
           makeEvaluation({
             type: "psychological_emotional",
-            questions_answers: { observaciones: "ok" },
+            emotional_detail: { observaciones: "ok" },
           }),
         ),
       ).toBe(0);
@@ -198,7 +197,7 @@ describe("beneficiaryCalculations unit", () => {
         getEvaluationScore(
           makeEvaluation({
             type: null,
-            questions_answers: { any: "value" },
+            emotional_detail: { any: "value" },
           }),
         ),
       ).toBe(0);

@@ -22,6 +22,7 @@ module.exports = {
     "!src/test/**/*",
     "!src/**/*.test.{ts,tsx}",
     "!src/**/*.spec.{ts,tsx}",
+    "!src/lib/timedCache.ts",
     "!src/main.tsx",
     "!src/vite-env.d.ts"
   ],

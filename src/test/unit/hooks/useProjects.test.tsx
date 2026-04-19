@@ -1,5 +1,6 @@
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { useProjects } from "@/hooks/useProjects";
+import { invalidateTimedCacheByPrefix } from "@/lib/timedCache";
 
 const toastSuccessMock = jest.fn();
 const toastErrorMock = jest.fn();
@@ -44,6 +45,7 @@ jest.mock("@/lib/schemas/project.schema", () => ({
 describe("useProjects unit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    invalidateTimedCacheByPrefix("projects:");
 
     getAllProjectsMock.mockResolvedValue([
       {

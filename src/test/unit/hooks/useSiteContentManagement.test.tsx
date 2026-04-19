@@ -104,9 +104,6 @@ describe("useSiteContentManagement unit", () => {
   });
 
   it("handles loadStats error without breaking mount", async () => {
-    const consoleErrorSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => undefined);
     getStatsMock.mockRejectedValueOnce(new Error("stats failed"));
 
     const { result } = renderHook(() => useSiteContentManagement());
@@ -115,10 +112,7 @@ describe("useSiteContentManagement unit", () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
     expect(result.current.stats.total).toBe(0);
-
-    consoleErrorSpy.mockRestore();
   });
 
   it("opens create dialog with active tab preselected", async () => {

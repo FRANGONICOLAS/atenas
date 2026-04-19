@@ -81,25 +81,42 @@ describe("beneficiaryService integration", () => {
       supabaseOk({
         id: "e-22",
         created_at: "2026-02-03",
+        type: "ANTHROPOMETRIC",
         anthropometric_detail: { peso: 39 },
-        technical_tactic_detail: { pase: 6 },
-        emotional_detail: { apoyo_social: "moderado" },
+        technical_tactic_detail: null,
+        emotional_detail: null,
       }),
     );
 
     const linkBuilder = createBuilder();
     linkBuilder.insert.mockResolvedValueOnce({ error: null });
 
+    const evalLookupBuilder = createBuilder();
+    evalLookupBuilder.in.mockResolvedValueOnce(
+      supabaseOk([
+        {
+          beneficiary_id: "b-2",
+          evaluation: {
+            id: "e-22",
+            created_at: "2026-02-03",
+            type: "ANTHROPOMETRIC",
+            anthropometric_detail: { peso: 39 },
+            technical_tactic_detail: null,
+            emotional_detail: null,
+          },
+        },
+      ]),
+    );
+
     clientMock.from
       .mockImplementationOnce(() => updateBuilder)
       .mockImplementationOnce(() => evaluationBuilder)
-      .mockImplementationOnce(() => linkBuilder);
+      .mockImplementationOnce(() => linkBuilder)
+      .mockImplementationOnce(() => evalLookupBuilder);
 
     const updated = await beneficiaryService.update("b-2", {
       first_name: "Sara",
       anthropometric_detail: { peso: 39 },
-      technical_tactic_detail: { pase: 6 },
-      emotional_detail: { apoyo_social: "moderado" },
     });
 
     expect(updated.beneficiary_id).toBe("b-2");

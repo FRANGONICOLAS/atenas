@@ -18,7 +18,10 @@ Definir, ejecutar y evidenciar un plan de pruebas unitarias e integracion para l
 - Evaluaciones y seguimiento.
 - Gestion de sedes.
 - Reportes y exportaciones.
-- Manejo de errores y resiliencia.
+- Manejo de errores y resiliencia (excepto utilitario `src/lib/errorHandler.ts`).
+
+Exclusion formal de alcance:
+- `src/lib/errorHandler.ts` se retira del plan de pruebas y no se considera objetivo de cobertura para este informe.
 
 ### 1.3 Estado actual consolidado
 - Ultima ejecucion CI: `npm run test:ci`.

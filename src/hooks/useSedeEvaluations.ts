@@ -780,6 +780,7 @@ export const useSedeEvaluations = () => {
     refresh,
     handleDeleteEvaluation,
     exportEvaluationsByType,
+    exportEvaluationsByBeneficiary,
     exportEvaluationById,
     exportAllEvaluations,
     formatDate,
