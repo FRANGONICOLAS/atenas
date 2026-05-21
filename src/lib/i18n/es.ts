@@ -650,7 +650,6 @@ export const es = {
         projectGoal: "Meta del proyecto",
         projectProgress: "Progreso del proyecto",
         donatedAt: "Fecha de donacion",
-        paymentMethod: "Metodo de pago",
         notAvailable: "No disponible",
       },
       messages: {

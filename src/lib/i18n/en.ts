@@ -647,7 +647,6 @@ export const en = {
         projectGoal: "Project goal",
         projectProgress: "Project progress",
         donatedAt: "Donation date",
-        paymentMethod: "Payment method",
         notAvailable: "Not available",
       },
       messages: {

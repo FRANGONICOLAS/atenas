@@ -354,10 +354,6 @@ export const DonationsHistory = () => {
                         <p className="text-muted-foreground">{t.donatorDashboard.cards.labels.donatedAt}</p>
                         <p className="font-medium">{formatDate(tx.created_at)}</p>
                       </div>
-                      <div>
-                        <p className="text-muted-foreground">{t.donatorDashboard.cards.labels.paymentMethod}</p>
-                        <p className="font-medium">{getPaymentMethodLabel(tx.payment_method)}</p>
-                      </div>
                     </div>
 
                     <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
