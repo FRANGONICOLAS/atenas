@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, X, Clock, ArrowLeft, Home } from 'lucide-react';
+import { Check, X, Clock, Home } from 'lucide-react';
+import { donationService } from '@/api/services/donation.service';
+import { boldService } from '@/api/services/bold.service';
 
 const DonationResultPage = () => {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<'approved' | 'declined' | 'pending' | null>(null);
   const [orderId, setOrderId] = useState<string>('');
+  const syncRef = useRef(false);
 
   useEffect(() => {
     // Obtener parámetros de la URL
@@ -23,6 +26,47 @@ const DonationResultPage = () => {
       setOrderId(txOrderId);
     }
   }, [searchParams]);
+
+  useEffect(() => {
+    if (status !== 'approved' || !orderId || syncRef.current) {
+      return;
+    }
+
+    syncRef.current = true;
+
+    const syncDonation = async () => {
+      try {
+        const transaction = await boldService.getBoldTransactionByOrderId(orderId);
+        if (!transaction || transaction.donation_id) {
+          return;
+        }
+
+        const dateValue = transaction.created_at
+          ? transaction.created_at.split('T')[0]
+          : new Date().toISOString().split('T')[0];
+
+        const donation = await donationService.createDonation({
+          user_id: transaction.user_id,
+          project_id: transaction.project_id ?? null,
+          amount: transaction.amount,
+          currency: transaction.currency || 'COP',
+          status: 'approved',
+          date: dateValue,
+          pay_method: 'bold',
+          approve_code: orderId,
+        });
+
+        await boldService.updateBoldTransaction(orderId, {
+          donation_id: donation.donation_id,
+          status: 'APPROVED',
+        });
+      } catch (error) {
+        console.error('Error syncing donation:', error);
+      }
+    };
+
+    void syncDonation();
+  }, [status, orderId]);
 
   const getStatusConfig = () => {
     switch (status) {

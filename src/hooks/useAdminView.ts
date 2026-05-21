@@ -97,7 +97,7 @@ export const useAdminDashboard = () => {
     section: "gallery",
   });
   const [donationsThisMonth, setDonationsThisMonth] = useState<number>(0);
-  const [donationsProcessedThisMonth, setDonationsProcessedThisMonth] =
+    const [donationsProcessedTotal, setDonationsProcessedTotal] =
     useState<number>(0);
   const [recentDonations, setRecentDonations] = useState<AdminDonation[]>([]);
 
@@ -165,12 +165,12 @@ export const useAdminDashboard = () => {
     try {
       const {
         totalDonatedThisMonth,
-        donationsProcessedThisMonth: processedCount,
+          donationsProcessedTotal: processedCount,
         recentDonations: donations,
       } = await donationService.getAdminDonationStats();
 
       setDonationsThisMonth(totalDonatedThisMonth);
-      setDonationsProcessedThisMonth(processedCount);
+        setDonationsProcessedTotal(processedCount);
       setRecentDonations(donations);
     } catch (error) {
       console.error("Error loading donation stats:", error);
@@ -584,7 +584,7 @@ export const useAdminDashboard = () => {
     stats,
     recentDonations,
     newPlayersThisMonth,
-    donationsProcessedThisMonth,
+    donationsProcessedTotal,
     completedProjects,
     totalDonatedThisMonth: donationsThisMonth,
 

@@ -170,16 +170,22 @@ export const BeneficiaryForm = ({
                   <SelectValue placeholder="Selecciona categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Categoría 1">Categoría 1 (6-7)</SelectItem>
-                  <SelectItem value="Categoría 2">Categoría 2 (8-9)</SelectItem>
-                  <SelectItem value="Categoría 3">
-                    Categoría 3 (10-11)
+                  <SelectItem value="Categoria Sub 6">Categoria Sub 6 (6-7)</SelectItem>
+                  <SelectItem value="Categoria Sub 8">Categoria Sub 8 (8-9)</SelectItem>
+                  <SelectItem value="Categoria Sub 10">
+                    Categoria Sub 10 (10-11)
                   </SelectItem>
-                  <SelectItem value="Categoría 4">
-                    Categoría 4 (12-14)
+                  <SelectItem value="Categoria Sub 12">
+                    Categoria Sub 12 (12-13)
                   </SelectItem>
-                  <SelectItem value="Categoría 5">
-                    Categoría 5 (15-17)
+                  <SelectItem value="Categoria Sub 14">
+                    Categoria Sub 14 (14-15)
+                  </SelectItem>
+                  <SelectItem value="Categoria Sub 16">
+                    Categoria Sub 16 (16-17)
+                  </SelectItem>
+                  <SelectItem value="Categoria Sub 18">
+                    Categoria Sub 18 (18+)
                   </SelectItem>
                 </SelectContent>
               </Select>

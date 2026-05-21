@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AnalyticsViewProps {
   newPlayersThisMonth: number;
-  donationsProcessedThisMonth: number;
+  donationsProcessedTotal: number;
   completedProjects: number;
   totalDonatedThisMonth: number;
   formatCurrency: (value: number) => string;
@@ -10,7 +10,7 @@ interface AnalyticsViewProps {
 
 export const AnalyticsView = ({
   newPlayersThisMonth,
-  donationsProcessedThisMonth,
+  donationsProcessedTotal,
   completedProjects,
   totalDonatedThisMonth,
   formatCurrency,
@@ -32,7 +32,7 @@ export const AnalyticsView = ({
             <div className="flex items-center justify-between p-3 bg-background shadow-md rounded-lg">
               <span className="text-sm font-medium">Donaciones Procesadas</span>
               <span className="text-2xl font-bold text-green-600">
-                {donationsProcessedThisMonth}
+                {donationsProcessedTotal}
               </span>
             </div>
             <div className="flex items-center justify-between p-3 bg-background shadow-md rounded-lg">

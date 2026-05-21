@@ -45,7 +45,7 @@ const MainDashboard = ({ user }: { user: User }) => {
     recentDonations,
     formatCurrency,
     newPlayersThisMonth,
-    donationsProcessedThisMonth,
+    donationsProcessedTotal,
     completedProjects,
     totalDonatedThisMonth,
   } = useAdminDashboard();
@@ -125,7 +125,7 @@ const MainDashboard = ({ user }: { user: User }) => {
         <TabsContent value="analytics">
           <AnalyticsView
             newPlayersThisMonth={newPlayersThisMonth}
-            donationsProcessedThisMonth={donationsProcessedThisMonth}
+            donationsProcessedTotal={donationsProcessedTotal}
             completedProjects={completedProjects}
             totalDonatedThisMonth={totalDonatedThisMonth}
             formatCurrency={formatCurrency}

@@ -61,8 +61,8 @@ export const DonationsView = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {recentDonations.map((donation) => (
-              <TableRow key={donation.id}>
+            {recentDonations.map((donation, index) => (
+              <TableRow key={`${donation.id}-${index}`}>
                 <TableCell className="font-medium">{donation.donor}</TableCell>
                 <TableCell>{donation.project}</TableCell>
                 <TableCell className="text-right font-semibold text-green-600">

@@ -155,7 +155,7 @@ export const donationService = {
 
   async getAdminDonationStats(): Promise<{
     totalDonatedThisMonth: number;
-    donationsProcessedThisMonth: number;
+    donationsProcessedTotal: number;
     recentDonations: Array<{
       id: number;
       donor: string;
@@ -195,15 +195,14 @@ export const donationService = {
         0,
       ) || 0;
 
-    const monthCountQuery = await client
+    const totalApprovedQuery = await client
       .from("donation")
       .select("donation_id", { count: "exact", head: true })
-      .gte("date", startOfMonth)
-      .lt("date", startOfNextMonth);
+      .eq("status", "approved");
 
-    if (monthCountQuery.error) throw monthCountQuery.error;
+    if (totalApprovedQuery.error) throw totalApprovedQuery.error;
 
-    const donationsProcessedThisMonth = monthCountQuery.count || 0;
+    const donationsProcessedTotal = totalApprovedQuery.count || 0;
 
     const recentQuery = await client
       .from("donation")
@@ -239,9 +238,20 @@ export const donationService = {
 
     return {
       totalDonatedThisMonth,
-      donationsProcessedThisMonth,
+      donationsProcessedTotal,
       recentDonations: formattedDonations,
     };
+  },
+
+  async createDonation(donation: import("@/api/types").DonationInsert) {
+    const { data, error } = await client
+      .from("donation")
+      .insert([donation])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as DonationFromDB;
   },
 
   // Obtener donación por ID
