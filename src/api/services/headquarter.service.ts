@@ -122,6 +122,17 @@ export const headquarterService = {
     return data || [];
   },
 
+  // Obtiene el conteo de proyectos asignados a una sede
+  async getProjectCount(headquarterId: string): Promise<number> {
+    const { count, error } = await client
+      .from("headquarters_project")
+      .select("*", { count: "exact", head: true })
+      .eq("headquarters_id", headquarterId);
+
+    if (error) throw error;
+    return count || 0;
+  },
+
   // Asigna un proyecto a una sede
   async assignProject(headquarterId: string, projectId: string): Promise<void> {
     const { error } = await client

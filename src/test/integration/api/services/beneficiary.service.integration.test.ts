@@ -60,7 +60,7 @@ describe("beneficiaryService integration", () => {
         first_name: "Sara",
         last_name: "Rojas",
         birth_date: "2011-02-02",
-        category: "Categoría 3",
+        category: "Categoria Sub 10",
         phone: "777",
         registry_date: "2026-01-02",
         status: "activo",
@@ -134,7 +134,7 @@ describe("beneficiaryService integration", () => {
           first_name: "Mateo",
           last_name: "Perez",
           birth_date: "2012-03-03",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "444",
           registry_date: "2026-01-03",
           status: "activo",
@@ -173,7 +173,7 @@ describe("beneficiaryService integration", () => {
 
     const result = await beneficiaryService.getByHeadquarterAndCategory(
       "hq-9",
-      "Categoría 1",
+      "Categoria Sub 6",
     );
 
     expect(result).toHaveLength(1);

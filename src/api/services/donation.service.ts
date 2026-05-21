@@ -177,31 +177,41 @@ export const donationService = {
       .toISOString()
       .split("T")[0];
 
-    const monthQuery = await client
+    const monthAmountQuery = await client
       .from("donation")
       .select("amount")
       .eq("status", "approved")
       .gte("date", startOfMonth)
       .lt("date", startOfNextMonth);
 
-    if (monthQuery.error) throw monthQuery.error;
+    if (monthAmountQuery.error) throw monthAmountQuery.error;
 
-    const monthData = monthQuery.data as Array<{ amount?: string }> | null;
+    const monthData = monthAmountQuery.data as Array<{
+      amount?: string;
+    }> | null;
     const totalDonatedThisMonth =
       monthData?.reduce(
         (sum, donation) => sum + parseFloat(donation.amount ?? "0"),
         0,
       ) || 0;
-    const donationsProcessedThisMonth = monthData?.length || 0;
+
+    const monthCountQuery = await client
+      .from("donation")
+      .select("donation_id", { count: "exact", head: true })
+      .gte("date", startOfMonth)
+      .lt("date", startOfNextMonth);
+
+    if (monthCountQuery.error) throw monthCountQuery.error;
+
+    const donationsProcessedThisMonth = monthCountQuery.count || 0;
 
     const recentQuery = await client
       .from("donation")
       .select(
-        `donation_id, amount, currency, date, status, user:user_id(first_name,last_name), project:project_id(name)`,
+        `donation_id, amount, currency, date, created_at, status, user:user_id(first_name,last_name), project:project_id(name)`,
       )
-      .eq("status", "approved")
       .order("date", { ascending: false })
-      .limit(3);
+      .limit(5);
 
     if (recentQuery.error) throw recentQuery.error;
 
@@ -210,6 +220,7 @@ export const donationService = {
       amount?: string;
       currency: string;
       date: string;
+      created_at?: string | null;
       status: string;
       user?: { first_name: string | null; last_name: string | null };
       project?: { name: string | null };
@@ -222,7 +233,7 @@ export const donationService = {
         "Donante",
       project: donation.project?.name || "Proyecto",
       amount: parseFloat(donation.amount ?? "0"),
-      date: donation.date,
+      date: donation.created_at || donation.date,
       currency: donation.currency || "COP",
     }));
 

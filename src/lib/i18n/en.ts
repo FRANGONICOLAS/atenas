@@ -345,25 +345,6 @@ export const en = {
     registerToCreate: "Register to Create Testimonial",
     noTestimonials: "No featured testimonials yet",
     defaultUser: "User",
-    successStories: {
-      title: "Success Stories",
-      badge: "Flagship Case",
-      items: {
-        andres: {
-          name: "Andrés Rodríguez",
-          title:
-            "From a vulnerable neighborhood to a professional club's youth division",
-          description:
-            "Andrés arrived at the foundation at age 10. Without economic resources, he found an outlet in football. Today, at 17, he is signed with a professional club and is an ambassador for our foundation.",
-        },
-        laura: {
-          name: "Laura Jiménez",
-          title: "Top scorer and U-15 national team selection",
-          description:
-            "Laura demonstrated that with talent and dedication there are no limits. She was called up to the national team and today inspires dozens of girls in the foundation.",
-        },
-      },
-    },
     moreTestimonials: "More Testimonials",
     memberRole: "Foundation Member",
     modal: {

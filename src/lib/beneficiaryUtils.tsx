@@ -1,5 +1,5 @@
-import { Badge } from '@/components/ui/badge';
-import type { Beneficiary, BeneficiaryReport } from '@/types/beneficiary.types';
+import { Badge } from "@/components/ui/badge";
+import type { Beneficiary, BeneficiaryReport } from "@/types/beneficiary.types";
 
 export interface BeneficiaryReportOptions {
   headquarterMap?: Record<string, string>;
@@ -57,9 +57,9 @@ export const mapToReport = (
     headquarter_name:
       options.headquarterMap?.[b.headquarters_id] || b.headquarters_id,
     headquarter_director:
-      options.headquarterDirectorMap?.[b.headquarters_id] || '',
+      options.headquarterDirectorMap?.[b.headquarters_id] || "",
     phone: b.phone,
-    guardian: b.guardian || '',
+    guardian: b.guardian || "",
     registry_date: b.registry_date,
     status: b.status,
     performance: b.performance,
@@ -68,9 +68,11 @@ export const mapToReport = (
 // Obtiene la categoría de edad basada en la fecha de nacimiento
 export const getAgeCategory = (birthDate: string): string => {
   const age = calculateAge(birthDate);
-  if (age < 8) return "Categoría 1";
-  if (age < 10) return "Categoría 2";
-  if (age < 12) return "Categoría 3";
-  if (age < 14) return "Categoría 4";
-  return "Categoría 5";
+  if (age < 8) return "Categoria Sub 6";
+  if (age < 10) return "Categoria Sub 8";
+  if (age < 12) return "Categoria Sub 10";
+  if (age < 14) return "Categoria Sub 12";
+  if (age < 16) return "Categoria Sub 14";
+  if (age < 18) return "Categoria Sub 16";
+  return "Categoria Sub 18";
 };

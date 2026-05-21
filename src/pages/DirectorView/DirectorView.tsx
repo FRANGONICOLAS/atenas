@@ -71,13 +71,7 @@ const MainDashboard = ({ user }: { user: User }) => {
     const activeProjects = projects.filter((p) => p.status === "active").length;
     const totalHeadquarters = headquarters.length;
 
-    // Logros del mes: beneficiarios registrados en el mes actual
-    const currentMonth = new Date().getMonth();
-    const achievementsThisMonth = beneficiaries.filter((b) => {
-      if (!b.registry_date) return false;
-      const registryDate = new Date(b.registry_date);
-      return registryDate.getMonth() === currentMonth;
-    }).length;
+    const completedProjects = projects.filter((p) => p.progress >= 100).length;
 
     return [
       {
@@ -100,8 +94,8 @@ const MainDashboard = ({ user }: { user: User }) => {
       },
       {
         icon: Award,
-        title: "Logros del Mes",
-        value: achievementsThisMonth.toString(),
+        title: "Proyectos Completados",
+        value: completedProjects.toString(),
         color: "bg-yellow-500",
       },
     ];

@@ -92,7 +92,7 @@ describe("useBeneficiaries unit", () => {
         first_name: "Ana",
         last_name: "Lopez",
         birth_date: "2012-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
         registry_date: thisMonthDate,
         status: "activo",
@@ -104,7 +104,7 @@ describe("useBeneficiaries unit", () => {
         first_name: "Carlos",
         last_name: "Perez",
         birth_date: "2011-01-01",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "456",
         registry_date: thisMonthDate,
         status: "inactivo",
@@ -189,7 +189,7 @@ describe("useBeneficiaries unit", () => {
         first_name: "Nueva",
         last_name: "Persona",
         birth_date: "2014-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
       });
       expect(ok).toBe(true);
@@ -217,7 +217,7 @@ describe("useBeneficiaries unit", () => {
         first_name: "",
         last_name: "Persona",
         birth_date: "2014-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
       });
       expect(ok).toBe(false);
@@ -268,7 +268,7 @@ describe("useBeneficiaries unit", () => {
         first_name: "Nueva",
         last_name: "ConFoto",
         birth_date: "2014-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
       });
       expect(ok).toBe(true);
@@ -322,7 +322,7 @@ describe("useBeneficiaries unit", () => {
           first_name: "Save",
           last_name: "Create",
           birth_date: "2014-01-01",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "123",
         },
         true,

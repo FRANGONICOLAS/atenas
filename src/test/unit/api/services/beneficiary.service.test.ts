@@ -1,4 +1,4 @@
-import { beneficiaryService } from "@/api/services/beneficiary.service";
+﻿import { beneficiaryService } from "@/api/services/beneficiary.service";
 import { supabaseError, supabaseOk } from "@/test/mocks/supabase.mock";
 import { storageService } from "@/api/services/storage.service";
 
@@ -77,7 +77,7 @@ describe("beneficiaryService unit", () => {
           first_name: "Ana",
           last_name: "Lopez",
           birth_date: "2012-01-01",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "123",
           registry_date: "2026-01-01",
           status: "activo",
@@ -132,7 +132,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Luis",
         last_name: "Diaz",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
         registry_date: "2026-01-10",
         status: "activo",
@@ -191,7 +191,7 @@ describe("beneficiaryService unit", () => {
       first_name: "Luis",
       last_name: "Diaz",
       birth_date: "2010-10-10",
-      category: "Categoría 2",
+      category: "Categoria Sub 8",
       phone: "555",
       anthropometric_detail: { peso: 40 },
     });
@@ -214,7 +214,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Luis",
         last_name: "Diaz",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
       }),
     ).rejects.toMatchObject({ message: "Insert failed" });
@@ -251,7 +251,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Nora",
         last_name: "Mora",
         birth_date: "2012-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
         registry_date: "2026-01-01",
         status: "activo",
@@ -288,7 +288,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Lina",
         last_name: "Diaz",
         birth_date: "2013-01-01",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "999",
         registry_date: "2026-01-01",
         status: "activo",
@@ -311,7 +311,7 @@ describe("beneficiaryService unit", () => {
       first_name: "Lina",
       last_name: "Diaz",
       birth_date: "2013-01-01",
-      category: "Categoría 2",
+      category: "Categoria Sub 8",
       phone: "999",
     });
 
@@ -328,7 +328,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Edit",
         last_name: "User",
         birth_date: "2012-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
         registry_date: "2026-01-01",
         status: "activo",
@@ -365,7 +365,7 @@ describe("beneficiaryService unit", () => {
           first_name: "Ana",
           last_name: "H",
           birth_date: "2012-01-01",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "1",
           registry_date: "2026-01-01",
           status: "activo",
@@ -408,7 +408,7 @@ describe("beneficiaryService unit", () => {
     const headquarterResult =
       await beneficiaryService.getByHeadquarterId("hq-1");
     const categoryResult =
-      await beneficiaryService.getByCategory("Categoría 1");
+      await beneficiaryService.getByCategory("Categoria Sub 6");
     const statusResult = await beneficiaryService.getByStatus("activo");
     const lowResult = await beneficiaryService.getLowPerformance(60);
     const searchResult = await beneficiaryService.searchByName("ana");
@@ -449,7 +449,7 @@ describe("beneficiaryService unit", () => {
 
     const total = await beneficiaryService.count();
     const byHeadquarter = await beneficiaryService.countByHeadquarter("hq-1");
-    const byCategory = await beneficiaryService.countByCategory("Categoría 1");
+    const byCategory = await beneficiaryService.countByCategory("Categoria Sub 6");
 
     expect(total).toBe(12);
     expect(byHeadquarter).toBe(4);
@@ -481,7 +481,7 @@ describe("beneficiaryService unit", () => {
           first_name: "No",
           last_name: "Eval",
           birth_date: "2012-01-01",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "123",
           registry_date: "2026-01-01",
           status: "activo",
@@ -520,7 +520,7 @@ describe("beneficiaryService unit", () => {
           first_name: "Latest",
           last_name: "Eval",
           birth_date: "2012-01-01",
-          category: "Categoría 1",
+          category: "Categoria Sub 6",
           phone: "123",
           registry_date: "2026-01-01",
           status: "activo",
@@ -601,7 +601,7 @@ describe("beneficiaryService unit", () => {
     clientMock.from.mockReturnValueOnce(builder);
 
     await expect(
-      beneficiaryService.getByHeadquarterAndCategory("hq-1", "Categoría 1"),
+      beneficiaryService.getByHeadquarterAndCategory("hq-1", "Categoria Sub 6"),
     ).rejects.toMatchObject({
       message: "Filter failed",
     });
@@ -658,7 +658,7 @@ describe("beneficiaryService unit", () => {
       message: "ByHQ failed",
     });
     await expect(
-      beneficiaryService.getByCategory("Categoría 1"),
+      beneficiaryService.getByCategory("Categoria Sub 6"),
     ).rejects.toMatchObject({
       message: "ByCategory failed",
     });
@@ -686,7 +686,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Eval",
         last_name: "Fail",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
         registry_date: "2026-01-10",
         status: "activo",
@@ -709,7 +709,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Eval",
         last_name: "Fail",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
         anthropometric_detail: { peso: 40 },
       }),
@@ -727,7 +727,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Link",
         last_name: "Fail",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
         registry_date: "2026-01-10",
         status: "activo",
@@ -760,7 +760,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Link",
         last_name: "Fail",
         birth_date: "2010-10-10",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "555",
         anthropometric_detail: { peso: 40 },
       }),
@@ -778,7 +778,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Null",
         last_name: "Details",
         birth_date: "2013-01-01",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "999",
         registry_date: "2026-01-01",
         status: "activo",
@@ -828,7 +828,7 @@ describe("beneficiaryService unit", () => {
       first_name: "Null",
       last_name: "Details",
       birth_date: "2013-01-01",
-      category: "Categoría 2",
+      category: "Categoria Sub 8",
       phone: "999",
       anthropometric_detail: { peso: 32 },
     });
@@ -874,7 +874,7 @@ describe("beneficiaryService unit", () => {
       message: "Count failed",
     });
     await expect(
-      beneficiaryService.countByCategory("Categoría 1"),
+      beneficiaryService.countByCategory("Categoria Sub 6"),
     ).rejects.toMatchObject({
       message: "Count category failed",
     });
@@ -922,10 +922,10 @@ describe("beneficiaryService unit", () => {
       beneficiaryService.getByHeadquarterId("hq-1"),
     ).resolves.toEqual([]);
     await expect(
-      beneficiaryService.getByCategory("Categoría 1"),
+      beneficiaryService.getByCategory("Categoria Sub 6"),
     ).resolves.toEqual([]);
     await expect(
-      beneficiaryService.getByHeadquarterAndCategory("hq-1", "Categoría 1"),
+      beneficiaryService.getByHeadquarterAndCategory("hq-1", "Categoria Sub 6"),
     ).resolves.toEqual([]);
     await expect(beneficiaryService.searchByName("ana")).resolves.toEqual([]);
     await expect(beneficiaryService.getByStatus("activo")).resolves.toEqual([]);
@@ -955,7 +955,7 @@ describe("beneficiaryService unit", () => {
       0,
     );
     await expect(
-      beneficiaryService.countByCategory("Categoría 1"),
+      beneficiaryService.countByCategory("Categoria Sub 6"),
     ).resolves.toBe(0);
   });
 
@@ -981,7 +981,7 @@ describe("beneficiaryService unit", () => {
         first_name: "Edit",
         last_name: "Null",
         birth_date: "2012-01-01",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "123",
         registry_date: "2026-01-01",
         status: "activo",
@@ -1083,3 +1083,7 @@ describe("beneficiaryService unit", () => {
     });
   });
 });
+
+
+
+

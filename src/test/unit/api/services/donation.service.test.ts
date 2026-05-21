@@ -447,6 +447,11 @@ describe("donationService unit", () => {
       supabaseOk([{ amount: "100.5" }, { amount: "49.5" }]),
     );
 
+    const countBuilder = createBuilder();
+    countBuilder.lt.mockResolvedValueOnce(
+      supabaseOk(null, { count: 3 }),
+    );
+
     const recentBuilder = createBuilder();
     recentBuilder.limit.mockResolvedValueOnce(
       supabaseOk([
@@ -455,6 +460,7 @@ describe("donationService unit", () => {
           amount: "200",
           currency: "USD",
           date: "2026-04-05",
+          created_at: "2026-04-05T14:20:00Z",
           status: "approved",
           user: { first_name: "Ana", last_name: "Lopez" },
           project: { name: "Proyecto A" },
@@ -464,6 +470,7 @@ describe("donationService unit", () => {
           amount: undefined,
           currency: null,
           date: "2026-04-04",
+          created_at: null,
           status: "approved",
           user: { first_name: null, last_name: null },
           project: { name: null },
@@ -473,19 +480,20 @@ describe("donationService unit", () => {
 
     clientMock.from
       .mockImplementationOnce(() => monthBuilder)
+      .mockImplementationOnce(() => countBuilder)
       .mockImplementationOnce(() => recentBuilder);
 
     const stats = await donationService.getAdminDonationStats();
 
     expect(stats.totalDonatedThisMonth).toBe(150);
-    expect(stats.donationsProcessedThisMonth).toBe(2);
+    expect(stats.donationsProcessedThisMonth).toBe(3);
     expect(stats.recentDonations).toEqual([
       {
         id: 10,
         donor: "Ana Lopez",
         project: "Proyecto A",
         amount: 200,
-        date: "2026-04-05",
+        date: "2026-04-05T14:20:00Z",
         currency: "USD",
       },
       {
@@ -516,11 +524,15 @@ describe("donationService unit", () => {
     const monthBuilder = createBuilder();
     monthBuilder.lt.mockResolvedValueOnce(supabaseOk([{ amount: "10" }]));
 
+    const countBuilder = createBuilder();
+    countBuilder.lt.mockResolvedValueOnce(supabaseOk(null, { count: 1 }));
+
     const recentBuilder = createBuilder();
     recentBuilder.limit.mockResolvedValueOnce(supabaseError("recent failed"));
 
     clientMock.from
       .mockImplementationOnce(() => monthBuilder)
+      .mockImplementationOnce(() => countBuilder)
       .mockImplementationOnce(() => recentBuilder);
 
     await expect(donationService.getAdminDonationStats()).rejects.toMatchObject(

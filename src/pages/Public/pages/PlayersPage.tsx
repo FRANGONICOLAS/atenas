@@ -70,11 +70,13 @@ const PlayersPage = () => {
 
   const categories = [
     "all",
-    "Categoría 1",
-    "Categoría 2",
-    "Categoría 3",
-    "Categoría 4",
-    "Categoría 5",
+    "Categoria Sub 6",
+    "Categoria Sub 8",
+    "Categoria Sub 10",
+    "Categoria Sub 12",
+    "Categoria Sub 14",
+    "Categoria Sub 16",
+    "Categoria Sub 18",
   ];
 
   const filteredPlayers = useMemo(() => {

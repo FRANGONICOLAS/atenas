@@ -353,25 +353,6 @@ export const es = {
     registerToCreate: "Registrarse para Crear Testimonio",
     noTestimonials: "No hay testimonios destacados todavía",
     defaultUser: "Usuario",
-    successStories: {
-      title: "Casos de Éxito",
-      badge: "Caso Emblemático",
-      items: {
-        andres: {
-          name: "Andrés Rodríguez",
-          title:
-            "De un barrio vulnerable a las divisiones inferiores de un club profesional",
-          description:
-            "Andrés llegó a la fundación con 10 años. Sin recursos económicos, encontró en el fútbol una salida. Hoy, a sus 17 años, está firmado con un club profesional y es embajador de nuestra fundación.",
-        },
-        laura: {
-          name: "Laura Jiménez",
-          title: "Máxima goleadora y seleccionada nacional sub-15",
-          description:
-            "Laura demostró que con talento y dedicación no hay límites. Fue convocada a la selección nacional y hoy inspira a decenas de niñas en la fundación.",
-        },
-      },
-    },
     moreTestimonials: "Más Testimonios",
     memberRole: "Miembro de la fundación",
     modal: {

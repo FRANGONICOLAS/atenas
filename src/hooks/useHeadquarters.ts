@@ -379,6 +379,25 @@ export const useHeadquarters = () => {
 
   const handleDelete = async (id: string) => {
     try {
+      const [projectCount, beneficiaryCount] = await Promise.all([
+        headquarterService.getProjectCount(id),
+        headquarterService.getBeneficiaryCount(id),
+      ]);
+
+      if (projectCount > 0) {
+        toast.error("No se puede eliminar", {
+          description: "No puedes eliminar una sede que tiene proyectos asociados",
+        });
+        return;
+      }
+
+      if (beneficiaryCount > 0) {
+        toast.error("No se puede eliminar", {
+          description: "No puedes eliminar una sede que tiene jugadores asociados",
+        });
+        return;
+      }
+
       await headquarterService.delete(id);
       setDeleteTarget(null);
       toast.success("Sede eliminada", {
