@@ -191,56 +191,6 @@ const TestimonialsPage = () => {
         />
       )}
 
-      {/* Success Stories */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-foreground mb-12">
-            {t.testimonials.successStories.title}
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-0">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
-                  alt="Andrés"
-                  className="w-full h-48 md:h-full object-cover"
-                />
-                <CardContent className="p-6">
-                  <Badge className="mb-3 bg-secondary">{t.testimonials.successStories.badge}</Badge>
-                  <h3 className="font-bold text-xl text-foreground mb-2">Andrés Rodríguez</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {t.testimonials.successStories.items.andres.title}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {t.testimonials.successStories.items.andres.description}
-                  </p>
-                </CardContent>
-              </div>
-            </Card>
-
-            <Card className="overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-0">
-                <img 
-                  src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=400&fit=crop"
-                  alt="Laura"
-                  className="w-full h-48 md:h-full object-cover"
-                />
-                <CardContent className="p-6">
-                  <Badge className="mb-3 bg-secondary">{t.testimonials.successStories.badge}</Badge>
-                  <h3 className="font-bold text-xl text-foreground mb-2">Laura Jiménez</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {t.testimonials.successStories.items.laura.title}
-                  </p>
-                  <p className="text-muted-foreground text-sm">
-                    {t.testimonials.successStories.items.laura.description}
-                  </p>
-                </CardContent>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* All Testimonials Grid */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">

@@ -12,6 +12,8 @@ const createHeadquarterMock = jest.fn();
 const updateHeadquarterMock = jest.fn();
 const deleteHeadquarterMock = jest.fn();
 const uploadImageHeadquarterMock = jest.fn();
+const getProjectCountMock = jest.fn();
+const getBeneficiaryCountMock = jest.fn();
 
 const getAllBeneficiariesMock = jest.fn();
 let markerClickHandler: (() => void) | undefined;
@@ -34,6 +36,8 @@ jest.mock("@/api/services", () => ({
     update: (...args: unknown[]) => updateHeadquarterMock(...args),
     delete: (...args: unknown[]) => deleteHeadquarterMock(...args),
     uploadImage: (...args: unknown[]) => uploadImageHeadquarterMock(...args),
+    getProjectCount: (...args: unknown[]) => getProjectCountMock(...args),
+    getBeneficiaryCount: (...args: unknown[]) => getBeneficiaryCountMock(...args),
   },
   beneficiaryService: {
     getAll: (...args: unknown[]) => getAllBeneficiariesMock(...args),
@@ -117,6 +121,8 @@ describe("useHeadquarters unit", () => {
     updateHeadquarterMock.mockResolvedValue({ headquarters_id: "hq-1" });
     deleteHeadquarterMock.mockResolvedValue(undefined);
     uploadImageHeadquarterMock.mockResolvedValue("https://cdn.test/hq.png");
+    getProjectCountMock.mockResolvedValue(0);
+    getBeneficiaryCountMock.mockResolvedValue(0);
   });
 
   it("loads initial headquarters and beneficiary stats", async () => {
@@ -273,6 +279,50 @@ describe("useHeadquarters unit", () => {
     expect(updateHeadquarterMock).toHaveBeenCalledWith("hq-2", {
       status: "inactive",
     });
+  });
+
+  it("blocks delete when headquarter has projects", async () => {
+    getProjectCountMock.mockResolvedValueOnce(2);
+
+    const { result } = renderHook(() => useHeadquarters());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.handleDelete("hq-1");
+    });
+
+    expect(deleteHeadquarterMock).not.toHaveBeenCalled();
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No se puede eliminar",
+      expect.objectContaining({
+        description: "No puedes eliminar una sede que tiene proyectos asociados",
+      }),
+    );
+  });
+
+  it("blocks delete when headquarter has jugadores", async () => {
+    getBeneficiaryCountMock.mockResolvedValueOnce(3);
+
+    const { result } = renderHook(() => useHeadquarters());
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    await act(async () => {
+      await result.current.handleDelete("hq-1");
+    });
+
+    expect(deleteHeadquarterMock).not.toHaveBeenCalled();
+    expect(toastErrorMock).toHaveBeenCalledWith(
+      "No se puede eliminar",
+      expect.objectContaining({
+        description: "No puedes eliminar una sede que tiene jugadores asociados",
+      }),
+    );
   });
 
   it("filters headquarters by term and status", async () => {

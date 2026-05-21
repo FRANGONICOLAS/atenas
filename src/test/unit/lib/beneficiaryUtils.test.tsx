@@ -21,11 +21,11 @@ describe("beneficiaryUtils", () => {
     expect(calculateAge("2018-04-05")).toBe(7);
     expect(calculateAge("2018-04-04")).toBe(8);
 
-    expect(getAgeCategory("2019-05-01")).toBe("Categoría 1");
-    expect(getAgeCategory("2017-04-04")).toBe("Categoría 2");
-    expect(getAgeCategory("2015-04-04")).toBe("Categoría 3");
-    expect(getAgeCategory("2013-04-04")).toBe("Categoría 4");
-    expect(getAgeCategory("2011-04-04")).toBe("Categoría 5");
+    expect(getAgeCategory("2019-05-01")).toBe("Categoria Sub 6");
+    expect(getAgeCategory("2017-04-04")).toBe("Categoria Sub 8");
+    expect(getAgeCategory("2015-04-04")).toBe("Categoria Sub 10");
+    expect(getAgeCategory("2013-04-04")).toBe("Categoria Sub 12");
+    expect(getAgeCategory("2011-04-04")).toBe("Categoria Sub 14");
   });
 
   it("returns expected performance color by score", () => {
@@ -43,7 +43,7 @@ describe("beneficiaryUtils", () => {
         first_name: "Ana",
         last_name: "Lopez",
         birth_date: "2016-04-04",
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         phone: "123",
         registry_date: "2026-01-01",
         status: "activo",
@@ -57,7 +57,7 @@ describe("beneficiaryUtils", () => {
         first_name: "Ana",
         last_name: "Lopez",
         age: 10,
-        category: "Categoría 2",
+        category: "Categoria Sub 8",
         headquarters_id: "hq-1",
         headquarter_name: "hq-1",
         headquarter_director: "",

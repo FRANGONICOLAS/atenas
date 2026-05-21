@@ -10,7 +10,7 @@ export interface DonationRow {
   date: string
   donation_id: string
   pay_method: string | null
-  project_id: string
+  project_id: string | null
   status: string
   user_id: string
 }
@@ -23,7 +23,7 @@ export interface DonationInsert {
   date?: string
   donation_id?: string
   pay_method?: string | null
-  project_id: string
+  project_id?: string | null
   status?: string
   user_id: string
 }
@@ -36,7 +36,7 @@ export interface DonationUpdate {
   date?: string
   donation_id?: string
   pay_method?: string | null
-  project_id?: string
+  project_id?: string | null
   status?: string
   user_id?: string
 }

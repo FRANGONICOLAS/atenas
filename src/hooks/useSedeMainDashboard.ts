@@ -9,14 +9,20 @@ import {
 import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
 import { useAuth } from "@/hooks/useAuth";
 import type { EvaluationRow } from "@/api/types";
-import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
+import {
+  FIVE_MINUTES_MS,
+  getTimedCache,
+  setTimedCache,
+} from "@/lib/timedCache";
 
 export const BENEFICIARY_CATEGORIES = [
-  "Categoría 1",
-  "Categoría 2",
-  "Categoría 3",
-  "Categoría 4",
-  "Categoría 5",
+  "Categoria Sub 6",
+  "Categoria Sub 8",
+  "Categoria Sub 10",
+  "Categoria Sub 12",
+  "Categoria Sub 14",
+  "Categoria Sub 16",
+  "Categoria Sub 18",
 ] as const;
 
 interface EvaluationWithMeta {
@@ -43,8 +49,12 @@ interface SedeDashboardCache {
 export const useSedeMainDashboard = () => {
   const { user, isLoading: authLoading } = useAuth();
 
-  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<string | null>(null);
-  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<string | null>(null);
+  const [assignedHeadquarterId, setAssignedHeadquarterId] = useState<
+    string | null
+  >(null);
+  const [assignedHeadquarterName, setAssignedHeadquarterName] = useState<
+    string | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [beneficiaries, setBeneficiaries] = useState<BeneficiarySlim[]>([]);
   const [evaluations, setEvaluations] = useState<EvaluationWithMeta[]>([]);
@@ -154,9 +164,9 @@ export const useSedeMainDashboard = () => {
         if (!row.evaluation || !row.beneficiary_id) continue;
         const evaluation = row.evaluation as EvaluationRow;
         const score = getEvaluationScore(evaluation);
-        const name = `${row.beneficiary?.first_name ?? ""} ${row.beneficiary?.last_name ?? ""}`.trim();
-        const category =
-          categoryMap.get(row.beneficiary_id) ?? "Sin categoría";
+        const name =
+          `${row.beneficiary?.first_name ?? ""} ${row.beneficiary?.last_name ?? ""}`.trim();
+        const category = categoryMap.get(row.beneficiary_id) ?? "Sin categoría";
         mapped.push({
           beneficiary_id: row.beneficiary_id,
           evaluation,
@@ -192,7 +202,7 @@ export const useSedeMainDashboard = () => {
   useEffect(() => {
     if (authLoading) return;
     void loadData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, user?.id]);
 
   // Beneficiaries grouped by category
@@ -241,12 +251,11 @@ export const useSedeMainDashboard = () => {
     const techEvals = evaluations.filter(
       (e) => e.evaluation.type === "TECHNICAL" && e.score > 0,
     );
-    const avgDeportivo =
-      techEvals.length
-        ? Math.round(
-            techEvals.reduce((sum, e) => sum + e.score, 0) / techEvals.length,
-          )
-        : 0;
+    const avgDeportivo = techEvals.length
+      ? Math.round(
+          techEvals.reduce((sum, e) => sum + e.score, 0) / techEvals.length,
+        )
+      : 0;
 
     const totalBenef = beneficiaries.length;
     const activeBenef = beneficiaries.filter(

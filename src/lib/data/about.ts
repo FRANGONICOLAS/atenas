@@ -10,6 +10,6 @@ export const getAboutValues = (t: Translation) => [
 ];
 
 export const getAboutTeam = (t: Translation, images: Record<string, string>) => [
-  { name: 'Hector Sanchez', role: t.about.roles.director, image: images.team1 },
-  { name: 'Omar', role: t.about.roles.director, image: images.team2 },
+  { name: 'Héctor Fabio Sanchez Landazuri', role: t.about.roles.director, image: images.team1 },
+  { name: 'José Omar Suarez Molina', role: t.about.roles.director, image: images.team2 },
 ];

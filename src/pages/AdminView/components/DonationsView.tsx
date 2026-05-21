@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 
 interface Donation {
   id: number | string;
@@ -21,7 +21,30 @@ interface DonationsViewProps {
   formatCurrency: (amount: number) => string;
 }
 
-export const DonationsView = ({ recentDonations, formatCurrency }: DonationsViewProps) => {
+export const DonationsView = ({
+  recentDonations,
+  formatCurrency,
+}: DonationsViewProps) => {
+  const formatDate = (value: string) => {
+    const isoDateOnly = /^\d{4}-\d{2}-\d{2}$/;
+    const parsed = isoDateOnly.test(value)
+      ? new Date(`${value}T00:00:00-05:00`)
+      : new Date(value);
+
+    if (Number.isNaN(parsed.getTime())) {
+      return value;
+    }
+
+    return parsed.toLocaleString("es-CO", {
+      timeZone: "America/Bogota",
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -45,7 +68,9 @@ export const DonationsView = ({ recentDonations, formatCurrency }: DonationsView
                 <TableCell className="text-right font-semibold text-green-600">
                   {formatCurrency(donation.amount)}
                 </TableCell>
-                <TableCell className="text-muted-foreground">{donation.date}</TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formatDate(donation.date)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

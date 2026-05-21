@@ -93,7 +93,7 @@ describe("useBeneficiaries integration", () => {
         first_name: "Laura",
         last_name: "Rincon",
         birth_date: "2012-05-05",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "300",
       });
       expect(created).toBe(true);
@@ -124,7 +124,7 @@ describe("useBeneficiaries integration", () => {
         first_name: "",
         last_name: "Rincon",
         birth_date: "2012-05-05",
-        category: "Categoría 1",
+        category: "Categoria Sub 6",
         phone: "300",
       });
       expect(created).toBe(false);

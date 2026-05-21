@@ -20,7 +20,7 @@ export interface Donation {
 export interface DonationFromDB {
   donation_id: string;
   user_id: string;
-  project_id: string;
+  project_id: string | null;
   currency: string;
   amount?: string;
   status: string;
