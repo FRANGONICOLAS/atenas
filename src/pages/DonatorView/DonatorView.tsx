@@ -14,7 +14,7 @@ import { useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/common/DashboardHeader";
 import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { DonatorStatCard } from "./components";
+import { StatCard } from "@/components/common/StatCard";
 import { DonationsPage, ProjectsPage } from "./pages";
 import {
   Card,
@@ -131,7 +131,7 @@ const MainDashboard = ({ user }: { user: User }) => {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {statsCards.map((stat, index) => (
-          <DonatorStatCard
+          <StatCard
             key={index}
             icon={stat.icon}
             title={stat.title}

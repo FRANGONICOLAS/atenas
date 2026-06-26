@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getFantasticLetterTabs } from "@/hooks/useSedeEvaluations";
+import { getFantasticLetterTabs } from "@/lib/evaluationDisplayUtils";
 
 interface EmotionalEvaluationTabsProps {
   detail?: Record<string, unknown>;

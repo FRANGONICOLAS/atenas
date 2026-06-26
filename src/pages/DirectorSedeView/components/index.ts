@@ -1,1 +1,0 @@
-export { SedeStatCard } from './SedeStatCard';

@@ -1,12 +1,15 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { type LucideIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+
+type IconComponent = React.ComponentType<{ className?: string }>;
 
 interface StatCardProps {
   title: string;
   value: string | number;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: IconComponent | LucideIcon;
   color: string;
-  change: string;
+  change?: string;
 }
 
 export const StatCard = ({ title, value, icon: Icon, color, change }: StatCardProps) => {
@@ -17,9 +20,11 @@ export const StatCard = ({ title, value, icon: Icon, color, change }: StatCardPr
           <div className={`w-12 h-12 rounded-lg ${color} flex items-center justify-center`}>
             <Icon className="w-6 h-6 text-white" />
           </div>
-          <Badge variant="outline" className="text-green-600 border-green-600">
-            {change}
-          </Badge>
+          {change && (
+            <Badge variant="outline" className="text-green-600 border-green-600">
+              {change}
+            </Badge>
+          )}
         </div>
         <h3 className="text-2xl font-bold text-foreground mb-1">{value}</h3>
         <p className="text-sm text-muted-foreground">{title}</p>

@@ -1,4 +1,3 @@
-export { StatCard } from "./StatCard";
 export { LocationsView } from "./LocationsView";
 export { EventsView } from "./EventsView";
 export { BeneficiaryTable } from "./Beneficiaries/BeneficiaryTable";
@@ -7,5 +6,6 @@ export { ProjectDialog } from "./Projects/ProjectDialog";
 export { MapDialog } from "./MapDialog";
 export { CalendarDialog } from "./CalendarDialog";
 export { HeadquartersMap } from "./Headquarters/HeadquartersMap";
+export { HeadquartersDialog } from "./Headquarters/HeadquartersDialog";
 export { HeadquarterDetail } from "./Headquarters/HeadquarterDetail";
 export { HeadquartersTable } from "./Headquarters/HeadquartersTable";

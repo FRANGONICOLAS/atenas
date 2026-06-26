@@ -11,7 +11,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAdminDashboard } from "@/hooks/useAdminView";
 import { useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/common/DashboardHeader";
-import { StatCard, DonationsView, AnalyticsView } from "./components";
+import { StatCard } from "@/components/common/StatCard";
+import { DonationsView, AnalyticsView } from "./components";
 import { UsersPage, ContentPage, SiteContentPage } from "./pages";
 import { User } from "@/types";
 

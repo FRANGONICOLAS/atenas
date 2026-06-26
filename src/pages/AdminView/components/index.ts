@@ -1,4 +1,3 @@
-export { StatCard } from './StatCard';
 export { ExportButton } from './ExportButton';
 export { UsersView } from './UsersView';
 export { DonationsView } from './DonationsView';

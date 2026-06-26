@@ -26,6 +26,8 @@ import {
   getTimedCache,
   setTimedCache,
 } from "@/lib/timedCache";
+import { buildReportContext } from "@/lib/report/reportContext";
+import { countNewThisMonth } from "@/lib/beneficiaryCalculations";
 
 export const applySedeBeneficiaryFilters = (
   beneficiaries: Beneficiary[],
@@ -59,6 +61,15 @@ export const applySedeBeneficiaryFilters = (
     );
   });
 };
+
+async function uploadPhotoIfNeeded(
+  beneficiaryId: string,
+  photoFile: File | null,
+  existingUrl?: string,
+): Promise<string | undefined> {
+  if (!photoFile) return existingUrl;
+  return await beneficiaryService.uploadPhoto(beneficiaryId, photoFile);
+}
 
 export const useSedeBeneficiaries = () => {
   const { user, isLoading: authLoading } = useAuth();
@@ -315,21 +326,10 @@ export const useSedeBeneficiaries = () => {
     statusFilter,
   ]);
 
-  const newPlayersThisMonth = useMemo(() => {
-    const today = new Date();
-    const monthStart = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1,
-    ).getTime();
-
-    return beneficiaries.filter((b) => {
-      const createdAt = b.created_at || b.registry_date;
-      if (!createdAt) return false;
-      const date = new Date(createdAt).getTime();
-      return !Number.isNaN(date) && date >= monthStart;
-    }).length;
-  }, [beneficiaries]);
+  const newPlayersThisMonth = useMemo(
+    () => countNewThisMonth(beneficiaries),
+    [beneficiaries],
+  );
 
   const stats = useMemo(() => {
     const total = beneficiaries.length;
@@ -363,7 +363,7 @@ export const useSedeBeneficiaries = () => {
       const newBeneficiary = await beneficiaryService.create(payload);
 
       if (photoFile) {
-        const photoUrl = await beneficiaryService.uploadPhoto(
+        const photoUrl = await uploadPhotoIfNeeded(
           newBeneficiary.beneficiary_id,
           photoFile,
         );
@@ -414,13 +414,11 @@ export const useSedeBeneficiaries = () => {
         return false;
       }
 
-      let photoUrl = payload.photo_url;
-      if (photoFile) {
-        photoUrl = await beneficiaryService.uploadPhoto(
-          beneficiaryId,
-          photoFile,
-        );
-      }
+      const photoUrl = await uploadPhotoIfNeeded(
+        beneficiaryId,
+        photoFile,
+        payload.photo_url,
+      );
 
       await beneficiaryService.update(beneficiaryId, {
         ...payload,
@@ -486,38 +484,18 @@ export const useSedeBeneficiaries = () => {
     }
   };
 
-  const headquarterMap = useMemo(
-    () =>
-      headquarters.reduce<Record<string, string>>((acc, hq) => {
-        acc[hq.headquarters_id] = hq.name;
-        return acc;
-      }, {}),
-    [headquarters],
+  const reportContext = useMemo(
+    () => buildReportContext(headquarters, headquarterDirectorNames, user),
+    [headquarters, headquarterDirectorNames, user],
   );
-
-  const headquarterDirectorMap = useMemo(
-    () =>
-      headquarters.reduce<Record<string, string>>((acc, hq) => {
-        acc[hq.headquarters_id] =
-          headquarterDirectorNames[hq.user_id] || "Desconocido";
-        return acc;
-      }, {}),
-    [headquarters, headquarterDirectorNames],
-  );
-
-  const currentUserName =
-    `${user?.first_name ?? ""} ${user?.last_name ?? ""}`.trim();
-  const generatedByLabel = currentUserName
-    ? `Director de sede: ${currentUserName}`
-    : "Director de sede";
 
   const handleExportExcel = (beneficiariesToExport?: Beneficiary[]) => {
     const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
-      headquarterMap,
-      headquarterDirectorMap,
+      headquarterMap: reportContext.headquarterMap,
+      headquarterDirectorMap: reportContext.headquarterDirectorMap,
     });
     generateBeneficiariesExcel(data, "beneficiarios", {
-      generatedBy: generatedByLabel,
+      generatedBy: reportContext.generatedByLabel,
       headquartersName: assignedHeadquarterName || "Sin sede",
     });
     toast.success("Reporte Excel generado", {
@@ -527,11 +505,11 @@ export const useSedeBeneficiaries = () => {
 
   const handleExportPDF = (beneficiariesToExport?: Beneficiary[]) => {
     const data = mapBeneficiaryToReport(beneficiariesToExport || filtered, {
-      headquarterMap,
-      headquarterDirectorMap,
+      headquarterMap: reportContext.headquarterMap,
+      headquarterDirectorMap: reportContext.headquarterDirectorMap,
     });
     generateBeneficiariesPDF(data, "beneficiarios", {
-      generatedBy: generatedByLabel,
+      generatedBy: reportContext.generatedByLabel,
       headquartersName: assignedHeadquarterName || "Sin sede",
     });
     toast.success("Reporte PDF generado", {

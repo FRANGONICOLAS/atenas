@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAnthropometricEvaluationTabs } from "@/hooks/useSedeEvaluations";
+import { getAnthropometricEvaluationTabs } from "@/lib/evaluationDisplayUtils";
 
 interface AnthropometricEvaluationTabsProps {
   detail?: Record<string, unknown>;

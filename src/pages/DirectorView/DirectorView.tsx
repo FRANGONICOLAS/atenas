@@ -9,7 +9,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { useSearchParams } from "react-router-dom";
 import { DashboardHeader } from "@/components/common/DashboardHeader";
-import { StatCard } from "./components";
+import { StatCard } from "@/components/common/StatCard";
 import {
   LocationsPage,
   ProjectsPage,

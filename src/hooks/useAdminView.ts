@@ -12,9 +12,9 @@ import {
   generateDonationsExcel,
   generateDonationsPDF,
   generateConsolidatedExcel,
-  type UserReport,
-  type DonationReport,
 } from "@/lib/reportGenerator";
+import { formatCurrency } from "@/lib/report/types";
+import type { UserReport, DonationReport } from "@/lib/report/types";
 import { useBeneficiaries } from "./useBeneficiaries";
 import { useProjects } from "./useProjects";
 import {
@@ -52,6 +52,26 @@ interface AdminDonation {
 const ADMIN_USERS_CACHE_KEY = "admin:users";
 const ADMIN_ROLES_CACHE_KEY = "admin:roles";
 const ADMIN_HEADQUARTERS_CACHE_KEY = "admin:headquarters";
+
+const mapUsersToReport = (users: DBUser[]): UserReport[] =>
+  users.map((u, index) => ({
+    id: index + 1,
+    name: `${u.first_name ?? ""} ${u.last_name ?? ""}`.trim(),
+    email: u.email,
+    role: u.roles?.length ? u.roles[0].toUpperCase() : "DONATOR",
+    status: "Activo",
+    date: u.created_at?.split("T")[0] ?? new Date().toISOString().split("T")[0],
+  }));
+
+const mapDonationsToReport = (donations: AdminDonation[]): DonationReport[] =>
+  donations.map((d) => ({
+    id: d.id,
+    donor: d.donor,
+    amount: d.amount,
+    project: d.project,
+    date: d.date,
+    status: "Completado",
+  }));
 
 export const useAdminDashboard = () => {
   const [searchParams] = useSearchParams();
@@ -179,14 +199,6 @@ export const useAdminDashboard = () => {
           "No se pudieron cargar los datos de donaciones del panel de administración",
       });
     }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("es-CO", {
-      style: "currency",
-      currency: "COP",
-      minimumFractionDigits: 0,
-    }).format(value);
   };
 
   // Load users and roles from Supabase
@@ -455,17 +467,7 @@ export const useAdminDashboard = () => {
   };
 
   const handleExportUsersExcel = () => {
-    const reportData: UserReport[] = users.map((u, index) => ({
-      id: index + 1,
-      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
-      email: u.email,
-      role:
-        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
-      status: "Activo",
-      date: u.created_at
-        ? u.created_at.split("T")[0]
-        : new Date().toISOString().split("T")[0],
-    }));
+    const reportData = mapUsersToReport(users);
 
     generateUsersExcel(reportData, "reporte_usuarios");
     toast.success("Reporte de usuarios generado", {
@@ -474,17 +476,7 @@ export const useAdminDashboard = () => {
   };
 
   const handleExportUsersPDF = () => {
-    const reportData: UserReport[] = users.map((u, index) => ({
-      id: index + 1,
-      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
-      email: u.email,
-      role:
-        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
-      status: "Activo",
-      date: u.created_at
-        ? u.created_at.split("T")[0]
-        : new Date().toISOString().split("T")[0],
-    }));
+    const reportData = mapUsersToReport(users);
 
     generateUsersPDF(reportData, "reporte_usuarios");
     toast.success("Reporte de usuarios generado", {
@@ -493,14 +485,7 @@ export const useAdminDashboard = () => {
   };
 
   const handleExportDonationsExcel = () => {
-    const reportData: DonationReport[] = recentDonations.map((d) => ({
-      id: d.id,
-      donor: d.donor,
-      amount: d.amount,
-      project: d.project,
-      date: d.date,
-      status: "Completado",
-    }));
+    const reportData = mapDonationsToReport(recentDonations);
 
     generateDonationsExcel(reportData, "reporte_donaciones");
     toast.success("Reporte de donaciones generado", {
@@ -509,14 +494,7 @@ export const useAdminDashboard = () => {
   };
 
   const handleExportDonationsPDF = () => {
-    const reportData: DonationReport[] = recentDonations.map((d) => ({
-      id: d.id,
-      donor: d.donor,
-      amount: d.amount,
-      project: d.project,
-      date: d.date,
-      status: "Completado",
-    }));
+    const reportData = mapDonationsToReport(recentDonations);
 
     generateDonationsPDF(reportData, "reporte_donaciones");
     toast.success("Reporte de donaciones generado", {
@@ -525,26 +503,8 @@ export const useAdminDashboard = () => {
   };
 
   const handleExportConsolidated = () => {
-    const userReports: UserReport[] = users.map((u, index) => ({
-      id: index + 1,
-      name: `${u.first_name || ""} ${u.last_name || ""}`.trim(),
-      email: u.email,
-      role:
-        u.roles && u.roles.length > 0 ? u.roles[0].toUpperCase() : "DONATOR",
-      status: "Activo",
-      date: u.created_at
-        ? u.created_at.split("T")[0]
-        : new Date().toISOString().split("T")[0],
-    }));
-
-    const donationReports: DonationReport[] = recentDonations.map((d) => ({
-      id: d.id,
-      donor: d.donor,
-      amount: d.amount,
-      project: d.project,
-      date: d.date,
-      status: "Completado",
-    }));
+    const userReports = mapUsersToReport(users);
+    const donationReports = mapDonationsToReport(recentDonations);
 
     generateConsolidatedExcel(
       donationReports,

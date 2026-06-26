@@ -173,6 +173,21 @@ const extractFantasticScore = (
   return Math.round((rawScore / 90) * 100);
 };
 
+/**
+ * Counts how many items have a created_at or registry_date within the current month.
+ */
+export function countNewThisMonth(
+  items: Array<{ created_at?: string; registry_date?: string }>,
+): number {
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  return items.filter((item) => {
+    const date = item.created_at || item.registry_date;
+    if (!date) return false;
+    return new Date(date) >= startOfMonth;
+  }).length;
+}
+
 export const getEvaluationScore = (evaluation: EvaluationRow): number => {
   switch (normalizeEvaluationType(evaluation.type)) {
     case "TECHNICAL":

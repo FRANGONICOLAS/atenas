@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getTechnicalEvaluationTabs } from "@/hooks/useSedeEvaluations";
+import { getTechnicalEvaluationTabs } from "@/lib/evaluationDisplayUtils";
 
 interface TechnicalEvaluationTabsProps {
   detail?: Record<string, unknown>;
