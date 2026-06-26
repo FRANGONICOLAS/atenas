@@ -25,5 +25,10 @@ dist-ssr
 *.sw?
 .vercel
 .env
+.agents
+spec
+AGENT.md
+opencode.json
+skills-lock.json
 
 coverage

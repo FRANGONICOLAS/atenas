@@ -1,5 +1,63 @@
 import type { Json, EvaluationRow } from "@/api/types";
-import type { EvaluationType } from "@/types";
+import type { Evaluation, EvaluationType, EvaluationReport } from "@/types";
+import { getEvaluationScore } from "@/lib/beneficiaryCalculations";
+
+export interface EvaluationJoinRow {
+  beneficiary_id: string | null;
+  evaluation: EvaluationRow | null;
+  beneficiary: {
+    first_name: string | null;
+    last_name: string | null;
+  } | null;
+}
+
+export const resolveEvaluationType = (
+  evaluation: EvaluationRow,
+): EvaluationType => {
+  return normalizeEvaluationType(evaluation.type) ?? "EMOTIONAL";
+};
+
+export const extractComments = (evaluation: EvaluationRow): string => {
+  return getEvaluationComment(evaluation);
+};
+
+export const mapEvaluationRow = (row: EvaluationJoinRow): Evaluation | null => {
+  if (!row.evaluation || !row.beneficiary || !row.beneficiary_id) return null;
+
+  const beneficiaryName =
+    `${row.beneficiary.first_name ?? ""} ${row.beneficiary.last_name ?? ""}`.trim();
+
+  return {
+    id: row.evaluation.id,
+    beneficiaryId: row.beneficiary_id,
+    beneficiaryName: beneficiaryName || "Beneficiario",
+    date: row.evaluation.created_at || new Date().toISOString(),
+    type: resolveEvaluationType(row.evaluation),
+    score: getEvaluationScore(row.evaluation),
+    comments: extractComments(row.evaluation),
+    evaluator: "",
+  };
+};
+
+export const mapEvaluationReport = (
+  row: EvaluationJoinRow,
+  headquarterName: string | null,
+): EvaluationReport | null => {
+  if (!row.evaluation || !row.beneficiary || !row.beneficiary_id) return null;
+
+  const beneficiaryName =
+    `${row.beneficiary.first_name ?? ""} ${row.beneficiary.last_name ?? ""}`.trim();
+  const type = normalizeEvaluationType(row.evaluation.type) ?? "EMOTIONAL";
+
+  return {
+    beneficiaryId: row.beneficiary_id,
+    beneficiaryName: beneficiaryName || "Beneficiario",
+    headquarterName,
+    date: row.evaluation.created_at || new Date().toISOString(),
+    type,
+    questions: getEvaluationDetailByType(row.evaluation),
+  };
+};
 
 export const evaluationTypeLabels: Record<EvaluationType, string> = {
   ANTHROPOMETRIC: "Antropométrica",
