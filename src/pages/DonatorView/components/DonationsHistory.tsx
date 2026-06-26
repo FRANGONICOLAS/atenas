@@ -3,8 +3,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { DollarSign, Heart, RefreshCw, Target, TrendingUp } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useProjects } from '@/hooks/useProjects';
-import { boldService } from '@/api/services/bold.service';
-import type { BoldTransactionWithProject } from '@/types/bold.types';
+import { donationService } from '@/api/services/donation.service';
+import type { DonationWithProject } from '@/types/donation.types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +46,7 @@ const formatDate = (value?: string | null) => {
   });
 };
 
-const getProjectName = (tx: BoldTransactionWithProject) => {
+const getProjectName = (tx: DonationWithProject) => {
   return tx.project?.name || 'Libre Inversión';
 };
 
@@ -70,7 +70,7 @@ type DonationImpact = {
 };
 
 const getDonationImpact = (
-  tx: BoldTransactionWithProject,
+  tx: DonationWithProject,
   projectMap: Map<string, { goal: number; raised: number; progress: number }>
 ): DonationImpact | null => {
   if (!tx.project_id) return null;
@@ -112,7 +112,7 @@ export const DonationsHistory = () => {
   const { t } = useLanguage();
   const { user, isLoading: isAuthLoading } = useAuth();
   const { projects } = useProjects();
-  const [transactions, setTransactions] = useState<BoldTransactionWithProject[]>([]);
+  const [donations, setDonations] = useState<DonationWithProject[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
@@ -122,7 +122,7 @@ export const DonationsHistory = () => {
     if (isAuthLoading) return;
 
     if (!user?.id) {
-      setTransactions([]);
+      setDonations([]);
       setLoading(false);
       setError(null);
       return;
@@ -131,7 +131,7 @@ export const DonationsHistory = () => {
     let isActive = true;
     let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const loadTransactions = async (attempt = 0) => {
+    const loadDonations = async (attempt = 0) => {
       if (!isActive) return;
       if (attempt === 0) {
         setLoading(true);
@@ -139,9 +139,9 @@ export const DonationsHistory = () => {
       }
 
       try {
-        const data = await boldService.getUserBoldTransactionsWithProjects(user.id);
+        const data = await donationService.getUserDonations(user.id);
         if (!isActive) return;
-        setTransactions(data);
+        setDonations(data);
         setLoading(false);
         setRetryCount(0);
       } catch (err) {
@@ -149,7 +149,7 @@ export const DonationsHistory = () => {
         if (attempt < MAX_RETRIES) {
           const nextAttempt = attempt + 1;
           setRetryCount(nextAttempt);
-          retryTimer = setTimeout(() => loadTransactions(nextAttempt), RETRY_DELAYS_MS[attempt]);
+          retryTimer = setTimeout(() => loadDonations(nextAttempt), RETRY_DELAYS_MS[attempt]);
         } else {
           setError(err instanceof Error ? err.message : 'Error al cargar donaciones');
           setLoading(false);
@@ -157,7 +157,7 @@ export const DonationsHistory = () => {
       }
     };
 
-    loadTransactions(0);
+    loadDonations(0);
 
     return () => {
       isActive = false;
@@ -165,12 +165,12 @@ export const DonationsHistory = () => {
     };
   }, [user?.id, isAuthLoading]);
 
-  const sortedTransactions = useMemo(() => {
-    const items = [...transactions];
+  const sortedDonations = useMemo(() => {
+    const items = [...donations];
 
     items.sort((a, b) => {
-      const amountA = a.amount ?? 0;
-      const amountB = b.amount ?? 0;
+      const amountA = parseFloat(a.amount ?? '0');
+      const amountB = parseFloat(b.amount ?? '0');
       const dateA = new Date(a.created_at || '').getTime();
       const dateB = new Date(b.created_at || '').getTime();
 
@@ -184,7 +184,7 @@ export const DonationsHistory = () => {
     });
 
     return items;
-  }, [transactions, sortBy]);
+  }, [donations, sortBy]);
 
   const projectMap = useMemo(() => {
     return new Map(
@@ -206,10 +206,10 @@ export const DonationsHistory = () => {
     setError(null);
     setRetryCount(0);
     setLoading(true);
-    boldService
-      .getUserBoldTransactionsWithProjects(user.id)
+    donationService
+      .getUserDonations(user.id)
       .then((data) => {
-        setTransactions(data);
+        setDonations(data);
         setLoading(false);
       })
       .catch((err) => {
@@ -277,22 +277,23 @@ export const DonationsHistory = () => {
           </div>
         )}
 
-        {!loading && !error && sortedTransactions.length === 0 && (
+        {!loading && !error && sortedDonations.length === 0 && (
           <div className="flex flex-col items-center justify-center gap-2 py-10 text-muted-foreground">
             <DollarSign className="h-10 w-10 opacity-50" />
             <p>{t.donatorDashboard.status.noDonations}</p>
           </div>
         )}
 
-        {!loading && !error && sortedTransactions.length > 0 && (
+        {!loading && !error && sortedDonations.length > 0 && (
           <div className="grid gap-4 md:grid-cols-2">
-            {sortedTransactions.map((tx) => {
+            {sortedDonations.map((tx) => {
+              const amount = parseFloat(tx.amount ?? '0');
               const impact = getDonationImpact(tx, projectMap);
-              const motivationalMessage = getMotivationalMessage(impact, tx.amount ?? 0, t);
+              const motivationalMessage = getMotivationalMessage(impact, amount, t);
 
               return (
                 <Card
-                  key={tx.bold_transaction_id}
+                  key={tx.donation_id}
                   className="border border-border/60 bg-gradient-to-br from-background to-muted/20"
                 >
                   <CardContent className="p-5 space-y-4">
@@ -316,7 +317,7 @@ export const DonationsHistory = () => {
                           {t.donatorDashboard.table.amount}
                         </p>
                         <p className="text-lg font-bold text-foreground">
-                          {formatCurrency(tx.amount, tx.currency)}
+                          {formatCurrency(amount, tx.currency)}
                         </p>
                       </div>
                     </div>

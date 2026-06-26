@@ -33,17 +33,14 @@ export const donationService = {
     // Obtener todas las donaciones del usuario
     const donations = await this.getUserDonations(userId);
 
-    // Filtrar solo donaciones aprobadas
-    const approvedDonations = donations.filter((d) => d.status === "approved");
-
-    // Calcular total donado
-    const totalDonated = approvedDonations.reduce((sum, donation) => {
+    // Calcular total donado (todas las donaciones)
+    const totalDonated = donations.reduce((sum, donation) => {
       return sum + parseFloat(donation.amount);
     }, 0);
 
     // Obtener proyectos únicos apoyados
     const uniqueProjects = new Map<string, DonationWithProject[]>();
-    approvedDonations.forEach((donation) => {
+    donations.forEach((donation) => {
       if (donation.project_id) {
         if (!uniqueProjects.has(donation.project_id)) {
           uniqueProjects.set(donation.project_id, []);
@@ -72,8 +69,7 @@ export const donationService = {
           const allProjectDonationsQuery = await client
             .from("donation")
             .select("amount")
-            .eq("project_id", projectId)
-            .eq("status", "approved");
+            .eq("project_id", projectId);
           const allProjectDonations = allProjectDonationsQuery.data as Array<{
             amount?: string;
           }> | null;
@@ -140,7 +136,7 @@ export const donationService = {
     }
 
     // Obtener las 3 donaciones más recientes
-    const recentDonations = approvedDonations.slice(0, 3);
+    const recentDonations = donations.slice(0, 3);
 
     return {
       totalDonated,
@@ -180,7 +176,6 @@ export const donationService = {
     const monthAmountQuery = await client
       .from("donation")
       .select("amount")
-      .eq("status", "approved")
       .gte("date", startOfMonth)
       .lt("date", startOfNextMonth);
 
@@ -197,8 +192,7 @@ export const donationService = {
 
     const totalApprovedQuery = await client
       .from("donation")
-      .select("donation_id", { count: "exact", head: true })
-      .eq("status", "approved");
+      .select("donation_id", { count: "exact", head: true });
 
     if (totalApprovedQuery.error) throw totalApprovedQuery.error;
 
@@ -240,6 +234,33 @@ export const donationService = {
       totalDonatedThisMonth,
       donationsProcessedTotal,
       recentDonations: formattedDonations,
+    };
+  },
+
+  async getPublicDonationStats(): Promise<{
+    totalDonations: number;
+    totalRaised: number;
+    recentDonations: Array<{
+      donation_id: string;
+      amount: string;
+      currency: string;
+      date: string;
+      project_name: string | null;
+    }>;
+  }> {
+    const { data, error } = await client.rpc("get_public_donation_stats");
+
+    if (error) throw error;
+    return data as {
+      totalDonations: number;
+      totalRaised: number;
+      recentDonations: Array<{
+        donation_id: string;
+        amount: string;
+        currency: string;
+        date: string;
+        project_name: string | null;
+      }>;
     };
   },
 

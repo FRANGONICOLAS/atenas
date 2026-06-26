@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { headquarterService, projectService, userService } from "@/api/services";
+import { client } from "@/api/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import type { Project } from "@/types";
 import type { CreateProjectData, UpdateProjectData } from "@/api/services/project.service";
@@ -238,6 +239,31 @@ export const useSedeProjects = () => {
     void loadProjects(assignedHeadquarterId);
   }, [assignedHeadquarterId]);
 
+  const [freeDonationsTotal, setFreeDonationsTotal] = useState(0);
+
+  useEffect(() => {
+    const loadFreeDonations = async () => {
+      try {
+        const { data, error } = await client
+          .from("donation")
+          .select("amount")
+          .is("project_id", null);
+        if (error) {
+          console.error("Error loading free donations:", error);
+          return;
+        }
+        const total = (data || []).reduce(
+          (sum, d) => sum + parseFloat(d.amount ?? "0"),
+          0,
+        );
+        setFreeDonationsTotal(total);
+      } catch (err) {
+        console.error("Error loading free donations:", err);
+      }
+    };
+    void loadFreeDonations();
+  }, []);
+
   const filtered = useMemo(() => {
     return applySedeProjectFilters(
       projects,
@@ -254,7 +280,8 @@ export const useSedeProjects = () => {
     const totalRaised = projects.reduce((sum, p) => sum + p.raised, 0);
     const totalRaisedFree = projects
       .filter((p) => p.type === "free")
-      .reduce((sum, p) => sum + p.raised, 0);
+      .reduce((sum, p) => sum + p.raised, 0)
+      + freeDonationsTotal;
     const completedCount = projects.filter((p) => p.progress >= 100).length;
     const inProgress = total - completedCount;
 
@@ -266,7 +293,7 @@ export const useSedeProjects = () => {
       totalRaisedFree,
       completedCount,
     };
-  }, [projects]);
+  }, [projects, freeDonationsTotal]);
 
   const handleCreateProject = async (
     projectData: CreateProjectData,

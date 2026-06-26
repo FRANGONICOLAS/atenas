@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 import { projectService } from "@/api/services";
+import { client } from "@/api/supabase/client";
 import type { Project } from "@/types";
 import type { CreateProjectData, UpdateProjectData } from "@/api/services/project.service";
 import { FIVE_MINUTES_MS, getTimedCache, setTimedCache } from "@/lib/timedCache";
@@ -85,7 +86,30 @@ export const useProjects = () => {
   // Cargar datos iniciales
   useEffect(() => {
     void loadProjects();
+    void loadFreeDonations();
   }, []);
+
+  const [freeDonationsTotal, setFreeDonationsTotal] = useState(0);
+
+  const loadFreeDonations = async () => {
+    try {
+      const { data, error } = await client
+        .from("donation")
+        .select("amount")
+        .is("project_id", null);
+      if (error) {
+        console.error("Error loading free donations:", error);
+        return;
+      }
+      const total = (data || []).reduce(
+        (sum, d) => sum + parseFloat(d.amount ?? "0"),
+        0,
+      );
+      setFreeDonationsTotal(total);
+    } catch (err) {
+      console.error("Error loading free donations:", err);
+    }
+  };
 
   // Estadísticas de proyectos
   const stats = useMemo(() => {
@@ -94,7 +118,8 @@ export const useProjects = () => {
     const totalRaised = projects.reduce((sum, p) => sum + p.raised, 0);
     const totalRaisedFree = projects
       .filter((p) => p.type === "free")
-      .reduce((sum, p) => sum + p.raised, 0);
+      .reduce((sum, p) => sum + p.raised, 0)
+      + freeDonationsTotal;
     const completedCount = projects.filter((p) => p.progress >= 100).length;
     const inProgress = total - completedCount;
 
@@ -106,7 +131,7 @@ export const useProjects = () => {
       totalRaisedFree,
       completedCount,
     };
-  }, [projects]);
+  }, [projects, freeDonationsTotal]);
 
   // Project handlers
   const handleCreateProject = async (projectData: CreateProjectData, headquarterId?: string) => {

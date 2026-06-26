@@ -21,9 +21,11 @@ export const boldService = {
     const apiKey = import.meta.env.VITE_BOLD_API_KEY || "";
     const merchantId = import.meta.env.VITE_BOLD_MERCHANT_ID || undefined;
     const isProduction = import.meta.env.VITE_BOLD_PRODUCTION === "true";
-    const redirectionUrl =
-      import.meta.env.VITE_BOLD_REDIRECT_URL ||
-      `${window.location.origin}/payment/result`;
+    const appResultUrl = `${window.location.origin}/donation/result`;
+
+    const redirectionUrl = import.meta.env.VITE_BOLD_REDIRECT_URL
+      ? `${import.meta.env.VITE_BOLD_REDIRECT_URL}?redirect_url=${encodeURIComponent(appResultUrl)}`
+      : appResultUrl;
 
     if (!apiKey) {
       console.warn("⚠️ VITE_BOLD_API_KEY not configurado");
