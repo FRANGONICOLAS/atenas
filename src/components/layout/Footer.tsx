@@ -10,6 +10,7 @@ const Footer = () => {
     { href: '/categorias', label: t.nav.categories },
     { href: '/proyectos', label: t.nav.projects },
     { href: '/galeria', label: t.nav.gallery },
+    { href: '/apoya-comuna-17', label: t.vaki.navLabel },
     { href: '/donar', label: t.nav.donate },
   ];
 

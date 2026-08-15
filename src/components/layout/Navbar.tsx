@@ -18,6 +18,7 @@ const Navbar = () => {
     { href: homeLink, label: t.nav.home },
     { href: '/proyectos', label: t.nav.projects },
     { href: '/galeria', label: t.nav.gallery },
+    { href: '/apoya-comuna-17', label: t.vaki.navLabel },
   ];
 
   return (
