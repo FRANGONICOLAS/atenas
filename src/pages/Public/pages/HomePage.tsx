@@ -7,6 +7,7 @@ import { ProblemSection } from '../components/ProblemSection';
 import { TransformationSection } from '../components/TransformationSection';
 import { DonationStatsSection } from '../components/DonationStatsSection';
 import { DonationsUsageSection } from '../components/DonationsUsageSection';
+import { VakiBanner } from '../components/VakiBanner';
 import CTA from '@/components/CTA';
 
 const HOME_KEYS = [
@@ -40,6 +41,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen">
       <HeroSection heroImageUrl={imageMap['home_hero']} />
+      <VakiBanner />
       <ProblemSection problemUrl={imageMap['home_problem']} impactUrl={imageMap['home_impact']} />
       <TransformationSection images={imageMap} />
       <DonationStatsSection stats={donationStats} />
