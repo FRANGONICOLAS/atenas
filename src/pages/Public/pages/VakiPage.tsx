@@ -3,12 +3,11 @@ import {
   Users,
   School,
   Home as HomeIcon,
-  Trophy,
   ExternalLink,
   Package,
   HeartHandshake,
   HeartPulse,
-  Wrench,
+  Apple,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -25,14 +24,14 @@ const VakiPage = () => {
     { icon: Heart, text: t.vaki.commitment.items.p1 },
     { icon: School, text: t.vaki.commitment.items.p2 },
     { icon: HomeIcon, text: t.vaki.commitment.items.p3 },
-    { icon: Trophy, text: t.vaki.commitment.items.p4 },
+    { icon: Apple, text: t.vaki.commitment.items.p4 },
   ];
 
   const fundsItems = [
     { icon: Package, text: t.vaki.useOfFunds.items.p1 },
     { icon: HeartHandshake, text: t.vaki.useOfFunds.items.p2 },
     { icon: HeartPulse, text: t.vaki.useOfFunds.items.p3 },
-    { icon: Wrench, text: t.vaki.useOfFunds.items.p4 },
+    { icon: Apple, text: t.vaki.useOfFunds.items.p4 },
   ];
 
   return (

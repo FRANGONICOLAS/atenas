@@ -670,7 +670,7 @@ export const es = {
         p1: "Acompañamiento a los niños de la fundación y sus familias",
         p2: "Apoyo a las escuelas hermanas y a la comunidad educativa",
         p3: "Ayuda humanitaria para los hogares más afectados",
-        p4: "Recuperación de los escenarios y espacios deportivos de la comuna",
+        p4: "Refrigerios e hidratación para la comunidad afectada",
       },
     },
     useOfFunds: {
@@ -679,7 +679,7 @@ export const es = {
         p1: "Kits deportivos y recreativos para los niños",
         p2: "Ayuda humanitaria para las familias damnificadas",
         p3: "Acompañamiento psicosocial con profesionales",
-        p4: "Materiales para recuperar los escenarios deportivos",
+        p4: "Refrigerios e hidratación para los niños y las familias",
       },
     },
     cta: {

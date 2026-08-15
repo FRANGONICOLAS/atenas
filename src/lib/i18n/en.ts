@@ -667,7 +667,7 @@ export const en = {
         p1: "Support for the foundation's children and their families",
         p2: "Support for partner schools and the school community",
         p3: "Humanitarian aid for the most affected households",
-        p4: "Recovery of the commune's sports facilities and spaces",
+        p4: "Snacks and hydration for the affected community",
       },
     },
     useOfFunds: {
@@ -676,7 +676,7 @@ export const en = {
         p1: "Sports and recreation kits for the children",
         p2: "Humanitarian aid for affected families",
         p3: "Professional psychosocial support",
-        p4: "Materials to recover the sports facilities",
+        p4: "Snacks and hydration for the children and families",
       },
     },
     cta: {
