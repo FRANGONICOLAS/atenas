@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import ScrollToTop from "@/components/common/ScrollToTop";
-import { queryKeys } from "@/lib/queryKeys";
+import { FullScreenLoader } from "@/components/common/FullScreenLoader";
 import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { ProfileGuard } from "@/components/auth/ProfileGuard";
@@ -63,28 +63,6 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  useEffect(() => {
-    const keys = [
-      "home_hero",
-      "home_problem",
-      "home_impact",
-      "home_projects",
-      "home_transformation_1",
-      "home_transformation_2",
-      "home_transformation_3",
-      "home_transformation_4",
-      "home_transformation_5",
-      "home_transformation_6",
-    ];
-    queryClient.prefetchQuery({
-      queryKey: queryKeys.content.byKeys(keys),
-      queryFn: () =>
-        import("@/api/services/content.service").then((m) =>
-          m.contentService.getContentsByKeys(keys),
-        ),
-    });
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
@@ -100,7 +78,8 @@ const App = () => {
             <ProfileGuard>
               <ScrollToTop />
               <ConditionalLayout>
-                <Routes>
+                <Suspense fallback={<FullScreenLoader message="Cargando..." />}>
+                  <Routes>
                   <Route
                     path="/"
                     element={
@@ -208,6 +187,7 @@ const App = () => {
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+                </Suspense>
               </ConditionalLayout>
             </ProfileGuard>
           </BrowserRouter>

@@ -1,33 +1,35 @@
-// Auth Pages
-export { default as LoginPage } from './Auth/LoginPage';
-export { default as RegisterPage } from './Auth/RegisterPage';
-export { default as ResetPasswordPage } from './Auth/ResetPasswordPage';
-export { default as AuthCallback } from './Auth/AuthCallback';
-export { default as CompleteProfile } from './Auth/CompleteProfile';
+import { lazy } from 'react';
 
-// Public Pages
+// Auth Pages
+export const LoginPage = lazy(() => import('./Auth/LoginPage'));
+export const RegisterPage = lazy(() => import('./Auth/RegisterPage'));
+export const ResetPasswordPage = lazy(() => import('./Auth/ResetPasswordPage'));
+export const AuthCallback = lazy(() => import('./Auth/AuthCallback'));
+export const CompleteProfile = lazy(() => import('./Auth/CompleteProfile'));
+
+// Public Pages (HomePage se mantiene eager para el primer render)
 export { default as HomePage } from './Public/pages/HomePage';
-export { default as AboutPage } from './Public/pages/AboutPage';
-export { default as WhatWeDo } from './Public/pages/WhatWeDo';
-export { default as ProjectsPage } from './Public/pages/ProjectsPage';
-export { default as GalleryPage } from './Public/pages/GalleryPage';
-export { default as LocationsPage } from './Public/pages/LocationsPage';
-export { default as VakiPage } from './Public/pages/VakiPage';
+export const AboutPage = lazy(() => import('./Public/pages/AboutPage'));
+export const WhatWeDo = lazy(() => import('./Public/pages/WhatWeDo'));
+export const ProjectsPage = lazy(() => import('./Public/pages/ProjectsPage'));
+export const GalleryPage = lazy(() => import('./Public/pages/GalleryPage'));
+export const LocationsPage = lazy(() => import('./Public/pages/LocationsPage'));
+export const VakiPage = lazy(() => import('./Public/pages/VakiPage'));
 
 // Beneficiary Pages
-export { default as CategoriesPage } from './Public/pages/CategoriesPage';
-export { default as PlayersPage } from './Public/pages/PlayersPage';
-export { default as TestimonialsPage } from './Public/pages/TestimonialsPage';
+export const CategoriesPage = lazy(() => import('./Public/pages/CategoriesPage'));
+export const PlayersPage = lazy(() => import('./Public/pages/PlayersPage'));
+export const TestimonialsPage = lazy(() => import('./Public/pages/TestimonialsPage'));
 
 // Dashboard Pages
-export { default as AdminView } from './AdminView/AdminView';
-export { default as DirectorView } from './DirectorView/DirectorView';
-export { default as DirectorSedeView } from './DirectorSedeView/DirectorSedeView';
-export { default as EvaluationDetailPage } from './DirectorSedeView/pages/EvaluationDetailPage';
-export { default as DonatorView } from './DonatorView/DonatorView';
+export const AdminView = lazy(() => import('./AdminView/AdminView'));
+export const DirectorView = lazy(() => import('./DirectorView/DirectorView'));
+export const DirectorSedeView = lazy(() => import('./DirectorSedeView/DirectorSedeView'));
+export const EvaluationDetailPage = lazy(() => import('./DirectorSedeView/pages/EvaluationDetailPage'));
+export const DonatorView = lazy(() => import('./DonatorView/DonatorView'));
 
 // Common Pages
-export { default as DonationPage } from './Common/DonationPage';
-export { default as DonationResultPage } from './Common/DonationResultPage';
-export { default as ProfilePage } from './Common/ProfilePage';
-export { default as NotFound } from './Common/NotFound';
+export const DonationPage = lazy(() => import('./Common/DonationPage'));
+export const DonationResultPage = lazy(() => import('./Common/DonationResultPage'));
+export const ProfilePage = lazy(() => import('./Common/ProfilePage'));
+export const NotFound = lazy(() => import('./Common/NotFound'));
