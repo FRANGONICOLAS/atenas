@@ -627,42 +627,65 @@ export const en = {
   vaki: {
     navLabel: "Support Comuna 17",
     banner: {
-      title: "Help us with the emergency in Comuna 17",
+      title: "Earthquake in Colombia: help Comuna 17",
       description:
-        "The earthquake hit our community hard. Join the campaign to support the children of the foundation and our partner schools.",
-      button: "Learn how to help",
+        "The magnitude 7.4 quake hit Cali hard. Join the campaign to support the families, children and schools of Comuna 17.",
+      button: "Emergency campaign",
     },
     hero: {
-      badge: "Emergency campaign",
-      title: "Together for the children of Comuna 17",
+      eyebrow: "Emergency campaign · Comuna 17, Cali",
+      title: "Help Comuna 17 stand back up",
       subtitle:
-        "The earthquake left many families in a vulnerable situation. Following the foundation's objectives, we want to provide special support to our children and the partner schools we work with.",
+        "The August 10 earthquake hit Cali hard, and Comuna 17 is among the most affected areas. Entire families lost everything, or nearly everything. We are supporting the whole community — children, young people, adults and elders — and sport is once again the meeting point that brings us together.",
+      primaryCta: "Donate through Vaki",
+      secondaryCta: "Where your donation goes",
+      vakiNote:
+        "We raise funds through Vaki, a Colombian crowdfunding platform.",
+      facts: {
+        rows: [
+          { label: "Quake", value: "Magnitude 7.4" },
+          { label: "Date", value: "August 10, 2026" },
+          { label: "Epicenter", value: "San José del Palmar, Chocó" },
+          { label: "Cali", value: "Among the most affected" },
+          { label: "Homes", value: "About 5,000 damaged or collapsed" },
+          { label: "School", value: "Gradual return from August 24" },
+        ],
+      },
     },
     context: {
-      title: "An emergency close to home",
-      description1:
-        "Comuna 17 is one of the areas most affected by the earthquake in Colombia. Many families, children and sports facilities have been harmed.",
-      description2:
-        "At the foundation we believe sport is also a tool for recovery: a safe space of support and hope for those who need it most.",
+      title: "What is happening",
+      p1: "On Monday, August 10, 2026, a magnitude 7.4 earthquake with its epicenter in San José del Palmar, Chocó, shook much of western Colombia. Cali was one of the hardest-hit cities, and Comuna 17, where the foundation works, is among the most affected areas.",
+      p2: "About 5,000 homes in the city were damaged or collapsed and thousands of families in Comuna 17 are affected. School infrastructure was also damaged and classes will resume gradually from August 24. Children and adults need to recover the routine, the play and the support network that sport gives them.",
+      sources:
+        "Sources: Santiago de Cali Mayor's Office and national emergency reports.",
     },
-    mission: {
-      title: "Our support",
-      description:
-        "With this campaign we want to support the children of the foundation and our partner schools, making sure sport remains a refuge in the middle of the emergency.",
-      points: {
-        p1: "Special support for the children of the foundation",
-        p2: "Support for the partner schools we work with",
-        p3: "Recovery of affected sports facilities",
-        p4: "Emotional and social support for families",
+    commitment: {
+      title: "Our commitment",
+      subtitle:
+        "Following the foundation's objectives, we will provide special support to the foundation's children, the partner schools and all the families of Comuna 17 who were affected.",
+      items: {
+        p1: "Support for the foundation's children and their families",
+        p2: "Support for partner schools and the school community",
+        p3: "Humanitarian aid for the most affected households",
+        p4: "Recovery of the commune's sports facilities and spaces",
+      },
+    },
+    useOfFunds: {
+      title: "Where your donation goes",
+      items: {
+        p1: "Sports and recreation kits for the children",
+        p2: "Humanitarian aid for affected families",
+        p3: "Professional psychosocial support",
+        p4: "Materials to recover the sports facilities",
       },
     },
     cta: {
-      title: "Your help goes directly",
+      title: "Every contribution reaches Comuna 17 directly",
       description:
-        "Every contribution, no matter how small, lets us keep supporting the children of Comuna 17.",
+        "Your donation, no matter how small, helps a family in Comuna 17 regain normalcy, and helps their children get back on the pitch.",
       button: "Donate through Vaki",
-      externalNote:
-        "The donation is made on the Vaki platform, in a new tab.",
+      externalNote: "Donations are made on the Vaki platform, in a new tab.",
+      transparency: "We will publish on this page how the funds raised are used.",
     },
   },
 };

@@ -630,42 +630,67 @@ export const es = {
   vaki: {
     navLabel: "Apoya la Comuna 17",
     banner: {
-      title: "Ayúdanos con la emergencia en la Comuna 17",
+      title: "Terremoto en Colombia: ayudemos a la Comuna 17",
       description:
-        "El terremoto golpeó duramente a nuestra comunidad. Únete a la campaña para acompañar a los niños de la fundación y las escuelas hermanas.",
-      button: "Conoce cómo ayudar",
+        "El sismo de magnitud 7,4 golpeó duramente a Cali. Únete a la campaña para acompañar a las familias, los niños y las escuelas de la Comuna 17.",
+      button: "Campaña de emergencia",
     },
     hero: {
-      badge: "Campaña de emergencia",
-      title: "Juntos por los niños de la Comuna 17",
+      eyebrow: "Campaña de emergencia · Comuna 17, Cali",
+      title: "Que la Comuna 17 se levante con tu ayuda",
       subtitle:
-        "El terremoto dejó a muchas familias en situación de vulnerabilidad. Siguiendo los objetivos de la fundación, queremos brindar un acompañamiento especial a nuestros niños y a las escuelas hermanas con las que trabajamos.",
+        "El terremoto del 10 de agosto golpeó con fuerza a Cali y la Comuna 17 está entre las zonas más afectadas. Familias enteras lo perdieron todo, o casi todo. Estamos acompañando a toda la comunidad — niños, jóvenes, adultos y mayores — y el deporte vuelve a ser el punto de encuentro que nos une.",
+      primaryCta: "Donar por Vaki",
+      secondaryCta: "En qué se usará tu aporte",
+      vakiNote:
+        "Recaudamos en Vaki, plataforma colombiana de financiamiento colectivo.",
+      facts: {
+        rows: [
+          { label: "Sismo", value: "Magnitud 7,4" },
+          { label: "Fecha", value: "10 de agosto de 2026" },
+          { label: "Epicentro", value: "San José del Palmar, Chocó" },
+          { label: "Cali", value: "Una de las más afectadas" },
+          { label: "Viviendas", value: "Cerca de 5.000 dañadas o colapsadas" },
+          { label: "Clases", value: "Regreso gradual desde el 24 de agosto" },
+        ],
+      },
     },
     context: {
-      title: "Una emergencia que nos toca de cerca",
-      description1:
-        "La Comuna 17 es una de las zonas más afectadas por el terremoto ocurrido en Colombia. Muchas familias, niños y espacios deportivos han resultado damnificados.",
-      description2:
-        "En la fundación creemos que el deporte también es una herramienta de recuperación: un espacio seguro, de contención y de esperanza para quienes más lo necesitan.",
+      title: "Lo que está pasando",
+      p1: "El lunes 10 de agosto de 2026, un terremoto de magnitud 7,4 con epicentro en San José del Palmar, Chocó, sacudió gran parte del occidente del país. Cali fue una de las ciudades más afectadas y la Comuna 17, donde trabaja la fundación, está entre las zonas más golpeadas.",
+      p2: "Cerca de 5.000 viviendas quedaron averiadas o colapsadas en la ciudad y miles de familias de la Comuna 17 están afectadas. La infraestructura escolar también resultó dañada y las clases se reanudarán de forma gradual a partir del 24 de agosto. Niños y adultos necesitan recuperar la rutina, el juego y la red de apoyo que les da el deporte.",
+      sources:
+        "Fuentes: Alcaldía de Santiago de Cali y reportes nacionales de emergencia.",
     },
-    mission: {
-      title: "Nuestro acompañamiento",
-      description:
-        "Con esta campaña queremos acompañar a los niños de la fundación y de las escuelas hermanas, asegurando que el deporte siga siendo un refugio en medio de la emergencia.",
-      points: {
-        p1: "Acompañamiento especial a los niños de la fundación",
-        p2: "Apoyo a las escuelas hermanas con las que trabajamos",
-        p3: "Recuperación de espacios deportivos afectados",
-        p4: "Contención emocional y social para las familias",
+    commitment: {
+      title: "Nuestro compromiso",
+      subtitle:
+        "Siguiendo los objetivos de la fundación, haremos un acompañamiento especial a los niños de la fundación y las escuelas hermanas, y a todas las familias de la Comuna 17 que resultaron afectadas.",
+      items: {
+        p1: "Acompañamiento a los niños de la fundación y sus familias",
+        p2: "Apoyo a las escuelas hermanas y a la comunidad educativa",
+        p3: "Ayuda humanitaria para los hogares más afectados",
+        p4: "Recuperación de los escenarios y espacios deportivos de la comuna",
+      },
+    },
+    useOfFunds: {
+      title: "En qué se usará tu aporte",
+      items: {
+        p1: "Kits deportivos y recreativos para los niños",
+        p2: "Ayuda humanitaria para las familias damnificadas",
+        p3: "Acompañamiento psicosocial con profesionales",
+        p4: "Materiales para recuperar los escenarios deportivos",
       },
     },
     cta: {
-      title: "Tu ayuda llega directo",
+      title: "Cada aporte llega directo a la Comuna 17",
       description:
-        "Cada aporte, por pequeño que sea, nos permite seguir acompañando a los niños de la Comuna 17.",
+        "Tu donación, por pequeña que sea, ayuda a que una familia de la Comuna 17 recupere la normalidad, y a que sus niños vuelvan a la cancha.",
       button: "Donar por Vaki",
       externalNote:
-        "La donación se realiza en la plataforma Vaki, en una nueva pestaña.",
+        "La donación se realiza en la plataforma Vaki, en una pestaña nueva.",
+      transparency:
+        "Publicaremos en esta página cómo se invierte lo recaudado.",
     },
   },
 };
