@@ -25,6 +25,7 @@ import {
   ProjectsPage,
   GalleryPage,
   LocationsPage,
+  VakiPage,
   // Beneficiary Pages
   CategoriesPage,
   PlayersPage,
@@ -124,6 +125,7 @@ const App = () => {
                     element={<DonationResultPage />}
                   />
                   <Route path="/sedes" element={<LocationsPage />} />
+                  <Route path="/apoya-comuna-17" element={<VakiPage />} />
 
                   {/* Rutas de autenticación */}
                   <Route path="/login" element={<LoginPage />} />

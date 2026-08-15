@@ -12,6 +12,7 @@ export { default as WhatWeDo } from './Public/pages/WhatWeDo';
 export { default as ProjectsPage } from './Public/pages/ProjectsPage';
 export { default as GalleryPage } from './Public/pages/GalleryPage';
 export { default as LocationsPage } from './Public/pages/LocationsPage';
+export { default as VakiPage } from './Public/pages/VakiPage';
 
 // Beneficiary Pages
 export { default as CategoriesPage } from './Public/pages/CategoriesPage';
