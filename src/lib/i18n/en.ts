@@ -624,4 +624,45 @@ export const en = {
       },
     },
   },
+  vaki: {
+    navLabel: "Support Comuna 17",
+    banner: {
+      title: "Help us with the emergency in Comuna 17",
+      description:
+        "The earthquake hit our community hard. Join the campaign to support the children of the foundation and our partner schools.",
+      button: "Learn how to help",
+    },
+    hero: {
+      badge: "Emergency campaign",
+      title: "Together for the children of Comuna 17",
+      subtitle:
+        "The earthquake left many families in a vulnerable situation. Following the foundation's objectives, we want to provide special support to our children and the partner schools we work with.",
+    },
+    context: {
+      title: "An emergency close to home",
+      description1:
+        "Comuna 17 is one of the areas most affected by the earthquake in Colombia. Many families, children and sports facilities have been harmed.",
+      description2:
+        "At the foundation we believe sport is also a tool for recovery: a safe space of support and hope for those who need it most.",
+    },
+    mission: {
+      title: "Our support",
+      description:
+        "With this campaign we want to support the children of the foundation and our partner schools, making sure sport remains a refuge in the middle of the emergency.",
+      points: {
+        p1: "Special support for the children of the foundation",
+        p2: "Support for the partner schools we work with",
+        p3: "Recovery of affected sports facilities",
+        p4: "Emotional and social support for families",
+      },
+    },
+    cta: {
+      title: "Your help goes directly",
+      description:
+        "Every contribution, no matter how small, lets us keep supporting the children of Comuna 17.",
+      button: "Donate through Vaki",
+      externalNote:
+        "The donation is made on the Vaki platform, in a new tab.",
+    },
+  },
 };

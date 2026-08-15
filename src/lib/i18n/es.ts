@@ -627,4 +627,45 @@ export const es = {
       },
     },
   },
+  vaki: {
+    navLabel: "Apoya la Comuna 17",
+    banner: {
+      title: "Ayúdanos con la emergencia en la Comuna 17",
+      description:
+        "El terremoto golpeó duramente a nuestra comunidad. Únete a la campaña para acompañar a los niños de la fundación y las escuelas hermanas.",
+      button: "Conoce cómo ayudar",
+    },
+    hero: {
+      badge: "Campaña de emergencia",
+      title: "Juntos por los niños de la Comuna 17",
+      subtitle:
+        "El terremoto dejó a muchas familias en situación de vulnerabilidad. Siguiendo los objetivos de la fundación, queremos brindar un acompañamiento especial a nuestros niños y a las escuelas hermanas con las que trabajamos.",
+    },
+    context: {
+      title: "Una emergencia que nos toca de cerca",
+      description1:
+        "La Comuna 17 es una de las zonas más afectadas por el terremoto ocurrido en Colombia. Muchas familias, niños y espacios deportivos han resultado damnificados.",
+      description2:
+        "En la fundación creemos que el deporte también es una herramienta de recuperación: un espacio seguro, de contención y de esperanza para quienes más lo necesitan.",
+    },
+    mission: {
+      title: "Nuestro acompañamiento",
+      description:
+        "Con esta campaña queremos acompañar a los niños de la fundación y de las escuelas hermanas, asegurando que el deporte siga siendo un refugio en medio de la emergencia.",
+      points: {
+        p1: "Acompañamiento especial a los niños de la fundación",
+        p2: "Apoyo a las escuelas hermanas con las que trabajamos",
+        p3: "Recuperación de espacios deportivos afectados",
+        p4: "Contención emocional y social para las familias",
+      },
+    },
+    cta: {
+      title: "Tu ayuda llega directo",
+      description:
+        "Cada aporte, por pequeño que sea, nos permite seguir acompañando a los niños de la Comuna 17.",
+      button: "Donar por Vaki",
+      externalNote:
+        "La donación se realiza en la plataforma Vaki, en una nueva pestaña.",
+    },
+  },
 };
