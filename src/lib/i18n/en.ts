@@ -99,38 +99,18 @@ export const en = {
   },
   about: {
     title: "About Us",
-    mission: "Our Mission",
-    missionText:
-      "Transform the lives of children and youth through sports, providing opportunities for comprehensive development, values formation, and social support.",
-    vision: "Our Vision",
-    visionText:
-      "To be the leading sports foundation in youth talent development, recognized for its positive social impact and comprehensive training model.",
-    values: "Our Values",
-    structure: "Organizational Structure",
     subtitle:
       "We are a non-profit sports foundation committed to the comprehensive development of children and youth through football.",
-    valuesList: {
-      passion: {
-        title: "Passion",
-        desc: "We love what we do and transmit it to every young person",
-      },
-      integrity: {
-        title: "Integrity",
-        desc: "We act with honesty and transparency at all times",
-      },
-      teamwork: {
-        title: "Teamwork",
-        desc: "We believe in the power of the team to achieve great goals",
-      },
-      excellence: {
-        title: "Excellence",
-        desc: "We seek continuous improvement in every aspect",
-      },
-      commitment: {
-        title: "Commitment",
-        desc: "We are committed to the development of our youth",
-      },
-    },
+    description:
+      "The Atenas Social-Sports Foundation is a nonprofit organization founded in 2017 in Comuna 17 of Santiago de Cali, Colombia. It was created in response to a social need: the lack of free, sustainable spaces where children and adolescents between the ages of 6 and 17 could receive a well-rounded education through sports. Using soccer as an educational tool, Atenas operates under an approach that views human beings as multidimensional—physical, psychological-emotional, and social—promoting not only athletic development but also the cultivation of values, emotional well-being, and the strengthening of the social fabric of its community.",
+    mission: "Our Mission",
+    missionText:
+      "To provide a well-rounded education to children and adolescents in Comuna 17 of Santiago de Cali through soccer as a tool for social transformation, offering them a free and ongoing space that fosters their physical, psychological-emotional, and social development, and enables them to grow into well-rounded individuals with strong values who are capable of making positive contributions to their communities.",
+    vision: "Our Vision",
+    visionText:
+      "The Atenas Social and Sports Foundation aims to go beyond the conventional, projecting its work beyond the present to shape the future of each of its beneficiaries. We work to forge strategic partnerships with public and private entities—both national and international—that enable us to make a tangible contribution to the life plans of every child and adolescent who is part of the Foundation. We recognize soccer as a discipline capable of opening doors to academic opportunities both within and outside the country, and we work to ensure that, through scholarships and sponsorships, our beneficiaries gain access to technical, technological, and professional careers that transform their present and secure their future. In addition to the above, the Foundation seeks to incorporate research as a cross-cutting theme to enhance the educational development of children and adolescents. Our goal is to take science beyond the laboratories and apply it directly on the soccer field and in everyday life, transforming knowledge into tangible tools for the holistic development of each beneficiary.",
+    values: "Our Values",
+    structure: "Organizational Structure",
     roles: {
       director: "General Director",
     },

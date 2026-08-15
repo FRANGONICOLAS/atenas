@@ -101,38 +101,18 @@ export const es = {
   },
   about: {
     title: "Quiénes Somos",
-    mission: "Nuestra Misión",
-    missionText:
-      "Transformar la vida de niños y jóvenes a través del deporte, brindándoles oportunidades de desarrollo integral, formación en valores y acompañamiento social.",
-    vision: "Nuestra Visión",
-    visionText:
-      "Ser la fundación deportiva líder en el desarrollo de jóvenes talentos, reconocida por su impacto social positivo y su modelo de formación integral.",
-    values: "Nuestros Valores",
-    structure: "Estructura Organizativa",
     subtitle:
       "Somos una fundación deportiva sin ánimo de lucro comprometida con el desarrollo integral de niños y jóvenes a través del fútbol.",
-    valuesList: {
-      passion: {
-        title: "Pasión",
-        desc: "Amamos lo que hacemos y lo transmitimos a cada joven",
-      },
-      integrity: {
-        title: "Integridad",
-        desc: "Actuamos con honestidad y transparencia en todo momento",
-      },
-      teamwork: {
-        title: "Trabajo en Equipo",
-        desc: "Creemos en el poder del equipo para lograr grandes metas",
-      },
-      excellence: {
-        title: "Excelencia",
-        desc: "Buscamos la mejora continua en cada aspecto",
-      },
-      commitment: {
-        title: "Compromiso",
-        desc: "Estamos comprometidos con el desarrollo de nuestros jóvenes",
-      },
-    },
+    description:
+      "La Fundación Sociodeportiva Atenas es una organización sin ánimo de lucro fundada en 2017 en la Comuna 17 de Santiago de Cali, Colombia. Surge como respuesta a un vacío social: la falta de espacios gratuitos y sostenidos donde niños, niñas y adolescentes entre los 6 y 17 años pudieran formarse de manera integral a través del deporte. A través del fútbol como herramienta pedagógica, Atenas trabaja bajo un enfoque que entiende al ser humano como un ser multidimensional —físico, psicológico-emocional y social— promoviendo no solo el desarrollo deportivo, sino también la construcción de valores, la salud emocional y el fortalecimiento del tejido social de su comunidad.",
+    mission: "Nuestra Misión",
+    missionText:
+      "Formar integralmente a niños, niñas y adolescentes de la Comuna 17 de Santiago de Cali, a través del fútbol como herramienta de transformación social, brindando de manera gratuita y constante un espacio que potencie su desarrollo físico, psicológico-emocional y social, y que les permita crecer como seres humanos íntegros, con valores y capaces de aportar positivamente a su entorno.",
+    vision: "Nuestra Visión",
+    visionText:
+      "La Fundación Sociodeportiva Atenas aspira a trascender lo convencional, proyectando su labor más allá del presente para incidir en el futuro de cada uno de sus beneficiarios. Trabajamos por articularnos estratégicamente con entidades públicas y privadas, nacionales e internacionales, que nos permitan aportar de manera concreta al proyecto de vida de cada niño, niña y adolescente que forma parte de la Fundación. Reconocemos en el fútbol una disciplina capaz de abrir puertas hacia la formación académica dentro y fuera del país, y trabajamos para que, a través de becas y patrocinios, nuestros beneficiarios accedan a carreras técnicas, tecnológicas y profesionales que transformen su presente y aseguren su futuro. Además de lo anterior, la Fundación busca incorporar la investigación como eje transversal para potenciar los procesos de formación de los niños, niñas y adolescentes. Nuestro propósito es llevar la ciencia más allá de los laboratorios y aplicarla directamente en el terreno de juego y en la práctica cotidiana, transformando el conocimiento en herramientas tangibles para el desarrollo integral de cada beneficiario.",
+    values: "Nuestros Valores",
+    structure: "Estructura Organizativa",
     roles: {
       director: "Director General",
     },
